@@ -888,7 +888,7 @@
             }
         });
 
-                        function updateTable() {
+                                function updateTable() {
             const tbody = document.getElementById('overtimeTable');
             const dataToShow = filteredData.length > 0 ? filteredData : overtimeData;
             if (dataToShow.length === 0) {
@@ -909,21 +909,30 @@
             }
             let html = '';
             dataToShow.forEach((data, index) => {
-                // HAPUS BARIS INI: const employeeNames = data.employees.map(emp => emp.name).join(', ');
-                const timeRange = `${formatTime(data.startTime)} - ${formatTime(data.endTime)}`;
-                // Hitung durasi
-                const start = new Date(`2000-01-01 ${data.startTime}`);
-                const end = new Date(`2000-01-01 ${data.endTime}`);
-                const diffMs = end - start;
+                // Format waktu: Ambil jam dan menit dari startTime dan endTime
+                const startTimeFormatted = data.startTime; // Ini sudah dalam format HH:MM
+                const endTimeFormatted = data.endTime;   // Ini juga sudah dalam format HH:MM
+                const timeRange = `${startTimeFormatted} - ${endTimeFormatted}`;
+
+                // Hitung durasi: Gunakan startTime dan endTime untuk menghitung selisih waktu
+                const start = new Date(`2000-01-01T${data.startTime}:00`);
+                const end = new Date(`2000-01-01T${data.endTime}:00`);
+                let diffMs = end - start;
+                if (diffMs < 0) {
+                    // Handle lembur melewati tengah malam
+                    diffMs += 24 * 60 * 60 * 1000;
+                }
                 const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
                 const diffMinutes = Math.floor((diffMs % (1000 * 60 * 60)) / (1000 * 60));
                 const duration = `${diffHours}j ${diffMinutes}m`;
+
                 // Dynamic color for line badges
                 const lineColors = {
                     'MATTRESS': 'bg-blue-100 text-blue-800',
                     'MATTRESS SPRING': 'bg-purple-100 text-purple-800'
                 };
                 const lineColor = lineColors[data.line] || 'bg-gray-100 text-gray-800';
+
                 html += `
                     <tr class="hover:bg-gray-50 transition-colors">
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 font-medium table-cell">${new Date(data.date).toLocaleDateString('id-ID')}</td>
@@ -932,13 +941,11 @@
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 table-cell">${timeRange}</td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 font-medium table-cell">${duration}</td>
-                        <!-- GANTI DENGAN BAGIAN INI: -->
                         <td class="px-6 py-4 text-sm text-gray-900 table-cell">
                             <div class="max-h-32 overflow-y-auto">
                                 ${data.employees.map(emp => `<div>${emp.name}</div>`).join('')}
                             </div>
                         </td>
-                        <!-- SAMPAI SINI -->
                         <td class="px-6 py-4 text-sm text-gray-900 max-w-xs truncate table-cell" title="${data.task}">${data.task}</td>
                         <td class="px-6 py-4 whitespace-nowrap">
                             <span class="px-3 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">Tersimpan</span>
