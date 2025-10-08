@@ -851,7 +851,7 @@
         }
 
         // --- Event Listeners ---
-                document.getElementById('overtimeForm').addEventListener('submit', async function(e) {
+                    document.getElementById('overtimeForm').addEventListener('submit', async function(e) {
             e.preventDefault();
             showLoading();
             const formData = {
@@ -911,7 +911,7 @@
             }
         });
 
-                     function updateTable() {
+                    function updateTable() {
             const tbody = document.getElementById('overtimeTable');
             const dataToShow = filteredData.length > 0 ? filteredData : overtimeData;
             if (dataToShow.length === 0) {
