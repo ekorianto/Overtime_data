@@ -329,16 +329,25 @@
             </div>
         </div>
     </div>
-    <!-- Modal untuk Detail Karyawan -->
+        <!-- Modal untuk Detail Karyawan -->
     <div id="employeeDetailModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50">
         <div class="flex items-center justify-center min-h-screen p-4">
-            <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full p-6">
-                <div class="flex justify-between items-center mb-4">
-                    <h3 class="text-lg font-bold">Daftar Karyawan</h3>
-                    <button onclick="closeEmployeeDetailModal()" class="text-gray-500 hover:text-gray-700 text-2xl">&times;</button>
+            <!-- Perbesar max-w dan tambahkan max-h -->
+            <div class="bg-white rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-hidden"> 
+                <div class="px-6 py-4 bg-gradient-to-r from-blue-50 to-indigo-50 border-b">
+                    <div class="flex justify-between items-center">
+                        <h3 class="text-lg font-bold">Detail Pengajuan Lembur</h3>
+                        <button onclick="closeEmployeeDetailModal()" class="text-gray-500 hover:text-gray-700 text-2xl">&times;</button>
+                    </div>
                 </div>
-                <div id="employeeDetailList" class="max-h-64 overflow-y-auto">
-                    <!-- Nama-nama karyawan akan diisi di sini -->
+                <div class="p-6">
+                    <!-- Tambahkan elemen untuk menampilkan info tambahan -->
+                    <div id="employeeDetailDate" class="text-sm font-semibold text-gray-700 mb-1"></div>
+                    <div id="employeeDetailTime" class="text-sm font-semibold text-gray-700 mb-1"></div>
+                    <div id="employeeDetailDuration" class="text-sm font-semibold text-gray-700 mb-4"></div>
+                    <div id="employeeDetailList" class="max-h-96 overflow-y-auto border border-gray-200 rounded-lg p-2">
+                        <!-- Nama-nama karyawan akan diisi di sini -->
+                    </div>
                 </div>
             </div>
         </div>
@@ -378,19 +387,30 @@
             document.getElementById('successModal').classList.add('hidden');
         }
 
-        // Fungsi untuk membuka modal detail karyawan
-        function openEmployeeDetailModal(employees) {
+                // Fungsi untuk membuka modal detail karyawan
+        function openEmployeeDetailModal(date, startTime, endTime, duration, employees) {
             const modal = document.getElementById('employeeDetailModal');
+            const dateDiv = document.getElementById('employeeDetailDate');
+            const timeDiv = document.getElementById('employeeDetailTime');
+            const durationDiv = document.getElementById('employeeDetailDuration');
             const listDiv = document.getElementById('employeeDetailList');
+
             // Kosongkan list sebelumnya
             listDiv.innerHTML = '';
+
+            // Tampilkan tanggal, waktu, durasi
+            dateDiv.textContent = `Tanggal: ${new Date(date).toLocaleDateString('id-ID')}`;
+            timeDiv.textContent = `Waktu: ${startTime} - ${endTime}`;
+            durationDiv.textContent = `Durasi: ${duration}`;
+
             // Tambahkan nama karyawan ke dalam list
-            (employees || []).forEach(emp => { // Tambahkan (employees || []) untuk keamanan jika null/undefined
+            (employees || []).forEach(emp => {
                 const div = document.createElement('div');
                 div.className = 'py-1 px-2 border-b border-gray-200'; // Gaya sederhana
                 div.textContent = `${emp.name} (${emp.id})`; // Tampilkan nama dan ID
                 listDiv.appendChild(div);
             });
+
             modal.classList.remove('hidden');
             document.body.style.overflow = 'hidden';
         }
@@ -400,6 +420,7 @@
             document.getElementById('employeeDetailModal').classList.add('hidden');
             document.body.style.overflow = 'auto';
         }
+
         function populateLineOptions() {
             // Get unique departments from employees data (exclude empty departments)
             const uniqueDepts = [...new Set(employees
@@ -880,9 +901,7 @@
         });
         
 
-        // Perbarui fungsi updateTable YANG SUDAH ADA
-    // Cari definisi fungsi updateTable di script kamu, lalu ganti seluruh isi fungsi tersebut dengan yang baru ini:
-            function updateTable() {
+               function updateTable() {
             const tbody = document.getElementById('overtimeTable');
             const dataToShow = filteredData.length > 0 ? filteredData : overtimeData;
             if (dataToShow.length === 0) {
@@ -908,8 +927,10 @@
                 const employeeNamesDiv = (data.employees || []).map(emp => `<div>${emp.name}</div>`).join('');
 
                 // Perbaikan untuk Waktu: Gunakan startTime dan endTime dari data (format HH:MM)
-                // PASTIKAN data.startTime dan data.endTime adalah string dalam format HH:MM
-                const timeRange = `${data.startTime} - ${data.endTime}`;
+                // Validasi format HH:MM
+                const startTimeFormatted = data.startTime && data.startTime.match(/^\d{2}:\d{2}$/) ? data.startTime : 'N/A';
+                const endTimeFormatted = data.endTime && data.endTime.match(/^\d{2}:\d{2}$/) ? data.endTime : 'N/A';
+                const timeRange = `${startTimeFormatted} - ${endTimeFormatted}`;
 
                 // Perbaikan untuk Durasi: Gunakan duration dari data (dari Google Sheets, sudah dikurangi istirahat)
                 // Atau hitung ulang berdasarkan startTime dan endTime jika data.duration tidak tersedia
@@ -947,7 +968,7 @@
                 };
                 const lineColor = lineColors[data.line] || 'bg-gray-100 text-gray-800';
 
-                // Tambahkan id unik ke <td> karyawan
+                // Tambahkan id unik ke <td> karyawan dan sembunyikan data tambahan dalam atribut data-
                 html += `
                     <tr class="hover:bg-gray-50 transition-colors">
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 font-medium table-cell">${new Date(data.date).toLocaleDateString('id-ID')}</td>
@@ -956,7 +977,7 @@
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 table-cell">${timeRange}</td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 font-medium table-cell">${duration}</td>
-                        <td class="px-6 py-4 text-sm text-gray-900 table-cell cursor-pointer" id="empCell-${index}">
+                        <td class="px-6 py-4 text-sm text-gray-900 table-cell cursor-pointer" id="empCell-${index}" data-date="${data.date}" data-starttime="${data.startTime}" data-endtime="${data.endTime}" data-duration="${duration}">
                             <div class="max-h-32 overflow-y-auto">
                                 ${employeeNamesDiv}
                             </div>
@@ -975,7 +996,15 @@
                 const cell = document.getElementById(`empCell-${index}`);
                 if (cell) {
                     cell.addEventListener('click', () => {
-                        openEmployeeDetailModal(data.employees); // Langsung kirim array, tidak perlu stringify
+                        // Ambil data dari atribut data-
+                        const date = cell.getAttribute('data-date');
+                        const startTime = cell.getAttribute('data-starttime');
+                        const endTime = cell.getAttribute('data-endtime');
+                        const duration = cell.getAttribute('data-duration');
+                        const employees = data.employees; // Ambil array employees dari scope luar
+
+                        // Panggil fungsi modal dengan semua data
+                        openEmployeeDetailModal(date, startTime, endTime, duration, employees);
                     });
                 }
             });
