@@ -851,18 +851,19 @@
         }
 
         // --- Event Listeners ---
-        document.getElementById('overtimeForm').addEventListener('submit', async function(e) {
+                document.getElementById('overtimeForm').addEventListener('submit', async function(e) {
             e.preventDefault();
             showLoading();
             const formData = {
                 date: document.getElementById('overtimeDate').value,
                 line: document.getElementById('lineSelect').value,
-                startTime: document.getElementById('startTime').value,
-                endTime: document.getElementById('endTime').value,
+                startTime: document.getElementById('startTime').value, // <-- Pastikan ini disimpan
+                endTime: document.getElementById('endTime').value,   // <-- Pastikan ini disimpan
                 task: document.getElementById('overtimeTask').value,
                 employees: [],
                 timestamp: new Date().toISOString()
             };
+            // Ambil karyawan yang dipilih
             const selectedCheckboxes = document.querySelectorAll('input[name="selectedEmployees"]:checked');
             selectedCheckboxes.forEach(checkbox => {
                 const employee = employees.find(emp => emp.id === checkbox.value);
@@ -879,14 +880,24 @@
                 return;
             }
             try {
+                // Simpan ke Google Sheets (menggunakan POST JSON utama, JSONP fallback)
                 const result = await saveToGoogleSheets(formData);
                 if (result.success) {
-                    // Jangan hanya push ke lokal, tetapi muat ULANG data dari Google Sheets
-                    // overtimeData.push(formData); // Hapus baris ini
-                    await loadOvertimeData(); // Muat ulang data dari Google Sheets untuk menyertakan entri baru
-                    // Update tabel dan statistik (sudah dilakukan di loadOvertimeData)
-                    // updateTable(); // Opsional, karena loadOvertimeData sudah memanggilnya
-                    // updateStats();  // Opsional, karena loadOvertimeData sudah memanggilnya
+                    // SIMPAN DATA LENGKAP KE overtimeData
+                    // Jangan hanya push formData, tapi pastikan semua field yang dibutuhkan ada
+                    overtimeData.push({
+                        date: formData.date,
+                        line: formData.line,
+                        startTime: formData.startTime, // <-- Simpan startTime
+                        endTime: formData.endTime,   // <-- Simpan endTime
+                        task: formData.task,
+                        employees: [...formData.employees], // Copy array
+                        timestamp: formData.timestamp
+                    });
+                    // Update tabel dan statistik
+                    updateTable();
+                    updateStats();
+                    // Tutup modal dan tampilkan success
                     closeModal();
                     document.getElementById('successModal').classList.remove('hidden');
                 } else {
@@ -894,13 +905,13 @@
                 }
             } catch (error) {
                 console.error('Submit error:', error);
-                showNotification(`❌ Gagal menyimpan: ${error.message}`, 'error');
+                alert('Terjadi kesalahan saat menyimpan data: ' + error.message);
             } finally {
                 hideLoading();
             }
         });
 
-                                function updateTable() {
+                     function updateTable() {
             const tbody = document.getElementById('overtimeTable');
             const dataToShow = filteredData.length > 0 ? filteredData : overtimeData;
             if (dataToShow.length === 0) {
@@ -921,12 +932,13 @@
             }
             let html = '';
             dataToShow.forEach((data, index) => {
+                // Perbaikan untuk Waktu: Gunakan startTime dan endTime dari data lokal (formData)
                 // Format waktu: Ambil jam dan menit dari startTime dan endTime
                 const startTimeFormatted = data.startTime; // Ini sudah dalam format HH:MM
                 const endTimeFormatted = data.endTime;   // Ini juga sudah dalam format HH:MM
                 const timeRange = `${startTimeFormatted} - ${endTimeFormatted}`;
 
-                // Hitung durasi: Gunakan startTime dan endTime untuk menghitung selisih waktu
+                // Perbaikan untuk Durasi: Hitung durasi berdasarkan startTime dan endTime dari data lokal
                 const start = new Date(`2000-01-01T${data.startTime}:00`);
                 const end = new Date(`2000-01-01T${data.endTime}:00`);
                 let diffMs = end - start;
@@ -934,9 +946,18 @@
                     // Handle lembur melewati tengah malam
                     diffMs += 24 * 60 * 60 * 1000;
                 }
+                // Kurangi 1 jam (3600000 ms) untuk istirahat
+                diffMs -= (1 * 60 * 60 * 1000);
+                // Pastikan durasi tidak negatif
+                if (diffMs < 0) {
+                    diffMs = 0;
+                }
                 const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
                 const diffMinutes = Math.floor((diffMs % (1000 * 60 * 60)) / (1000 * 60));
                 const duration = `${diffHours}j ${diffMinutes}m`;
+
+                // Perbaikan untuk Karyawan: Tampilkan satu nama per baris
+                // const employeeNames = data.employees.map(emp => emp.name).join(', '); // Hapus baris ini
 
                 // Dynamic color for line badges
                 const lineColors = {
