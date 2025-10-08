@@ -577,10 +577,10 @@
         }
 
        // Fungsi baru untuk memuat data lembur dari Google Sheets menggunakan JSONP
+                // Fungsi baru untuk memuat data lembur dari Google Sheets menggunakan JSONP
         async function loadOvertimeData() {
             try {
                 console.log('Memuat data lembur dari Google Sheets (JSONP)...');
-                // showNotification('🔄 Memuat riwayat lembur...', 'info'); // Opsional
                 const timestamp = Date.now();
                 const callbackName = `loadOvertimeCallback${timestamp}`;
                 return new Promise((resolve, reject) => {
@@ -607,7 +607,6 @@
                                 console.log('✅ Data lembur berhasil dimuat dari Google Sheets (JSONP):', overtimeData.length, 'pengajuan');
                                 updateTable(); // Update tabel dengan data baru
                                 updateStats();  // Update statistik dengan data baru
-                                // showNotification(`✅ ${overtimeData.length} data lembur dimuat.`, 'success'); // Opsional
                                 resolve(response.data);
                             } else {
                                 throw new Error(response.error || 'Format data lembur tidak valid');
@@ -740,14 +739,14 @@
             });
         }
 
-                document.getElementById('overtimeForm').addEventListener('submit', async function(e) {
+                     document.getElementById('overtimeForm').addEventListener('submit', async function(e) {
             e.preventDefault();
             showLoading();
             const formData = {
                 date: document.getElementById('overtimeDate').value,
                 line: document.getElementById('lineSelect').value,
-                startTime: document.getElementById('startTime').value, // <-- Pastikan ini disimpan
-                endTime: document.getElementById('endTime').value,   // <-- Pastikan ini disimpan
+                startTime: document.getElementById('startTime').value,
+                endTime: document.getElementById('endTime').value,
                 task: document.getElementById('overtimeTask').value,
                 employees: [],
                 timestamp: new Date().toISOString()
@@ -772,21 +771,10 @@
                 // Simpan ke Google Sheets (menggunakan POST JSON utama, JSONP fallback)
                 const result = await saveToGoogleSheets(formData);
                 if (result.success) {
-                    // SIMPAN DATA LENGKAP KE overtimeData
-                    // Jangan hanya push formData, tapi pastikan semua field yang dibutuhkan ada
-                    overtimeData.push({
-                        date: formData.date,
-                        line: formData.line,
-                        startTime: formData.startTime, // <-- Simpan startTime
-                        endTime: formData.endTime,   // <-- Simpan endTime
-                        task: formData.task,
-                        employees: [...formData.employees], // Copy array
-                        timestamp: formData.timestamp
-                    });
-                    // Update tabel dan statistik
-                    updateTable();
-                    updateStats();
-                    // Tutup modal dan tampilkan success
+                    // JANGAN simpan ke overtimeData lokal, tapi muat ulang data dari Google Sheets
+                    // overtimeData.push(formData); // Hapus baris ini
+                    await loadOvertimeData(); // Muat ulang data dari Google Sheets untuk menyertakan entri baru
+                    // Update tabel dan statistik (sudah dilakukan di loadOvertimeData)
                     closeModal();
                     document.getElementById('successModal').classList.remove('hidden');
                 } else {
@@ -911,7 +899,7 @@
             }
         });
 
-                    function updateTable() {
+                     function updateTable() {
             const tbody = document.getElementById('overtimeTable');
             const dataToShow = filteredData.length > 0 ? filteredData : overtimeData;
             if (dataToShow.length === 0) {
@@ -932,13 +920,12 @@
             }
             let html = '';
             dataToShow.forEach((data, index) => {
-                // Perbaikan untuk Waktu: Gunakan startTime dan endTime dari data lokal (formData)
-                // Format waktu: Ambil jam dan menit dari startTime dan endTime
+                // Format waktu: Gunakan startTime dan endTime dari data
                 const startTimeFormatted = data.startTime; // Ini sudah dalam format HH:MM
                 const endTimeFormatted = data.endTime;   // Ini juga sudah dalam format HH:MM
                 const timeRange = `${startTimeFormatted} - ${endTimeFormatted}`;
 
-                // Perbaikan untuk Durasi: Hitung durasi berdasarkan startTime dan endTime dari data lokal
+                // Hitung durasi: Gunakan startTime dan endTime dari data
                 const start = new Date(`2000-01-01T${data.startTime}:00`);
                 const end = new Date(`2000-01-01T${data.endTime}:00`);
                 let diffMs = end - start;
@@ -956,15 +943,15 @@
                 const diffMinutes = Math.floor((diffMs % (1000 * 60 * 60)) / (1000 * 60));
                 const duration = `${diffHours}j ${diffMinutes}m`;
 
-                // Perbaikan untuk Karyawan: Tampilkan satu nama per baris
-                // const employeeNames = data.employees.map(emp => emp.name).join(', '); // Hapus baris ini
-
                 // Dynamic color for line badges
                 const lineColors = {
                     'MATTRESS': 'bg-blue-100 text-blue-800',
                     'MATTRESS SPRING': 'bg-purple-100 text-purple-800'
                 };
                 const lineColor = lineColors[data.line] || 'bg-gray-100 text-gray-800';
+
+                // Untuk kolom Karyawan: Tampilkan satu nama per baris
+                const employeeNamesDiv = data.employees.map(emp => `<div>${emp.name}</div>`).join('');
 
                 html += `
                     <tr class="hover:bg-gray-50 transition-colors">
@@ -976,7 +963,7 @@
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 font-medium table-cell">${duration}</td>
                         <td class="px-6 py-4 text-sm text-gray-900 table-cell">
                             <div class="max-h-32 overflow-y-auto">
-                                ${data.employees.map(emp => `<div>${emp.name}</div>`).join('')}
+                                ${employeeNamesDiv}
                             </div>
                         </td>
                         <td class="px-6 py-4 text-sm text-gray-900 max-w-xs truncate table-cell" title="${data.task}">${data.task}</td>
