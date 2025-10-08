@@ -740,18 +740,19 @@
             });
         }
 
-        document.getElementById('overtimeForm').addEventListener('submit', async function(e) {
+                document.getElementById('overtimeForm').addEventListener('submit', async function(e) {
             e.preventDefault();
             showLoading();
             const formData = {
                 date: document.getElementById('overtimeDate').value,
                 line: document.getElementById('lineSelect').value,
-                startTime: document.getElementById('startTime').value,
-                endTime: document.getElementById('endTime').value,
+                startTime: document.getElementById('startTime').value, // <-- Pastikan ini disimpan
+                endTime: document.getElementById('endTime').value,   // <-- Pastikan ini disimpan
                 task: document.getElementById('overtimeTask').value,
                 employees: [],
                 timestamp: new Date().toISOString()
             };
+            // Ambil karyawan yang dipilih
             const selectedCheckboxes = document.querySelectorAll('input[name="selectedEmployees"]:checked');
             selectedCheckboxes.forEach(checkbox => {
                 const employee = employees.find(emp => emp.id === checkbox.value);
@@ -771,10 +772,21 @@
                 // Simpan ke Google Sheets (menggunakan POST JSON utama, JSONP fallback)
                 const result = await saveToGoogleSheets(formData);
                 if (result.success) {
-                    // JANGAN hanya push ke lokal, tetapi muat ULANG data dari Google Sheets untuk menyertakan entri baru
-                    // overtimeData.push(formData); // Hapus baris ini
-                    await loadOvertimeData(); // Muat ulang data dari Google Sheets
-                    // Update tabel dan statistik (sudah dilakukan di loadOvertimeData)
+                    // SIMPAN DATA LENGKAP KE overtimeData
+                    // Jangan hanya push formData, tapi pastikan semua field yang dibutuhkan ada
+                    overtimeData.push({
+                        date: formData.date,
+                        line: formData.line,
+                        startTime: formData.startTime, // <-- Simpan startTime
+                        endTime: formData.endTime,   // <-- Simpan endTime
+                        task: formData.task,
+                        employees: [...formData.employees], // Copy array
+                        timestamp: formData.timestamp
+                    });
+                    // Update tabel dan statistik
+                    updateTable();
+                    updateStats();
+                    // Tutup modal dan tampilkan success
                     closeModal();
                     document.getElementById('successModal').classList.remove('hidden');
                 } else {
@@ -782,7 +794,7 @@
                 }
             } catch (error) {
                 console.error('Submit error:', error);
-                showNotification(`❌ Gagal menyimpan: ${error.message}`, 'error');
+                alert('Terjadi kesalahan saat menyimpan data: ' + error.message);
             } finally {
                 hideLoading();
             }
