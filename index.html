@@ -329,6 +329,20 @@
             </div>
         </div>
     </div>
+    <!-- Modal untuk Detail Karyawan -->
+    <div id="employeeDetailModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50">
+        <div class="flex items-center justify-center min-h-screen p-4">
+            <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full p-6">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-lg font-bold">Daftar Karyawan</h3>
+                    <button onclick="closeEmployeeDetailModal()" class="text-gray-500 hover:text-gray-700 text-2xl">&times;</button>
+                </div>
+                <div id="employeeDetailList" class="max-h-64 overflow-y-auto">
+                    <!-- Nama-nama karyawan akan diisi di sini -->
+                </div>
+            </div>
+        </div>
+    </div>
     <script>
         // Google Sheets Configuration
         const SHEET_ID = '1xad_Ig38yxi86To7mpOTOjPDdBLX9h7yIj1GoeIz9_I';
@@ -363,6 +377,29 @@
         function closeSuccessModal() {
             document.getElementById('successModal').classList.add('hidden');
         }
+
+        // Fungsi untuk membuka modal detail karyawan
+    function openEmployeeDetailModal(employees) {
+        const modal = document.getElementById('employeeDetailModal');
+        const listDiv = document.getElementById('employeeDetailList');
+        // Kosongkan list sebelumnya
+        listDiv.innerHTML = '';
+        // Tambahkan nama karyawan ke dalam list
+        employees.forEach(emp => {
+            const div = document.createElement('div');
+            div.className = 'py-1 px-2 border-b border-gray-200'; // Gaya sederhana
+            div.textContent = `${emp.name} (${emp.id})`; // Tampilkan nama dan ID
+            listDiv.appendChild(div);
+        });
+        modal.classList.remove('hidden');
+        document.body.style.overflow = 'hidden';
+    }
+
+    // Fungsi untuk menutup modal detail karyawan
+    function closeEmployeeDetailModal() {
+        document.getElementById('employeeDetailModal').classList.add('hidden');
+        document.body.style.overflow = 'auto';
+    }
         function populateLineOptions() {
             // Get unique departments from employees data (exclude empty departments)
             const uniqueDepts = [...new Set(employees
@@ -843,93 +880,95 @@
         });
         
 
-        // Fungsi Update Table (DIPERBAIKI UNTUK DATA DARI GOOGLE SHEETS)
-        function updateTable() {
-            const tbody = document.getElementById('overtimeTable');
-            const dataToShow = filteredData.length > 0 ? filteredData : overtimeData;
-            if (dataToShow.length === 0) {
-                tbody.innerHTML = `
-                    <tr>
-                        <td colspan="7" class="px-6 py-12 text-center text-gray-500">
-                            <div class="flex flex-col items-center space-y-3">
-                                <svg class="w-12 h-12 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-                                </svg>
-                                <p>Belum ada data pengajuan lembur</p>
-                                <p class="text-sm">Klik "Buat Pengajuan Lembur" untuk memulai</p>
-                            </div>
-                        </td>
-                    </tr>
-                `;
-                return;
-            }
-            let html = '';
-            dataToShow.forEach((data, index) => {
-                // Perbaikan untuk Karyawan: Tampilkan satu nama per baris
-                // Pastikan data.employees adalah array
-                const employeeNamesDiv = (data.employees || []).map(emp => `<div>${emp.name}</div>`).join('');
-
-                // Perbaikan untuk Waktu: Gunakan startTime dan endTime dari data (format HH:MM)
-                const timeRange = `${data.startTime} - ${data.endTime}`;
-
-                // Perbaikan untuk Durasi: Gunakan duration dari data (dari Google Sheets, sudah dikurangi istirahat)
-                // Atau hitung ulang berdasarkan startTime dan endTime jika data.duration tidak tersedia
-                let duration;
-                if (data.duration !== undefined) {
-                    // Jika data.duration adalah desimal (misalnya 3.5), ubah ke format jam:menit
-                    const totalMinutes = data.duration * 60;
-                    const hours = Math.floor(totalMinutes / 60);
-                    const minutes = Math.floor(totalMinutes % 60);
-                    duration = `${hours}j ${minutes}m`;
-                } else {
-                    // Jika data.duration tidak ada, hitung ulang berdasarkan startTime dan endTime
-                    const start = new Date(`2000-01-01T${data.startTime}:00`);
-                    const end = new Date(`2000-01-01T${data.endTime}:00`);
-                    let diffMs = end - start;
-                    if (diffMs < 0) {
-                        // Handle lembur melewati tengah malam
-                        diffMs += 24 * 60 * 60 * 1000;
-                    }
-                    // Kurangi 1 jam (3600000 ms) untuk istirahat
-                    diffMs -= (1 * 60 * 60 * 1000);
-                    // Pastikan durasi tidak negatif
-                    if (diffMs < 0) {
-                        diffMs = 0;
-                    }
-                    const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
-                    const diffMinutes = Math.floor((diffMs % (1000 * 60 * 60)) / (1000 * 60));
-                    duration = `${diffHours}j ${diffMinutes}m`;
-                }
-
-                // Dynamic color for line badges
-                const lineColors = {
-                    'MATTRESS': 'bg-blue-100 text-blue-800',
-                    'MATTRESS SPRING': 'bg-purple-100 text-purple-800'
-                };
-                const lineColor = lineColors[data.line] || 'bg-gray-100 text-gray-800';
-
-                html += `
-                    <tr class="hover:bg-gray-50 transition-colors">
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 font-medium table-cell">${new Date(data.date).toLocaleDateString('id-ID')}</td>
-                        <td class="px-6 py-4 whitespace-nowrap">
-                            <span class="px-3 py-1 text-xs font-semibold rounded-full ${lineColor}">${data.line}</span>
-                        </td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 table-cell">${timeRange}</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 font-medium table-cell">${duration}</td>
-                        <td class="px-6 py-4 text-sm text-gray-900 table-cell">
-                            <div class="max-h-32 overflow-y-auto">
-                                ${employeeNamesDiv}
-                            </div>
-                        </td>
-                        <td class="px-6 py-4 text-sm text-gray-900 max-w-xs truncate table-cell" title="${data.task}">${data.task}</td>
-                        <td class="px-6 py-4 whitespace-nowrap">
-                            <span class="px-3 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">Tersimpan</span>
-                        </td>
-                    </tr>
-                `;
-            });
-            tbody.innerHTML = html;
+        // Perbarui fungsi updateTable YANG SUDAH ADA
+    // Cari definisi fungsi updateTable di script kamu, lalu ganti seluruh isi fungsi tersebut dengan yang baru ini:
+    function updateTable() {
+        const tbody = document.getElementById('overtimeTable');
+        const dataToShow = filteredData.length > 0 ? filteredData : overtimeData;
+        if (dataToShow.length === 0) {
+            tbody.innerHTML = `
+                <tr>
+                    <td colspan="7" class="px-6 py-12 text-center text-gray-500">
+                        <div class="flex flex-col items-center space-y-3">
+                            <svg class="w-12 h-12 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                            </svg>
+                            <p>Belum ada data pengajuan lembur</p>
+                            <p class="text-sm">Klik "Buat Pengajuan Lembur" untuk memulai</p>
+                        </div>
+                    </td>
+                </tr>
+            `;
+            return;
         }
+        let html = '';
+        dataToShow.forEach((data, index) => {
+            // Perbaikan untuk Karyawan: Tampilkan satu nama per baris
+            // Pastikan data.employees adalah array
+            const employeeNamesDiv = (data.employees || []).map(emp => `<div>${emp.name}</div>`).join('');
+
+            // Perbaikan untuk Waktu: Gunakan startTime dan endTime dari data (format HH:MM)
+            // PASTIKAN data.startTime dan data.endTime adalah string dalam format HH:MM
+            const timeRange = `${data.startTime} - ${data.endTime}`;
+
+            // Perbaikan untuk Durasi: Gunakan duration dari data (dari Google Sheets, sudah dikurangi istirahat)
+            // Atau hitung ulang berdasarkan startTime dan endTime jika data.duration tidak tersedia
+            let duration;
+            if (data.duration !== undefined) {
+                // Jika data.duration adalah desimal (misalnya 3.5), ubah ke format jam:menit
+                const totalMinutes = data.duration * 60;
+                const hours = Math.floor(totalMinutes / 60);
+                const minutes = Math.floor(totalMinutes % 60);
+                duration = `${hours}j ${minutes}m`;
+            } else {
+                // Jika data.duration tidak ada, hitung ulang berdasarkan startTime dan endTime
+                const start = new Date(`2000-01-01T${data.startTime}:00`);
+                const end = new Date(`2000-01-01T${data.endTime}:00`);
+                let diffMs = end - start;
+                if (diffMs < 0) {
+                    // Handle lembur melewati tengah malam
+                    diffMs += 24 * 60 * 60 * 1000;
+                }
+                // Kurangi 1 jam (3600000 ms) untuk istirahat
+                diffMs -= (1 * 60 * 60 * 1000);
+                // Pastikan durasi tidak negatif
+                if (diffMs < 0) {
+                    diffMs = 0;
+                }
+                const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
+                const diffMinutes = Math.floor((diffMs % (1000 * 60 * 60)) / (1000 * 60));
+                duration = `${diffHours}j ${diffMinutes}m`;
+            }
+
+            // Dynamic color for line badges
+            const lineColors = {
+                'MATTRESS': 'bg-blue-100 text-blue-800',
+                'MATTRESS SPRING': 'bg-purple-100 text-purple-800'
+            };
+            const lineColor = lineColors[data.line] || 'bg-gray-100 text-gray-800';
+
+            html += `
+                <tr class="hover:bg-gray-50 transition-colors">
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 font-medium table-cell">${new Date(data.date).toLocaleDateString('id-ID')}</td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <span class="px-3 py-1 text-xs font-semibold rounded-full ${lineColor}">${data.line}</span>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 table-cell">${timeRange}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 font-medium table-cell">${duration}</td>
+                    <td class="px-6 py-4 text-sm text-gray-900 table-cell cursor-pointer" onclick="openEmployeeDetailModal(${JSON.stringify(data.employees)})">
+                        <div class="max-h-32 overflow-y-auto">
+                            ${employeeNamesDiv}
+                        </div>
+                    </td>
+                    <td class="px-6 py-4 text-sm text-gray-900 max-w-xs truncate table-cell" title="${data.task}">${data.task}</td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <span class="px-3 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">Tersimpan</span>
+                    </td>
+                </tr>
+            `;
+        });
+        tbody.innerHTML = html;
+    }
 
          function updateStats() {
             const today = new Date().toISOString().split('T')[0];
