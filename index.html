@@ -1,0 +1,1031 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistem Pengajuan Lembur - Mattress Pro</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            box-sizing: border-box;
+            /* Ukuran font dasar */
+            font-size: 18px; /* text-lg */
+        }
+        .modal-backdrop {
+            backdrop-filter: blur(8px);
+        }
+        .gradient-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        .card-hover {
+            transition: all 0.3s ease;
+        }
+        .card-hover:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+        .pulse-animation {
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+        .slide-in {
+            animation: slideIn 0.5s ease-out;
+        }
+        @keyframes slideIn {
+            from { transform: translateY(20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        .loading-spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #3498db;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .success-checkmark {
+            animation: checkmark 0.6s ease-in-out;
+        }
+        @keyframes checkmark {
+            0% { transform: scale(0); }
+            50% { transform: scale(1.2); }
+            100% { transform: scale(1); }
+        }
+        /* Tambahkan style untuk elemen-elemen utama */
+        .main-title { font-size: 2.5rem; } /* text-4xl -> 2.5rem (40px) */
+        .main-subtitle { font-size: 1.125rem; } /* text-sm -> 1.125rem (18px) */
+        .today-count { font-size: 3rem; } /* text-2xl -> 3rem (48px) */
+        .card-title { font-size: 1.125rem; } /* text-sm -> 1.125rem (18px) */
+        .card-value { font-size: 2.25rem; } /* text-2xl -> 2.25rem (36px) */
+        .action-btn-text { font-size: 1.5rem; } /* text-base -> 1.5rem (24px) */
+        .action-btn { padding: 1.5rem 2rem; } /* py-4 px-8 -> py-6 px-8 (24px, 32px) */
+        .filter-title { font-size: 1.25rem; } /* text-lg -> 1.25rem (20px) */
+        .filter-label { font-size: 1rem; } /* text-sm -> 1rem (16px) */
+        .table-title { font-size: 1.5rem; } /* text-xl -> 1.5rem (24px) */
+        .table-header { font-size: 0.75rem; } /* text-xs -> 0.75rem (12px) */
+        .table-cell { font-size: 1rem; } /* text-sm -> 1rem (16px) */
+        .modal-title { font-size: 1.5rem; } /* text-2xl -> 1.5rem (24px) */
+        .modal-label { font-size: 1.125rem; } /* text-sm -> 1.125rem (18px) */
+        .modal-input { font-size: 1.125rem; } /* text-base -> 1.125rem (18px) */
+        .modal-duration-text { font-size: 1.125rem; } /* text-sm -> 1.125rem (18px) */
+        .modal-submit-btn { font-size: 1.5rem; } /* text-base -> 1.5rem (24px) */
+        .modal-submit-btn-text { font-size: 1.25rem; } /* span dalam tombol -> 1.25rem (20px) */
+        .success-modal-title { font-size: 1.5rem; } /* text-xl -> 1.5rem (24px) */
+        .success-modal-text { font-size: 1.125rem; } /* text-base -> 1.125rem (18px) */
+        .notification-text { font-size: 1rem; } /* text-sm -> 1rem (16px) */
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <!-- Header dengan Gradient -->
+    <div class="gradient-bg shadow-xl">
+        <div class="max-w-7xl mx-auto px-6 py-8">
+            <div class="flex items-center justify-between">
+                <div>
+                    <h1 class="text-4xl font-bold text-white mb-2 main-title">🏭 Sistem Pengajuan Lembur</h1>
+                    <p class="text-blue-100 text-lg main-subtitle">Mattress Production Management System</p>
+                </div>
+                <div class="text-right text-white">
+                    <div class="text-sm opacity-90">Total Pengajuan Hari Ini</div>
+                    <div id="todayCount" class="text-5xl font-bold today-count">0</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Stats Cards -->
+    <div class="max-w-7xl mx-auto px-6 -mt-6 mb-8">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div class="bg-white rounded-xl shadow-lg p-6 card-hover">
+                <div class="flex items-center">
+                    <div class="p-3 bg-blue-100 rounded-full">
+                        <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"></path>
+                        </svg>
+                    </div>
+                    <div class="ml-4">
+                        <p class="text-sm font-medium text-gray-600 card-title">Total Karyawan</p>
+                        <p id="totalEmployees" class="text-4xl font-semibold text-gray-900 card-value">0</p>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-white rounded-xl shadow-lg p-6 card-hover">
+                <div class="flex items-center">
+                    <div class="p-3 bg-green-100 rounded-full">
+                        <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                    </div>
+                    <div class="ml-4">
+                        <p class="text-sm font-medium text-gray-600 card-title">Pengajuan Bulan Ini</p>
+                        <p id="monthlyCount" class="text-4xl font-semibold text-gray-900 card-value">0</p>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-white rounded-xl shadow-lg p-6 card-hover">
+                <div class="flex items-center">
+                    <div class="p-3 bg-purple-100 rounded-full">
+                        <svg class="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                        </svg>
+                    </div>
+                    <div class="ml-4">
+                        <p class="text-sm font-medium text-gray-600 card-title">Line Aktif</p>
+                        <p id="activeLines" class="text-4xl font-semibold text-gray-900 card-value">0</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Main Content -->
+    <div class="max-w-7xl mx-auto px-6 pb-8">
+        <!-- Action Buttons -->
+        <div class="flex flex-wrap gap-4 mb-8">
+            <button onclick="openModal()" class="bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white px-8 py-4 rounded-xl font-semibold shadow-lg transition-all duration-300 transform hover:scale-105 flex items-center space-x-2 action-btn">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                </svg>
+                <span class="action-btn-text">Buat Pengajuan Lembur</span>
+            </button>
+            <button onclick="refreshData()" class="bg-white hover:bg-gray-50 text-gray-700 px-6 py-4 rounded-xl font-semibold shadow-lg border border-gray-200 transition-all duration-300 flex items-center space-x-2">
+                <svg id="refreshIcon" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+                </svg>
+                <span>Refresh Data</span>
+            </button>
+            <button onclick="loadMasterData()" class="bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 text-white px-6 py-4 rounded-xl font-semibold shadow-lg transition-all duration-300 flex items-center space-x-2">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
+                </svg>
+                <span>Sync Master Data</span>
+            </button>
+            <button onclick="exportToCSV()" class="bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white px-6 py-4 rounded-xl font-semibold shadow-lg transition-all duration-300 flex items-center space-x-2">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                </svg>
+                <span>Export Data</span>
+            </button>
+        </div>
+        <!-- Filter Section -->
+        <div class="bg-white rounded-xl shadow-lg p-6 mb-8">
+            <h3 class="text-lg font-semibold text-gray-800 mb-4 filter-title">🔍 Filter Data</h3>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2 filter-label">Filter Tanggal</label>
+                    <input type="date" id="filterDate" onchange="filterData()" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2 filter-label">Filter Line</label>
+                    <select id="filterLine" onchange="filterData()" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                        <option value="">Semua Line</option>
+                    </select>
+                </div>
+                <div class="flex items-end">
+                    <button onclick="clearFilters()" class="w-full bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-lg transition-colors">
+                        Clear Filter
+                    </button>
+                </div>
+            </div>
+        </div>
+        <!-- Data Table -->
+        <div class="bg-white rounded-xl shadow-lg overflow-hidden slide-in">
+            <div class="px-6 py-4 bg-gradient-to-r from-gray-50 to-gray-100 border-b">
+                <div class="flex justify-between items-center">
+                    <h2 class="text-xl font-semibold text-gray-800 table-title">📋 Riwayat Pengajuan Lembur</h2>
+                    <div id="loadingIndicator" class="hidden flex items-center space-x-2">
+                        <div class="loading-spinner"></div>
+                        <span class="text-sm text-gray-600">Memuat data...</span>
+                    </div>
+                </div>
+            </div>
+            <div class="overflow-x-auto">
+                <table class="w-full">
+                    <thead class="bg-gradient-to-r from-blue-50 to-indigo-50">
+                        <tr>
+                            <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider table-header">Tanggal</th>
+                            <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider table-header">Line</th>
+                            <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider table-header">Waktu</th>
+                            <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider table-header">Durasi</th>
+                            <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider table-header">Karyawan</th>
+                            <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider table-header">Tugas</th>
+                            <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider table-header">Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="overtimeTable" class="bg-white divide-y divide-gray-200">
+                        <tr>
+                            <td colspan="7" class="px-6 py-12 text-center text-gray-500">
+                                <div class="flex flex-col items-center space-y-3">
+                                    <svg class="w-12 h-12 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                                    </svg>
+                                    <p>Belum ada data pengajuan lembur</p>
+                                    <p class="text-sm">Klik "Buat Pengajuan Lembur" untuk memulai</p>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <!-- Modal -->
+    <div id="overtimeModal" class="fixed inset-0 bg-black bg-opacity-50 modal-backdrop hidden z-50">
+        <div class="flex items-center justify-center min-h-screen p-4">
+            <div class="bg-white rounded-2xl shadow-2xl max-w-3xl w-full max-h-[90vh] overflow-y-auto transform transition-all">
+                <!-- Modal Header -->
+                <div class="px-8 py-6 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-t-2xl">
+                    <div class="flex justify-between items-center">
+                        <div>
+                            <h3 class="text-2xl font-bold modal-title">📝 Form Pengajuan Lembur</h3>
+                            <p class="text-blue-100 mt-1">Isi data dengan lengkap dan benar</p>
+                        </div>
+                        <button onclick="closeModal()" class="text-white hover:text-gray-200 text-3xl font-bold transition-colors">&times;</button>
+                    </div>
+                </div>
+                <!-- Modal Body -->
+                <form id="overtimeForm" class="p-8 space-y-6">
+                    <!-- Tanggal -->
+                    <div class="space-y-2">
+                        <label class="block text-sm font-semibold text-gray-700 modal-label">📅 Tanggal Lembur</label>
+                        <input type="date" id="overtimeDate" required class="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all modal-input">
+                    </div>
+                    <!-- Line Selection -->
+                    <div class="space-y-2">
+                        <label class="block text-sm font-semibold text-gray-700 modal-label">🏭 Pilih Line Produksi</label>
+                        <select id="lineSelect" required onchange="updateEmployeeList()" class="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all modal-input">
+                            <option value="">-- Pilih Line --</option>
+                        </select>
+                    </div>
+                    <!-- Jam Mulai & Selesai -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="space-y-2">
+                            <label class="block text-sm font-semibold text-gray-700 modal-label">🕐 Jam Mulai</label>
+                            <input type="time" id="startTime" required onchange="calculateDuration()" class="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all modal-input">
+                        </div>
+                        <div class="space-y-2">
+                            <label class="block text-sm font-semibold text-gray-700 modal-label">🕐 Jam Selesai</label>
+                            <input type="time" id="endTime" required onchange="calculateDuration()" class="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all modal-input">
+                        </div>
+                    </div>
+                    <!-- Durasi Display -->
+                    <div id="durationDisplay" class="hidden bg-blue-50 border border-blue-200 rounded-xl p-4">
+                        <div class="flex items-center space-x-2">
+                            <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                            <span class="text-sm font-medium text-blue-800 modal-duration-text">Durasi Lembur: <span id="durationText" class="font-bold"></span></span>
+                        </div>
+                    </div>
+                    <!-- Tugas Lembur -->
+                    <div class="space-y-2">
+                        <label class="block text-sm font-semibold text-gray-700 modal-label">📋 Tugas Lembur</label>
+                        <textarea id="overtimeTask" required rows="4" placeholder="Jelaskan secara detail tugas yang akan dikerjakan saat lembur..." class="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all resize-none modal-input"></textarea>
+                    </div>
+                    <!-- Employee Selection -->
+                    <div class="space-y-2">
+                        <label class="block text-sm font-semibold text-gray-700 modal-label">👥 Pilih Karyawan yang Lembur</label>
+                        <div id="employeeList" class="border-2 border-gray-300 rounded-xl p-6 max-h-64 overflow-y-auto bg-gray-50">
+                            <div class="text-center text-gray-500 py-8">
+                                <svg class="w-12 h-12 mx-auto text-gray-300 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
+                                </svg>
+                                <p>Pilih line terlebih dahulu</p>
+                            </div>
+                        </div>
+                        <div id="selectedCount" class="hidden text-sm text-blue-600 font-medium"></div>
+                    </div>
+                    <!-- Submit Button -->
+                    <div class="flex justify-end space-x-4 pt-6 border-t-2 border-gray-100">
+                        <button type="button" onclick="closeModal()" class="px-8 py-3 border-2 border-gray-300 text-gray-700 rounded-xl hover:bg-gray-50 transition-all font-semibold">
+                            Batal
+                        </button>
+                        <button type="submit" id="submitBtn" class="px-8 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-xl hover:from-blue-700 hover:to-indigo-700 transition-all font-semibold flex items-center space-x-2 modal-submit-btn">
+                            <span class="modal-submit-btn-text">Simpan Pengajuan</span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <!-- Success Modal -->
+    <div id="successModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50">
+        <div class="flex items-center justify-center min-h-screen p-4">
+            <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full p-8 text-center">
+                <div class="success-checkmark mb-4">
+                    <svg class="w-16 h-16 text-green-500 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                </div>
+                <h3 class="text-xl font-bold text-gray-900 mb-2 success-modal-title">Berhasil!</h3>
+                <p class="text-gray-600 mb-6 success-modal-text">Pengajuan lembur telah disimpan ke Google Sheets</p>
+                <button onclick="closeSuccessModal()" class="bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded-lg font-semibold transition-colors">
+                    OK
+                </button>
+            </div>
+        </div>
+    </div>
+    <script>
+        // Google Sheets Configuration
+        const SHEET_ID = '1xad_Ig38yxi86To7mpOTOjPDdBLX9h7yIj1GoeIz9_I';
+       // GANTI INI DENGAN URL DEPLOYMENT KAMU
+        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyd8864unE_ppfE5K2ZdrzX3LeBR4hWYb5oOUE_vdkNMbvh4QWNFKAqpKlqzDfznJqS6A/exec'; // <--- GANTI INI !!!
+        // Master data karyawan - akan diisi dari Google Sheets
+        let employees = [];
+        // Data pengajuan lembur (dari Google Sheets) - GANTI INI: Gunakan ini untuk menampilkan riwayat
+        let overtimeData = [];
+        let filteredData = [];
+
+        // --- Fungsi-fungsi Modal dan Utilitas ---
+        function openModal() {
+            document.getElementById('overtimeModal').classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+        }
+        function closeModal() {
+            document.getElementById('overtimeModal').classList.add('hidden');
+            document.body.style.overflow = 'auto';
+            document.getElementById('overtimeForm').reset();
+            document.getElementById('employeeList').innerHTML = `
+                <div class="text-center text-gray-500 py-8">
+                    <svg class="w-12 h-12 mx-auto text-gray-300 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
+                    </svg>
+                    <p>Pilih line terlebih dahulu</p>
+                </div>
+            `;
+            document.getElementById('durationDisplay').classList.add('hidden');
+            document.getElementById('selectedCount').classList.add('hidden');
+        }
+        function closeSuccessModal() {
+            document.getElementById('successModal').classList.add('hidden');
+        }
+        function populateLineOptions() {
+            // Get unique departments from employees data (exclude empty departments)
+            const uniqueDepts = [...new Set(employees
+                .map(emp => emp.dept)
+                .filter(dept => dept && dept.trim() !== '')
+            )].sort();
+            // Update line select dropdown in modal
+            const lineSelect = document.getElementById('lineSelect');
+            lineSelect.innerHTML = '<option value="">-- Pilih Line --</option>';
+            uniqueDepts.forEach(dept => {
+                const option = document.createElement('option');
+                option.value = dept;
+                option.textContent = dept;
+                lineSelect.appendChild(option);
+            });
+            // Update filter line dropdown
+            const filterLine = document.getElementById('filterLine');
+            filterLine.innerHTML = '<option value="">Semua Line</option>';
+            uniqueDepts.forEach(dept => {
+                const option = document.createElement('option');
+                option.value = dept;
+                option.textContent = dept;
+                filterLine.appendChild(option);
+            });
+            // Update active lines count
+            document.getElementById('activeLines').textContent = uniqueDepts.length;
+            console.log('✅ Line options populated:', uniqueDepts);
+        }
+        function updateEmployeeList() {
+            const selectedLine = document.getElementById('lineSelect').value;
+            const employeeListDiv = document.getElementById('employeeList');
+            if (!selectedLine) {
+                employeeListDiv.innerHTML = `
+                    <div class="text-center text-gray-500 py-8">
+                        <svg class="w-12 h-12 mx-auto text-gray-300 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0z"></path>
+                        </svg>
+                        <p>Pilih line terlebih dahulu</p>
+                    </div>
+                `;
+                return;
+            }
+            const filteredEmployees = employees.filter(emp => emp.dept === selectedLine);
+            if (filteredEmployees.length === 0) {
+                employeeListDiv.innerHTML = `
+                    <div class="text-center text-gray-500 py-8">
+                        <p>Tidak ada karyawan di line ini</p>
+                    </div>
+                `;
+                return;
+            }
+            let html = '<div class="space-y-3">';
+            filteredEmployees.forEach(emp => {
+                html += `
+                    <label class="flex items-center space-x-3 p-4 hover:bg-blue-50 rounded-xl cursor-pointer border border-transparent hover:border-blue-200 transition-all">
+                        <input type="checkbox" name="selectedEmployees" value="${emp.id}" onchange="updateSelectedCount()" class="w-5 h-5 text-blue-600 border-gray-300 rounded focus:ring-blue-500">
+                        <div class="flex-1">
+                            <span class="font-semibold text-gray-900">${emp.name}</span>
+                            <span class="text-sm text-gray-500 ml-2">(${emp.id})</span>
+                        </div>
+                    </label>
+                `;
+            });
+            html += '</div>';
+            employeeListDiv.innerHTML = html;
+        }
+        function updateSelectedCount() {
+            const selectedCheckboxes = document.querySelectorAll('input[name="selectedEmployees"]:checked');
+            const countDiv = document.getElementById('selectedCount');
+            if (selectedCheckboxes.length > 0) {
+                countDiv.classList.remove('hidden');
+                countDiv.textContent = `${selectedCheckboxes.length} karyawan dipilih`;
+            } else {
+                countDiv.classList.add('hidden');
+            }
+        }
+
+        function calculateDuration() {
+            const startTime = document.getElementById('startTime').value;
+            const endTime = document.getElementById('endTime').value;
+            const durationDisplay = document.getElementById('durationDisplay');
+            const durationText = document.getElementById('durationText');
+            if (startTime && endTime) {
+                const start = new Date(`2000-01-01 ${startTime}`);
+                const end = new Date(`2000-01-01 ${endTime}`);
+                if (end > start) {
+                    const diffMs = end - start;
+                    // Kurangi 1 jam (3600000 ms) untuk istirahat dalam preview
+                    const adjustedDiffMs = diffMs - (1 * 60 * 60 * 1000);
+                    let displayHours = Math.floor(adjustedDiffMs / (1000 * 60 * 60));
+                    let displayMinutes = Math.floor((adjustedDiffMs % (1000 * 60 * 60)) / (1000 * 60));
+                    // Pastikan durasi tidak negatif
+                    if (displayHours < 0) displayHours = 0;
+                    if (displayMinutes < 0) displayMinutes = 0;
+                    durationText.textContent = `${displayHours} jam ${displayMinutes} menit`;
+                    durationDisplay.classList.remove('hidden');
+                } else {
+                    durationDisplay.classList.add('hidden');
+                }
+            } else {
+                durationDisplay.classList.add('hidden');
+            }
+        }
+
+        function formatTime(time) {
+            return time.replace(':', '.');
+        }
+        function showLoading() {
+            document.getElementById('loadingIndicator').classList.remove('hidden');
+            const submitBtn = document.getElementById('submitBtn');
+            submitBtn.innerHTML = `
+                <div class="loading-spinner"></div>
+                <span>Menyimpan...</span>
+            `;
+            submitBtn.disabled = true;
+        }
+        function hideLoading() {
+            document.getElementById('loadingIndicator').classList.add('hidden');
+            const submitBtn = document.getElementById('submitBtn');
+            submitBtn.innerHTML = '<span>Simpan Pengajuan</span>';
+            submitBtn.disabled = false;
+        }
+        function showNotification(message, type = 'info') {
+            // Buat elemen notifikasi
+            const notification = document.createElement('div');
+            notification.className = `fixed top-4 right-4 z-50 p-4 rounded-lg shadow-lg max-w-sm transform transition-all duration-300 translate-x-full`;
+            if (type === 'success') {
+                notification.className += ' bg-green-500 text-white';
+            } else if (type === 'error') {
+                notification.className += ' bg-red-500 text-white';
+            } else {
+                notification.className += ' bg-blue-500 text-white';
+            }
+            notification.innerHTML = `
+                <div class="flex items-center space-x-2">
+                    <span class="text-sm notification-text">${message}</span>
+                    <button onclick="this.parentElement.parentElement.remove()" class="text-white hover:text-gray-200 ml-2">×</button>
+                </div>
+            `;
+            document.body.appendChild(notification);
+            // Animasi masuk
+            setTimeout(() => {
+                notification.classList.remove('translate-x-full');
+            }, 100);
+            // Auto remove setelah 5 detik
+            setTimeout(() => {
+                if (notification.parentNode) {
+                    notification.classList.add('translate-x-full');
+                    setTimeout(() => {
+                        if (notification.parentNode) {
+                            notification.remove();
+                        }
+                    }, 300);
+                }
+            }, 5000);
+        }
+
+        // --- Fungsi-fungsi untuk komunikasi dengan GAS ---
+        async function loadMasterData() {
+            try {
+                console.log('Memuat master data dari Google Sheets...');
+                showNotification('🔄 Memuat data karyawan dari Google Sheets...', 'info');
+                const timestamp = Date.now();
+                const callbackName = `jsonpCallback${timestamp}`;
+                return new Promise((resolve, reject) => {
+                    let script;
+                    const timeoutId = setTimeout(() => {
+                        cleanup();
+                        reject(new Error('Timeout - Google Sheets tidak merespons dalam 15 detik. Periksa URL script atau koneksi internet.'));
+                    }, 15000);
+                    const cleanup = () => {
+                        if (window[callbackName]) {
+                            delete window[callbackName];
+                        }
+                        if (script && script.parentNode) {
+                            document.head.removeChild(script);
+                        }
+                        clearTimeout(timeoutId);
+                    };
+                    window[callbackName] = function(data) {
+                        try {
+                            cleanup();
+                            console.log('JSONP response received:', data);
+                            if (data && data.success && data.data && Array.isArray(data.data)) {
+                                processMasterData(data);
+                                resolve();
+                            } else {
+                                throw new Error(data.error || 'Format data tidak valid atau kosong');
+                            }
+                        } catch (error) {
+                            reject(error);
+                        }
+                    };
+                    script = document.createElement('script');
+                    script.src = `${SCRIPT_URL}?action=getMasterData&sheet=Sheet12&callback=${callbackName}&timestamp=${timestamp}`;
+                    script.onerror = () => {
+                        cleanup();
+                        reject(new Error('Network error - tidak dapat terhubung ke Google Sheets. Periksa URL script atau deployment.'));
+                    };
+                    script.onload = () => {
+                        console.log('JSONP script loaded successfully');
+                    };
+                    document.head.appendChild(script);
+                    console.log('JSONP request sent:', script.src);
+                });
+            } catch (error) {
+                console.error('❌ Error loading master data:', error);
+                showNotification(`❌ Gagal memuat master data: ${error.message}. Menggunakan data default.`, 'error');
+                // Load default data if Google Sheets fails
+                loadDefaultData();
+            }
+        }
+
+       // Fungsi baru untuk memuat data lembur dari Google Sheets menggunakan JSONP
+        async function loadOvertimeData() {
+            try {
+                console.log('Memuat data lembur dari Google Sheets (JSONP)...');
+                // showNotification('🔄 Memuat riwayat lembur...', 'info'); // Opsional
+                const timestamp = Date.now();
+                const callbackName = `loadOvertimeCallback${timestamp}`;
+                return new Promise((resolve, reject) => {
+                    let script;
+                    const timeoutId = setTimeout(() => {
+                        cleanup();
+                        reject(new Error('Timeout memuat data lembur.'));
+                    }, 15000);
+                    const cleanup = () => {
+                        if (window[callbackName]) {
+                            delete window[callbackName];
+                        }
+                        if (script && script.parentNode) {
+                            document.head.removeChild(script);
+                        }
+                        clearTimeout(timeoutId);
+                    };
+                    window[callbackName] = function(response) {
+                        try {
+                            cleanup();
+                            console.log('JSONP loadOvertime response:', response);
+                            if (response && response.success && Array.isArray(response.data)) {
+                                overtimeData = response.data; // Isi array lokal dengan data dari server
+                                console.log('✅ Data lembur berhasil dimuat dari Google Sheets (JSONP):', overtimeData.length, 'pengajuan');
+                                updateTable(); // Update tabel dengan data baru
+                                updateStats();  // Update statistik dengan data baru
+                                // showNotification(`✅ ${overtimeData.length} data lembur dimuat.`, 'success'); // Opsional
+                                resolve(response.data);
+                            } else {
+                                throw new Error(response.error || 'Format data lembur tidak valid');
+                            }
+                        } catch (error) {
+                            console.error('Error processing overtime data (JSONP):', error);
+                            reject(error);
+                        }
+                    };
+                    script = document.createElement('script');
+                    script.src = `${SCRIPT_URL}?action=getAllOvertimeData&callback=${callbackName}&timestamp=${timestamp}`;
+                    script.onerror = () => {
+                        cleanup();
+                        reject(new Error('Network error saat memuat data lembur (JSONP).'));
+                    };
+                    document.head.appendChild(script);
+                    console.log('JSONP loadOvertime request sent:', script.src);
+                });
+            } catch (error) {
+                console.error('Error loading overtime data (JSONP):', error);
+                showNotification(`❌ Gagal memuat riwayat lembur (JSONP): ${error.message}`, 'error');
+                overtimeData = []; // Kosongkan jika gagal
+                updateTable(); // Update tabel agar menampilkan pesan kosong
+                updateStats();  // Update statistik agar tetap akurat
+            }
+        }
+
+        // Fungsi save yang DIPERBAIKI (menggunakan POST JSON, JSONP fallback)
+        async function saveToGoogleSheets(data) {
+            try {
+                console.log('Mencoba menyimpan data ke Google Sheets (POST JSON):', data);
+                // Prepare data with proper structure
+                const payload = {
+                    action: 'saveOvertimeData',
+                    date: data.date,
+                    line: data.line,
+                    startTime: data.startTime,
+                    endTime: data.endTime,
+                    task: data.task,
+                    employees: data.employees,
+                    timestamp: data.timestamp
+                };
+                console.log('Payload prepared for POST:', payload);
+                const response = await fetch(SCRIPT_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(payload)
+                });
+                console.log('Raw POST response status:', response.status);
+                console.log('Raw POST response headers:', response.headers);
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    console.error('POST response error text:', errorText);
+                    throw new Error(`HTTP error! status: ${response.status}, message: ${errorText}`);
+                }
+                const result = await response.json();
+                console.log('POST response JSON:', result);
+                if (result.success) {
+                     console.log('✅ Data berhasil disimpan ke Google Sheets melalui POST (JSON).');
+                     return result;
+                } else {
+                     throw new Error(result.error || 'Gagal menyimpan data melalui POST (JSON)');
+                }
+            } catch (error) {
+                console.error('Error saving via POST:', error);
+                console.log('POST failed, trying JSONP fallback...');
+                // Jika POST gagal, coba JSONP sebagai fallback untuk menyimpan
+                return saveToGoogleSheetsJsonp(data);
+            }
+        }
+
+         // Fallback save menggunakan JSONP (mengirim ke doGet)
+        async function saveToGoogleSheetsJsonp(data) {
+            return new Promise((resolve, reject) => {
+                const timestamp = Date.now();
+                const callbackName = `saveCallback${timestamp}`;
+                const timeoutId = setTimeout(() => {
+                    cleanup();
+                    console.log('JSONP Timeout reached for save.');
+                    reject(new Error('JSONP Request Timeout for save'));
+                }, 15000);
+                const cleanup = () => {
+                    if (window[callbackName]) {
+                        delete window[callbackName];
+                    }
+                    const script = document.querySelector(`script[src*="${callbackName}"]`);
+                    if (script && script.parentNode) {
+                        document.head.removeChild(script);
+                    }
+                    clearTimeout(timeoutId);
+                };
+                window[callbackName] = function(result) {
+                    try {
+                        cleanup();
+                        console.log('JSONP save response:', result);
+                        if (result && result.success) {
+                             console.log('✅ Data berhasil disimpan ke Google Sheets melalui JSONP.');
+                             resolve(result);
+                        } else {
+                             console.error('JSONP returned error or no success flag:', result);
+                             reject(new Error(result.error || 'JSONP returned failure or no success flag'));
+                        }
+                    } catch (error) {
+                        console.error('Error processing JSONP save response:', error);
+                        reject(error);
+                    }
+                };
+                const jsonpParams = new URLSearchParams({
+                    action: 'saveOvertimeData',
+                    date: data.date,
+                    line: data.line,
+                    startTime: data.startTime,
+                    endTime: data.endTime,
+                    task: data.task,
+                    employees: JSON.stringify(data.employees),
+                    timestamp: data.timestamp,
+                    callback: callbackName
+                });
+                const script = document.createElement('script');
+                script.src = `${SCRIPT_URL}?${jsonpParams.toString()}`;
+                script.onerror = () => {
+                    cleanup();
+                    console.log('JSONP script load error for save');
+                    reject(new Error('JSONP Script Load Error for save'));
+                };
+                document.head.appendChild(script);
+                console.log('JSONP save request sent:', script.src);
+            });
+        }
+
+        document.getElementById('overtimeForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            showLoading();
+            const formData = {
+                date: document.getElementById('overtimeDate').value,
+                line: document.getElementById('lineSelect').value,
+                startTime: document.getElementById('startTime').value,
+                endTime: document.getElementById('endTime').value,
+                task: document.getElementById('overtimeTask').value,
+                employees: [],
+                timestamp: new Date().toISOString()
+            };
+            const selectedCheckboxes = document.querySelectorAll('input[name="selectedEmployees"]:checked');
+            selectedCheckboxes.forEach(checkbox => {
+                const employee = employees.find(emp => emp.id === checkbox.value);
+                if (employee) {
+                    formData.employees.push({
+                        id: employee.id,
+                        name: employee.name
+                    });
+                }
+            });
+            if (formData.employees.length === 0) {
+                hideLoading();
+                alert('Pilih minimal satu karyawan untuk lembur!');
+                return;
+            }
+            try {
+                // Simpan ke Google Sheets (menggunakan POST JSON utama, JSONP fallback)
+                const result = await saveToGoogleSheets(formData);
+                if (result.success) {
+                    // JANGAN hanya push ke lokal, tetapi muat ULANG data dari Google Sheets untuk menyertakan entri baru
+                    // overtimeData.push(formData); // Hapus baris ini
+                    await loadOvertimeData(); // Muat ulang data dari Google Sheets
+                    // Update tabel dan statistik (sudah dilakukan di loadOvertimeData)
+                    closeModal();
+                    document.getElementById('successModal').classList.remove('hidden');
+                } else {
+                    throw new Error('Gagal menyimpan data dari server');
+                }
+            } catch (error) {
+                console.error('Submit error:', error);
+                showNotification(`❌ Gagal menyimpan: ${error.message}`, 'error');
+            } finally {
+                hideLoading();
+            }
+        });
+
+        // --- Handler untuk google.script.run ---
+        function processMasterData(data) {
+    try {
+        console.log('Processing master data:', data); // Log untuk debugging
+
+        // Pengecekan tipe data
+        if (!data || typeof data !== 'object') {
+            throw new Error('Data dari server bukan objek: ' + typeof data);
+        }
+        if (!Array.isArray(data.data)) {
+            throw new Error('data.data dari server bukan array: ' + typeof data.data);
+        }
+
+        // Clear existing data
+        employees = [];
+        // Skip header row (index 0) dan mulai dari row 1
+        // Gunakan slice(1) pada data.data
+        const rows = data.data.slice(1); // Ambil baris-baris tanpa header
+        for (let i = 0; i < rows.length; i++) { // Loop dimulai dari 0 karena rows sudah tanpa header
+            const row = rows[i];
+            if (row && row.length >= 3 && row[0] && row[1]) {
+                employees.push({
+                    id: String(row[0]).trim(),
+                    name: String(row[1]).trim(),
+                    dept: String(row[2] || "").trim()
+                });
+            }
+        }
+        // Update total karyawan di dashboard
+        document.getElementById('totalEmployees').textContent = employees.length;
+        // Populate line options dynamically
+        populateLineOptions();
+        console.log('✅ Master data berhasil dimuat:', employees.length, 'karyawan');
+        // Show success message
+        showNotification(`✅ Master data berhasil dimuat: ${employees.length} karyawan`, 'success');
+    } catch (error) {
+        console.error('Error processing master data:', error);
+        showNotification(`❌ Error memproses data: ${error.message}`, 'error');
+        loadDefaultData();
+    }
+}
+
+        // Handler untuk data lembur dari GAS
+        function updateTableAndStats(data) {
+             console.log('Updating table and stats with data from GAS:', data);
+             overtimeData = data; // Update data lokal dengan data dari Google Sheets
+             updateTable();
+             updateStats();
+        }
+
+        // --- Event Listeners ---
+        document.getElementById('overtimeForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            showLoading();
+            const formData = {
+                date: document.getElementById('overtimeDate').value,
+                line: document.getElementById('lineSelect').value,
+                startTime: document.getElementById('startTime').value,
+                endTime: document.getElementById('endTime').value,
+                task: document.getElementById('overtimeTask').value,
+                employees: [],
+                timestamp: new Date().toISOString()
+            };
+            const selectedCheckboxes = document.querySelectorAll('input[name="selectedEmployees"]:checked');
+            selectedCheckboxes.forEach(checkbox => {
+                const employee = employees.find(emp => emp.id === checkbox.value);
+                if (employee) {
+                    formData.employees.push({
+                        id: employee.id,
+                        name: employee.name
+                    });
+                }
+            });
+            if (formData.employees.length === 0) {
+                hideLoading();
+                alert('Pilih minimal satu karyawan untuk lembur!');
+                return;
+            }
+            try {
+                const result = await saveToGoogleSheets(formData);
+                if (result.success) {
+                    // Jangan hanya push ke lokal, tetapi muat ULANG data dari Google Sheets
+                    // overtimeData.push(formData); // Hapus baris ini
+                    await loadOvertimeData(); // Muat ulang data dari Google Sheets untuk menyertakan entri baru
+                    // Update tabel dan statistik (sudah dilakukan di loadOvertimeData)
+                    // updateTable(); // Opsional, karena loadOvertimeData sudah memanggilnya
+                    // updateStats();  // Opsional, karena loadOvertimeData sudah memanggilnya
+                    closeModal();
+                    document.getElementById('successModal').classList.remove('hidden');
+                } else {
+                    throw new Error('Gagal menyimpan data dari server');
+                }
+            } catch (error) {
+                console.error('Submit error:', error);
+                showNotification(`❌ Gagal menyimpan: ${error.message}`, 'error');
+            } finally {
+                hideLoading();
+            }
+        });
+
+        // --- Fungsi Tabel dan Statistik ---
+         function updateTable() {
+            const tbody = document.getElementById('overtimeTable');
+            // Gunakan filteredData jika ada, jika tidak gunakan overtimeData (yang diisi dari Google Sheets)
+            const dataToShow = filteredData.length > 0 ? filteredData : overtimeData;
+            if (dataToShow.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="7" class="px-6 py-12 text-center text-gray-500">
+                            <div class="flex flex-col items-center space-y-3">
+                                <svg class="w-12 h-12 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                                </svg>
+                                <p>Belum ada data pengajuan lembur</p>
+                                <p class="text-sm">Klik "Buat Pengajuan Lembur" untuk memulai</p>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+            let html = '';
+            dataToShow.forEach((data, index) => { // 'data' sekarang adalah objek dari getAllOvertimeData (sudah dikelompokkan dan memiliki duration)
+                const employeeNames = data.employees.map(emp => emp.name).join(', ');
+                const timeRange = `${formatTime(data.startTime)} - ${formatTime(data.endTime)}`;
+                // Gunakan durasi yang sudah dihitung dan dikurangi istirahat dari server (data.duration)
+                const duration = data.duration !== undefined ? `${data.duration} jam` : 'N/A'; // Tampilkan jam
+                // Dynamic color for line badges
+                const lineColors = {
+                    'MATTRESS': 'bg-blue-100 text-blue-800',
+                    'MATTRESS SPRING': 'bg-purple-100 text-purple-800'
+                };
+                const lineColor = lineColors[data.line] || 'bg-gray-100 text-gray-800';
+                html += `
+                    <tr class="hover:bg-gray-50 transition-colors">
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 font-medium table-cell">${new Date(data.date).toLocaleDateString('id-ID')}</td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <span class="px-3 py-1 text-xs font-semibold rounded-full ${lineColor}">${data.line}</span>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 table-cell">${timeRange}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 font-medium table-cell">${duration}</td> <!-- Gunakan data.duration -->
+                        <td class="px-6 py-4 text-sm text-gray-900 max-w-xs truncate table-cell" title="${employeeNames}">${employeeNames}</td>
+                        <td class="px-6 py-4 text-sm text-gray-900 max-w-xs truncate table-cell" title="${data.task}">${data.task}</td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <span class="px-3 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">Tersimpan</span>
+                        </td>
+                    </tr>
+                `;
+            });
+            tbody.innerHTML = html;
+        }
+
+         function updateStats() {
+            const today = new Date().toISOString().split('T')[0];
+            const currentMonth = new Date().getMonth();
+            const currentYear = new Date().getFullYear();
+            // Gunakan overtimeData (data dari Google Sheets) untuk menghitung statistik
+            const todayData = overtimeData.filter(data => data.date === today);
+            const monthlyData = overtimeData.filter(data => {
+                const dataDate = new Date(data.date);
+                return dataDate.getMonth() === currentMonth && dataDate.getFullYear() === currentYear;
+            });
+            document.getElementById('todayCount').textContent = todayData.length;
+            document.getElementById('monthlyCount').textContent = monthlyData.length;
+        }
+
+        function filterData() {
+            const filterDate = document.getElementById('filterDate').value;
+            const filterLine = document.getElementById('filterLine').value;
+            // Filter overtimeData (data dari Google Sheets)
+            filteredData = overtimeData.filter(data => {
+                let matchDate = true;
+                let matchLine = true;
+                if (filterDate) {
+                    matchDate = data.date === filterDate;
+                }
+                if (filterLine) {
+                    matchLine = data.line === filterLine;
+                }
+                return matchDate && matchLine;
+            });
+            updateTable(); // Update tabel dengan data yang difilter
+        }
+
+        function clearFilters() {
+            document.getElementById('filterDate').value = '';
+            document.getElementById('filterLine').value = '';
+            filteredData = []; // Kosongkan filteredData
+            updateTable(); // Update tabel tanpa filter
+        }
+
+        function refreshData() {
+            const refreshIcon = document.getElementById('refreshIcon');
+            refreshIcon.style.animation = 'spin 1s linear infinite';
+            setTimeout(() => {
+                refreshIcon.style.animation = '';
+                // Muat ulang data dari Google Sheets
+                loadOvertimeData(); // Panggil fungsi untuk memuat data lembur
+            }, 1000);
+        }
+
+        function exportToCSV() {
+            if (overtimeData.length === 0) {
+                showNotification('Tidak ada data untuk diekspor!', 'error');
+                return;
+            }
+            let csv = 'Tanggal,Line,Jam Mulai,Jam Selesai,Durasi (jam),NIK,Nama Karyawan,Tugas Lembur\n'; // Sesuaikan header CSV
+            overtimeData.forEach(data => {
+                data.employees.forEach(employee => {
+                    csv += `"${data.date}","${data.line}","${data.startTime}","${data.endTime}","${data.duration}","${employee.id}","${employee.name}","${data.task}"\n`; // Gunakan data.duration
+                });
+            });
+            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            const url = URL.createObjectURL(blob);
+            link.setAttribute('href', url);
+            link.setAttribute('download', `pengajuan_lembur_${new Date().toISOString().split('T')[0]}.csv`);
+            link.style.visibility = 'hidden';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            showNotification('File CSV berhasil diunduh!', 'success');
+        }
+
+         // Initialize application
+        async function initializeApp() { // Jadikan async
+            document.getElementById('overtimeDate').valueAsDate = new Date();
+            await loadMasterData(); // Tunggu master data selesai
+            await loadOvertimeData(); // Tunggu overtime data selesai
+            // Initialize stats (opsional, karena loadOvertimeData sudah memanggil updateStats)
+            // updateStats();
+        }
+
+        // Start the application when page loads
+        document.addEventListener('DOMContentLoaded', initializeApp);
+
+    </script>
+    <!-- Hapus script Cloudflare jika tidak relevan -->
+    <!-- <script>(function(){...})()</script> -->
+</body>
+</html>
