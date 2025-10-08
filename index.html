@@ -356,7 +356,7 @@
         // Google Sheets Configuration
         const SHEET_ID = '1xad_Ig38yxi86To7mpOTOjPDdBLX9h7yIj1GoeIz9_I';
        // GANTI INI DENGAN URL DEPLOYMENT KAMU
-        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyd8864unE_ppfE5K2ZdrzX3LeBR4hWYb5oOUE_vdkNMbvh4QWNFKAqpKlqzDfznJqS6A/exec'; // <--- GANTI INI !!!
+        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwLU8C5uydYhFxXJjzsHdVeqh3Bdrfdb-D_DgywmM0HlZe63R-0sBsocY2UWHM6Ml5zUA/exec'; // <--- GANTI INI !!!
         // Master data karyawan - akan diisi dari Google Sheets
         let employees = [];
         // Data pengajuan lembur (dari Google Sheets) - GANTI INI: Gunakan ini untuk menampilkan riwayat
@@ -901,7 +901,7 @@
         });
         
 
-               function updateTable() {
+                       function updateTable() {
             const tbody = document.getElementById('overtimeTable');
             const dataToShow = filteredData.length > 0 ? filteredData : overtimeData;
             if (dataToShow.length === 0) {
@@ -927,9 +927,26 @@
                 const employeeNamesDiv = (data.employees || []).map(emp => `<div>${emp.name}</div>`).join('');
 
                 // Perbaikan untuk Waktu: Gunakan startTime dan endTime dari data (format HH:MM)
-                // Validasi format HH:MM
-                const startTimeFormatted = data.startTime && data.startTime.match(/^\d{2}:\d{2}$/) ? data.startTime : 'N/A';
-                const endTimeFormatted = data.endTime && data.endTime.match(/^\d{2}:\d{2}$/) ? data.endTime : 'N/A';
+                // Validasi format HH:MM atau ambil dari objek Date jika perlu
+                let startTimeFormatted, endTimeFormatted;
+                if (typeof data.startTime === 'string' && data.startTime.match(/^\d{2}:\d{2}$/)) {
+                    startTimeFormatted = data.startTime;
+                } else if (data.startTime instanceof Date) {
+                    // Jika masih objek Date (kemungkinan kecil setelah perbaikan code.gs)
+                    startTimeFormatted = data.startTime.toTimeString().substr(0, 5); // Ambil HH:MM
+                } else {
+                    startTimeFormatted = 'N/A';
+                }
+
+                if (typeof data.endTime === 'string' && data.endTime.match(/^\d{2}:\d{2}$/)) {
+                    endTimeFormatted = data.endTime;
+                } else if (data.endTime instanceof Date) {
+                     // Jika masih objek Date (kemungkinan kecil setelah perbaikan code.gs)
+                    endTimeFormatted = data.endTime.toTimeString().substr(0, 5); // Ambil HH:MM
+                } else {
+                    endTimeFormatted = 'N/A';
+                }
+
                 const timeRange = `${startTimeFormatted} - ${endTimeFormatted}`;
 
                 // Perbaikan untuk Durasi: Gunakan duration dari data (dari Google Sheets, sudah dikurangi istirahat)
@@ -943,8 +960,9 @@
                     duration = `${hours}j ${minutes}m`;
                 } else {
                     // Jika data.duration tidak ada, hitung ulang berdasarkan startTime dan endTime
-                    const start = new Date(`2000-01-01T${data.startTime}:00`);
-                    const end = new Date(`2000-01-01T${data.endTime}:00`);
+                    // Gunakan format yang sudah difilter
+                    const start = new Date(`2000-01-01T${startTimeFormatted}:00`);
+                    const end = new Date(`2000-01-01T${endTimeFormatted}:00`);
                     let diffMs = end - start;
                     if (diffMs < 0) {
                         // Handle lembur melewati tengah malam
@@ -977,7 +995,7 @@
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 table-cell">${timeRange}</td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 font-medium table-cell">${duration}</td>
-                        <td class="px-6 py-4 text-sm text-gray-900 table-cell cursor-pointer" id="empCell-${index}" data-date="${data.date}" data-starttime="${data.startTime}" data-endtime="${data.endTime}" data-duration="${duration}">
+                        <td class="px-6 py-4 text-sm text-gray-900 table-cell cursor-pointer" id="empCell-${index}" data-date="${data.date}" data-starttime="${startTimeFormatted}" data-endtime="${endTimeFormatted}" data-duration="${duration}">
                             <div class="max-h-32 overflow-y-auto">
                                 ${employeeNamesDiv}
                             </div>
@@ -996,7 +1014,7 @@
                 const cell = document.getElementById(`empCell-${index}`);
                 if (cell) {
                     cell.addEventListener('click', () => {
-                        // Ambil data dari atribut data-
+                        // Ambil data dari atribut data- (sudah difilter di atas)
                         const date = cell.getAttribute('data-date');
                         const startTime = cell.getAttribute('data-starttime');
                         const endTime = cell.getAttribute('data-endtime');
