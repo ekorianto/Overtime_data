@@ -587,6 +587,11 @@
             const endDate = document.getElementById('endDate').value;
             const selectedEmployeeId = document.getElementById('employeeFilter').value; // Bisa kosong
 
+            console.log("Filter Tanggal Mulai:", startDate); // Tambahkan log ini
+            console.log("Filter Tanggal Selesai:", endDate); // Tambahkan log ini
+            console.log("Filter NIK Karyawan:", selectedEmployeeId); // Tambahkan log ini
+            console.log("Data lembur lokal (overtimeData):", overtimeData); // Tambahkan log ini
+
             if (!startDate || !endDate) {
                 alert('Pilih tanggal mulai dan tanggal selesai.');
                 return;
@@ -611,6 +616,7 @@
             // Hitung total jam per karyawan
             const rekapMap = {}; // { nik: { nama: "...", totalJam: 0 } }
             filteredData.forEach(entry => {
+                console.log("Memproses entry:", entry); // Tambahkan log ini
                 const entryStart = new Date(`2000-01-01T${entry.startTime}:00`);
                 const entryEnd = new Date(`2000-01-01T${entry.endTime}:00`);
                 let diffMs = entryEnd - entryStart;
@@ -627,6 +633,7 @@
                 const entryHours = diffMs / (1000 * 60 * 60);
 
                 entry.employees.forEach(emp => {
+                    console.log("Memproses employee:", emp); // Tambahkan log ini
                     if (!selectedEmployeeId || emp.id === selectedEmployeeId) { // Hanya proses karyawan yang dipilih atau semua
                         if (!rekapMap[emp.id]) {
                             // Cari nama dari array employees global jika belum ada
