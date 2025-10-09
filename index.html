@@ -606,12 +606,20 @@
             }
 
             // Ambil data lembur dari overtimeData (data lokal yang diambil dari Google Sheets)
-            const filteredData = overtimeData.filter(entry => {
-                const entryDate = new Date(entry.date);
-                const isInRange = entryDate >= start && entryDate <= end;
-                const isSelectedEmp = !selectedEmployeeId || entry.employees.some(emp => emp.id === selectedEmployeeId);
-                return isInRange && isSelectedEmp;
+                const filteredData = overtimeData.filter(entry => {
+                const entryDate = new Date(entry.date); // entry.date dalam format YYYY-MM-DD
+                const isInRange = entryDate >= start && entryDate <= end; // Filter tanggal
+                const isSelectedEmp = !selectedEmployeeId || entry.employees.some(emp => emp.id === selectedEmployeeId); // Filter karyawan
+                return isInRange && isSelectedEmp; // Harus memenuhi kedua kondisi
             });
+
+            // Tambahkan log ini
+            if (isInRange) {
+                console.log("Entry dalam rentang tanggal:", entry.date, "ID Karyawan dalam entry:", entry.employees.map(e => e.id));
+            }
+            if (isSelectedEmp) {
+                console.log("Entry cocok dengan karyawan:", selectedEmployeeId);
+            }
 
             // Hitung total jam per karyawan
             const rekapMap = {}; // { nik: { nama: "...", totalJam: 0 } }
