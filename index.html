@@ -339,7 +339,7 @@
     <div id="employeeDetailModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50">
         <div class="flex items-center justify-center min-h-screen p-4">
             <!-- Perbesar max-w dan tambahkan max-h -->
-            <div class="bg-white rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-hidden"> 
+            <div class="bg-white rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-hidden">
                 <div class="px-6 py-4 bg-gradient-to-r from-blue-50 to-indigo-50 border-b">
                     <div class="flex justify-between items-center">
                         <h3 class="text-lg font-bold">Detail Pengajuan Lembur</h3>
@@ -460,6 +460,7 @@
             document.getElementById('overtimeModal').classList.remove('hidden');
             document.body.style.overflow = 'hidden';
         }
+
         function closeModal() {
             document.getElementById('overtimeModal').classList.add('hidden');
             document.body.style.overflow = 'auto';
@@ -475,11 +476,12 @@
             document.getElementById('durationDisplay').classList.add('hidden');
             document.getElementById('selectedCount').classList.add('hidden');
         }
+
         function closeSuccessModal() {
             document.getElementById('successModal').classList.add('hidden');
         }
 
-                // Fungsi untuk membuka modal detail karyawan
+        // Fungsi untuk membuka modal detail karyawan
         function openEmployeeDetailModal(date, startTime, endTime, duration, employees) {
             const modal = document.getElementById('employeeDetailModal');
             const dateDiv = document.getElementById('employeeDetailDate');
@@ -513,7 +515,6 @@
             document.body.style.overflow = 'auto';
         }
 
-         
        // Fungsi untuk membuka modal Rekap
         function openRekapModal() {
             document.getElementById('rekapModal').classList.remove('hidden');
@@ -580,7 +581,7 @@
             document.body.style.overflow = 'hidden'; // Untuk modal hasil juga
         }
 
-                // Event listener untuk form rekap
+        // Event listener untuk form rekap
         document.getElementById('rekapForm').addEventListener('submit', function(e) {
             e.preventDefault();
             const startDate = document.getElementById('startDate').value;
@@ -601,6 +602,7 @@
             // Convert to Date objects for comparison
             const start = new Date(startDate);
             const end = new Date(endDate);
+
             if (start > end) {
                 alert('Tanggal mulai tidak boleh setelah tanggal selesai.');
                 return;
@@ -619,6 +621,7 @@
 
             // Hitung total jam per karyawan
             const rekapMap = {}; // { nik: { nama: "...", totalJam: 0 } }
+
             filteredData.forEach(entry => {
                 // Pastikan startTime dan endTime adalah string HH:MM
                 const entryStartTime = entry.startTime;
@@ -631,6 +634,7 @@
 
                 const entryStart = new Date(`2000-01-01T${entryStartTime}:00`);
                 const entryEnd = new Date(`2000-01-01T${entryEndTime}:00`);
+
                 let diffMs = entryEnd - entryStart;
                 if (diffMs < 0) {
                     // Handle lembur melewati tengah malam
@@ -638,10 +642,12 @@
                 }
                 // Kurangi 1 jam (3600000 ms) untuk istirahat
                 diffMs -= (1 * 60 * 60 * 1000);
+
                 // Pastikan durasi tidak negatif
                 if (diffMs < 0) {
                     diffMs = 0;
                 }
+
                 const entryHours = diffMs / (1000 * 60 * 60);
 
                 entry.employees.forEach(emp => {
@@ -659,6 +665,7 @@
                         rekapMap[emp.id].totalJam += entryHours;
                     }
                 });
+            });
 
             // Konversi map ke array dan bulatkan total jam
             const rekapResults = Object.values(rekapMap).map(item => ({
@@ -683,6 +690,7 @@
                 .map(emp => emp.dept)
                 .filter(dept => dept && dept.trim() !== '')
             )].sort();
+
             // Update line select dropdown in modal
             const lineSelect = document.getElementById('lineSelect');
             lineSelect.innerHTML = '<option value="">-- Pilih Line --</option>';
@@ -692,6 +700,7 @@
                 option.textContent = dept;
                 lineSelect.appendChild(option);
             });
+
             // Update filter line dropdown
             const filterLine = document.getElementById('filterLine');
             filterLine.innerHTML = '<option value="">Semua Line</option>';
@@ -701,13 +710,16 @@
                 option.textContent = dept;
                 filterLine.appendChild(option);
             });
+
             // Update active lines count
             document.getElementById('activeLines').textContent = uniqueDepts.length;
             console.log('✅ Line options populated:', uniqueDepts);
         }
+
         function updateEmployeeList() {
             const selectedLine = document.getElementById('lineSelect').value;
             const employeeListDiv = document.getElementById('employeeList');
+
             if (!selectedLine) {
                 employeeListDiv.innerHTML = `
                     <div class="text-center text-gray-500 py-8">
@@ -719,7 +731,9 @@
                 `;
                 return;
             }
+
             const filteredEmployees = employees.filter(emp => emp.dept === selectedLine);
+
             if (filteredEmployees.length === 0) {
                 employeeListDiv.innerHTML = `
                     <div class="text-center text-gray-500 py-8">
@@ -728,6 +742,7 @@
                 `;
                 return;
             }
+
             let html = '<div class="space-y-3">';
             filteredEmployees.forEach(emp => {
                 html += `
@@ -743,6 +758,7 @@
             html += '</div>';
             employeeListDiv.innerHTML = html;
         }
+
         function updateSelectedCount() {
             const selectedCheckboxes = document.querySelectorAll('input[name="selectedEmployees"]:checked');
             const countDiv = document.getElementById('selectedCount');
@@ -759,18 +775,22 @@
             const endTime = document.getElementById('endTime').value;
             const durationDisplay = document.getElementById('durationDisplay');
             const durationText = document.getElementById('durationText');
+
             if (startTime && endTime) {
                 const start = new Date(`2000-01-01 ${startTime}`);
                 const end = new Date(`2000-01-01 ${endTime}`);
+
                 if (end > start) {
                     const diffMs = end - start;
                     // Kurangi 1 jam (3600000 ms) untuk istirahat dalam preview
                     const adjustedDiffMs = diffMs - (1 * 60 * 60 * 1000);
                     let displayHours = Math.floor(adjustedDiffMs / (1000 * 60 * 60));
                     let displayMinutes = Math.floor((adjustedDiffMs % (1000 * 60 * 60)) / (1000 * 60));
+
                     // Pastikan durasi tidak negatif
                     if (displayHours < 0) displayHours = 0;
                     if (displayMinutes < 0) displayMinutes = 0;
+
                     durationText.textContent = `${displayHours} jam ${displayMinutes} menit`;
                     durationDisplay.classList.remove('hidden');
                 } else {
@@ -784,6 +804,7 @@
         function formatTime(time) {
             return time.replace(':', '.');
         }
+
         function showLoading() {
             document.getElementById('loadingIndicator').classList.remove('hidden');
             const submitBtn = document.getElementById('submitBtn');
@@ -793,12 +814,14 @@
             `;
             submitBtn.disabled = true;
         }
+
         function hideLoading() {
             document.getElementById('loadingIndicator').classList.add('hidden');
             const submitBtn = document.getElementById('submitBtn');
             submitBtn.innerHTML = '<span>Simpan Pengajuan</span>';
             submitBtn.disabled = false;
         }
+
         function showNotification(message, type = 'info') {
             // Buat elemen notifikasi
             const notification = document.createElement('div');
@@ -817,10 +840,12 @@
                 </div>
             `;
             document.body.appendChild(notification);
+
             // Animasi masuk
             setTimeout(() => {
                 notification.classList.remove('translate-x-full');
             }, 100);
+
             // Auto remove setelah 5 detik
             setTimeout(() => {
                 if (notification.parentNode) {
@@ -847,6 +872,7 @@
                         cleanup();
                         reject(new Error('Timeout - Google Sheets tidak merespons dalam 15 detik. Periksa URL script atau koneksi internet.'));
                     }, 15000);
+
                     const cleanup = () => {
                         if (window[callbackName]) {
                             delete window[callbackName];
@@ -856,6 +882,7 @@
                         }
                         clearTimeout(timeoutId);
                     };
+
                     window[callbackName] = function(data) {
                         try {
                             cleanup();
@@ -870,6 +897,7 @@
                             reject(error);
                         }
                     };
+
                     script = document.createElement('script');
                     script.src = `${SCRIPT_URL}?action=getMasterData&sheet=Sheet12&callback=${callbackName}&timestamp=${timestamp}`;
                     script.onerror = () => {
@@ -890,7 +918,6 @@
             }
         }
 
-       
         // Fungsi untuk memuat data lembur dari Google Sheets menggunakan JSONP
         // HANYA ADA SATU DEFINISI FUNGSI INI
         async function loadOvertimeData() {
@@ -904,6 +931,7 @@
                         cleanup();
                         reject(new Error('Timeout memuat data lembur.'));
                     }, 15000);
+
                     const cleanup = () => {
                         if (window[callbackName]) {
                             delete window[callbackName];
@@ -913,6 +941,7 @@
                         }
                         clearTimeout(timeoutId);
                     };
+
                     window[callbackName] = function(response) {
                         try {
                             cleanup();
@@ -931,6 +960,7 @@
                             reject(error);
                         }
                     };
+
                     script = document.createElement('script');
                     script.src = `${SCRIPT_URL}?action=getAllOvertimeData&callback=${callbackName}&timestamp=${timestamp}`;
                     script.onerror = () => {
@@ -965,6 +995,7 @@
                     timestamp: data.timestamp
                 };
                 console.log('Payload prepared for POST:', payload);
+
                 const response = await fetch(SCRIPT_URL, {
                     method: 'POST',
                     headers: {
@@ -972,15 +1003,19 @@
                     },
                     body: JSON.stringify(payload)
                 });
+
                 console.log('Raw POST response status:', response.status);
                 console.log('Raw POST response headers:', response.headers);
+
                 if (!response.ok) {
                     const errorText = await response.text();
                     console.error('POST response error text:', errorText);
                     throw new Error(`HTTP error! status: ${response.status}, message: ${errorText}`);
                 }
+
                 const result = await response.json();
                 console.log('POST response JSON:', result);
+
                 if (result.success) {
                      console.log('✅ Data berhasil disimpan ke Google Sheets melalui POST (JSON).');
                      return result;
@@ -1005,6 +1040,7 @@
                     console.log('JSONP Timeout reached for save.');
                     reject(new Error('JSONP Request Timeout for save'));
                 }, 15000);
+
                 const cleanup = () => {
                     if (window[callbackName]) {
                         delete window[callbackName];
@@ -1015,6 +1051,7 @@
                     }
                     clearTimeout(timeoutId);
                 };
+
                 window[callbackName] = function(result) {
                     try {
                         cleanup();
@@ -1031,6 +1068,7 @@
                         reject(error);
                     }
                 };
+
                 const jsonpParams = new URLSearchParams({
                     action: 'saveOvertimeData',
                     date: data.date,
@@ -1042,6 +1080,7 @@
                     timestamp: data.timestamp,
                     callback: callbackName
                 });
+
                 const script = document.createElement('script');
                 script.src = `${SCRIPT_URL}?${jsonpParams.toString()}`;
                 script.onerror = () => {
@@ -1054,62 +1093,56 @@
             });
         }
 
-           
-
         // --- Handler untuk google.script.run ---
         function processMasterData(data) {
-    try {
-        console.log('Processing master data:', data); // Log untuk debugging
+            try {
+                console.log('Processing master data:', data); // Log untuk debugging
+                // Pengecekan tipe data
+                if (!data || typeof data !== 'object') {
+                    throw new Error('Data dari server bukan objek: ' + typeof data);
+                }
+                if (!Array.isArray(data.data)) {
+                    throw new Error('data.data dari server bukan array: ' + typeof data.data);
+                }
 
-        // Pengecekan tipe data
-        if (!data || typeof data !== 'object') {
-            throw new Error('Data dari server bukan objek: ' + typeof data);
-        }
-        if (!Array.isArray(data.data)) {
-            throw new Error('data.data dari server bukan array: ' + typeof data.data);
-        }
+                // Clear existing data
+                employees = [];
+                // Skip header row (index 0) dan mulai dari row 1
+                // Gunakan slice(1) pada data.data
+                const rows = data.data.slice(1); // Ambil baris-baris tanpa header
+                for (let i = 0; i < rows.length; i++) { // Loop dimulai dari 0 karena rows sudah tanpa header
+                    const row = rows[i];
+                    if (row && row.length >= 3 && row[0] && row[1]) {
+                        employees.push({
+                            id: String(row[0]).trim(),
+                            name: String(row[1]).trim(),
+                            dept: String(row[2] || "").trim()
+                        });
+                    }
+                }
 
-        // Clear existing data
-        employees = [];
-        // Skip header row (index 0) dan mulai dari row 1
-        // Gunakan slice(1) pada data.data
-        const rows = data.data.slice(1); // Ambil baris-baris tanpa header
-        for (let i = 0; i < rows.length; i++) { // Loop dimulai dari 0 karena rows sudah tanpa header
-            const row = rows[i];
-            if (row && row.length >= 3 && row[0] && row[1]) {
-                employees.push({
-                    id: String(row[0]).trim(),
-                    name: String(row[1]).trim(),
-                    dept: String(row[2] || "").trim()
-                });
+                // Update total karyawan di dashboard
+                document.getElementById('totalEmployees').textContent = employees.length;
+
+                // Populate line options dynamically
+                populateLineOptions();
+
+                console.log('✅ Master data berhasil dimuat:', employees.length, 'karyawan');
+
+                // Show success message
+                showNotification(`✅ Master data berhasil dimuat: ${employees.length} karyawan`, 'success');
+            } catch (error) {
+                console.error('Error processing master data:', error);
+                showNotification(`❌ Error memproses data: ${error.message}`, 'error');
+                loadDefaultData();
             }
-        }
-        // Update total karyawan di dashboard
-        document.getElementById('totalEmployees').textContent = employees.length;
-        // Populate line options dynamically
-        populateLineOptions();
-        console.log('✅ Master data berhasil dimuat:', employees.length, 'karyawan');
-        // Show success message
-        showNotification(`✅ Master data berhasil dimuat: ${employees.length} karyawan`, 'success');
-    } catch (error) {
-        console.error('Error processing master data:', error);
-        showNotification(`❌ Error memproses data: ${error.message}`, 'error');
-        loadDefaultData();
-    }
-}
-
-        // Handler untuk data lembur dari GAS
-        function updateTableAndStats(data) {
-             console.log('Updating table and stats with data from GAS:', data);
-             overtimeData = data; // Update data lokal dengan data dari Google Sheets
-             updateTable();
-             updateStats();
         }
 
         // Event Listener Submit (HANYA ADA SATU DAN DITEMPATKAN DENGAN BENAR)
         document.getElementById('overtimeForm').addEventListener('submit', async function(e) {
             e.preventDefault();
             showLoading();
+
             const formData = {
                 date: document.getElementById('overtimeDate').value,
                 line: document.getElementById('lineSelect').value,
@@ -1119,6 +1152,7 @@
                 employees: [],
                 timestamp: new Date().toISOString()
             };
+
             // Ambil karyawan yang dipilih
             const selectedCheckboxes = document.querySelectorAll('input[name="selectedEmployees"]:checked');
             selectedCheckboxes.forEach(checkbox => {
@@ -1130,11 +1164,13 @@
                     });
                 }
             });
+
             if (formData.employees.length === 0) {
                 hideLoading();
                 alert('Pilih minimal satu karyawan untuk lembur!');
                 return;
             }
+
             try {
                 // Simpan ke Google Sheets (menggunakan POST JSON utama, JSONP fallback)
                 const result = await saveToGoogleSheets(formData);
@@ -1155,11 +1191,11 @@
                 hideLoading();
             }
         });
-        
 
-                       function updateTable() {
+        function updateTable() {
             const tbody = document.getElementById('overtimeTable');
             const dataToShow = filteredData.length > 0 ? filteredData : overtimeData;
+
             if (dataToShow.length === 0) {
                 tbody.innerHTML = `
                     <tr>
@@ -1176,6 +1212,7 @@
                 `;
                 return;
             }
+
             let html = '';
             dataToShow.forEach((data, index) => {
                 // Perbaikan untuk Karyawan: Tampilkan satu nama per baris
@@ -1193,7 +1230,6 @@
                 } else {
                     startTimeFormatted = 'N/A';
                 }
-
                 if (typeof data.endTime === 'string' && data.endTime.match(/^\d{2}:\d{2}$/)) {
                     endTimeFormatted = data.endTime;
                 } else if (data.endTime instanceof Date) {
@@ -1202,7 +1238,6 @@
                 } else {
                     endTimeFormatted = 'N/A';
                 }
-
                 const timeRange = `${startTimeFormatted} - ${endTimeFormatted}`;
 
                 // Perbaikan untuk Durasi: Gunakan duration dari data (dari Google Sheets, sudah dikurangi istirahat)
@@ -1226,10 +1261,12 @@
                     }
                     // Kurangi 1 jam (3600000 ms) untuk istirahat
                     diffMs -= (1 * 60 * 60 * 1000);
+
                     // Pastikan durasi tidak negatif
                     if (diffMs < 0) {
                         diffMs = 0;
                     }
+
                     const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
                     const diffMinutes = Math.floor((diffMs % (1000 * 60 * 60)) / (1000 * 60));
                     duration = `${diffHours}j ${diffMinutes}m`;
@@ -1288,12 +1325,14 @@
             const today = new Date().toISOString().split('T')[0];
             const currentMonth = new Date().getMonth();
             const currentYear = new Date().getFullYear();
+
             // Gunakan overtimeData (data dari Google Sheets) untuk menghitung statistik
             const todayData = overtimeData.filter(data => data.date === today);
             const monthlyData = overtimeData.filter(data => {
                 const dataDate = new Date(data.date);
                 return dataDate.getMonth() === currentMonth && dataDate.getFullYear() === currentYear;
             });
+
             document.getElementById('todayCount').textContent = todayData.length;
             document.getElementById('monthlyCount').textContent = monthlyData.length;
         }
@@ -1301,10 +1340,12 @@
         function filterData() {
             const filterDate = document.getElementById('filterDate').value;
             const filterLine = document.getElementById('filterLine').value;
+
             // Filter overtimeData (data dari Google Sheets)
             filteredData = overtimeData.filter(data => {
                 let matchDate = true;
                 let matchLine = true;
+
                 if (filterDate) {
                     matchDate = data.date === filterDate;
                 }
@@ -1313,6 +1354,7 @@
                 }
                 return matchDate && matchLine;
             });
+
             updateTable(); // Update tabel dengan data yang difilter
         }
 
@@ -1338,10 +1380,12 @@
                 showNotification('Tidak ada data untuk diekspor!', 'error');
                 return;
             }
-            let csv = 'Tanggal,Line,Jam Mulai,Jam Selesai,Durasi (jam),NIK,Nama Karyawan,Tugas Lembur\n'; // Sesuaikan header CSV
+            let csv = 'Tanggal,Line,Jam Mulai,Jam Selesai,Durasi (jam),NIK,Nama Karyawan,Tugas Lembur
+'; // Sesuaikan header CSV
             overtimeData.forEach(data => {
                 data.employees.forEach(employee => {
-                    csv += `"${data.date}","${data.line}","${data.startTime}","${data.endTime}","${data.duration}","${employee.id}","${employee.name}","${data.task}"\n`; // Gunakan data.duration
+                    csv += `"${data.date}","${data.line}","${data.startTime}","${data.endTime}","${data.duration}","${employee.id}","${employee.name}","${data.task}"
+`; // Gunakan data.duration
                 });
             });
             const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
@@ -1367,7 +1411,6 @@
         // Start the application when page loads
         // Hanya ada satu event listener DOMContentLoaded
         document.addEventListener('DOMContentLoaded', initializeApp);
-
     </script>
     <!-- Hapus script Cloudflare jika tidak relevan -->
     <!-- <script>(function(){...})()</script> -->
