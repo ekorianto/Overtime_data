@@ -170,6 +170,12 @@
                 </svg>
                 <span>Export Data</span>
             </button>
+            <button onclick="openRekapModal()" class="bg-gradient-to-r from-yellow-500 to-yellow-600 hover:from-yellow-600 hover:to-yellow-700 text-white px-6 py-4 rounded-xl font-semibold shadow-lg transition-all duration-300 flex items-center space-x-2">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+                </svg>
+                <span>Rekap Lembur</span>
+            </button>
         </div>
         <!-- Filter Section -->
         <div class="bg-white rounded-xl shadow-lg p-6 mb-8">
@@ -352,6 +358,92 @@
             </div>
         </div>
     </div>
+    <!-- Modal Rekap Lembur -->
+    <div id="rekapModal" class="fixed inset-0 bg-black bg-opacity-50 modal-backdrop hidden z-50">
+        <div class="flex items-center justify-center min-h-screen p-4">
+            <div class="bg-white rounded-2xl shadow-2xl max-w-3xl w-full max-h-[90vh] overflow-y-auto transform transition-all">
+                <!-- Modal Header -->
+                <div class="px-8 py-6 bg-gradient-to-r from-yellow-500 to-yellow-600 text-white rounded-t-2xl">
+                    <div class="flex justify-between items-center">
+                        <div>
+                            <h3 class="text-2xl font-bold">📋 Rekap Lembur</h3>
+                            <p class="text-yellow-100 mt-1">Filter berdasarkan tanggal dan karyawan</p>
+                        </div>
+                        <button onclick="closeRekapModal()" class="text-white hover:text-gray-200 text-3xl font-bold transition-colors">&times;</button>
+                    </div>
+                </div>
+                <!-- Modal Body -->
+                <form id="rekapForm" class="p-8 space-y-6">
+                    <!-- Tanggal Mulai -->
+                    <div class="space-y-2">
+                        <label class="block text-sm font-semibold text-gray-700">📅 Tanggal Mulai</label>
+                        <input type="date" id="startDate" required class="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500 transition-all">
+                    </div>
+                    <!-- Tanggal Selesai -->
+                    <div class="space-y-2">
+                        <label class="block text-sm font-semibold text-gray-700">📅 Tanggal Selesai</label>
+                        <input type="date" id="endDate" required class="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500 transition-all">
+                    </div>
+                    <!-- Pilih Karyawan -->
+                    <div class="space-y-2">
+                        <label class="block text-sm font-semibold text-gray-700">👥 Pilih Karyawan (Opsional)</label>
+                        <select id="employeeFilter" class="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500 transition-all">
+                            <option value="">Semua Karyawan</option>
+                        </select>
+                    </div>
+                    <!-- Submit Button -->
+                    <div class="flex justify-end space-x-4 pt-6 border-t-2 border-gray-100">
+                        <button type="button" onclick="closeRekapModal()" class="px-8 py-3 border-2 border-gray-300 text-gray-700 rounded-xl hover:bg-gray-50 transition-all font-semibold">
+                            Batal
+                        </button>
+                        <button type="submit" id="rekapSubmitBtn" class="px-8 py-3 bg-gradient-to-r from-yellow-500 to-yellow-600 text-white rounded-xl hover:from-yellow-600 hover:to-yellow-700 transition-all font-semibold flex items-center space-x-2">
+                            <span>Generate Rekap</span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <!-- Modal untuk menampilkan hasil Rekap -->
+    <div id="rekapResultModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50">
+        <div class="flex items-center justify-center min-h-screen p-4">
+            <div class="bg-white rounded-2xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-hidden transform transition-all">
+                <!-- Modal Header -->
+                <div class="px-8 py-6 bg-gradient-to-r from-yellow-500 to-yellow-600 text-white rounded-t-2xl">
+                    <div class="flex justify-between items-center">
+                        <div>
+                            <h3 class="text-2xl font-bold">📊 Hasil Rekap Lembur</h3>
+                            <p class="text-yellow-100 mt-1" id="rekapDateRangeText">Tanggal: ... - ...</p>
+                        </div>
+                        <button onclick="closeRekapResultModal()" class="text-white hover:text-gray-200 text-3xl font-bold transition-colors">&times;</button>
+                    </div>
+                </div>
+                <!-- Modal Body -->
+                <div class="p-6 overflow-y-auto max-h-[calc(90vh-200px)]"> <!-- Adjust max-h if needed -->
+                    <div id="rekapResultTableContainer">
+                        <!-- Tabel hasil akan diisi di sini -->
+                        <table class="w-full text-sm text-left text-gray-700">
+                            <thead class="text-xs text-gray-700 uppercase bg-gray-50">
+                                <tr>
+                                    <th scope="col" class="px-6 py-3">NIK</th>
+                                    <th scope="col" class="px-6 py-3">Nama Karyawan</th>
+                                    <th scope="col" class="px-6 py-3">Total Jam Lembur</th>
+                                </tr>
+                            </thead>
+                            <tbody id="rekapResultTableBody">
+                                <!-- Baris hasil akan ditambahkan di sini -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="p-6 border-t border-gray-200">
+                    <button onclick="closeRekapResultModal()" class="w-full px-6 py-3 bg-gray-500 hover:bg-gray-600 text-white rounded-lg font-semibold transition-colors">
+                        Tutup
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
     <script>
         // Google Sheets Configuration
         const SHEET_ID = '1xad_Ig38yxi86To7mpOTOjPDdBLX9h7yIj1GoeIz9_I';
@@ -420,6 +512,87 @@
             document.getElementById('employeeDetailModal').classList.add('hidden');
             document.body.style.overflow = 'auto';
         }
+
+        // Fungsi untuk membuka modal Rekap
+
+        // Event listener untuk form rekap
+        document.getElementById('rekapForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const startDate = document.getElementById('startDate').value;
+            const endDate = document.getElementById('endDate').value;
+            const selectedEmployeeId = document.getElementById('employeeFilter').value; // Bisa kosong
+
+            if (!startDate || !endDate) {
+                alert('Pilih tanggal mulai dan tanggal selesai.');
+                return;
+            }
+
+            // Convert to Date objects for comparison
+            const start = new Date(startDate);
+            const end = new Date(endDate);
+            if (start > end) {
+                alert('Tanggal mulai tidak boleh setelah tanggal selesai.');
+                return;
+            }
+
+            // Ambil data lembur dari overtimeData (data lokal yang diambil dari Google Sheets)
+            const filteredData = overtimeData.filter(entry => {
+                const entryDate = new Date(entry.date);
+                const isInRange = entryDate >= start && entryDate <= end;
+                const isSelectedEmp = !selectedEmployeeId || entry.employees.some(emp => emp.id === selectedEmployeeId);
+                return isInRange && isSelectedEmp;
+            });
+
+            // Hitung total jam per karyawan
+            const rekapMap = {}; // { nik: { nama: "...", totalJam: 0 } }
+            filteredData.forEach(entry => {
+                const entryStart = new Date(`2000-01-01T${entry.startTime}:00`);
+                const entryEnd = new Date(`2000-01-01T${entry.endTime}:00`);
+                let diffMs = entryEnd - entryStart;
+                if (diffMs < 0) {
+                    // Handle lembur melewati tengah malam
+                    diffMs += 24 * 60 * 60 * 1000;
+                }
+                // Kurangi 1 jam (3600000 ms) untuk istirahat
+                diffMs -= (1 * 60 * 60 * 1000);
+                // Pastikan durasi tidak negatif
+                if (diffMs < 0) {
+                    diffMs = 0;
+                }
+                const entryHours = diffMs / (1000 * 60 * 60);
+
+                entry.employees.forEach(emp => {
+                    if (!selectedEmployeeId || emp.id === selectedEmployeeId) { // Hanya proses karyawan yang dipilih atau semua
+                        if (!rekapMap[emp.id]) {
+                            // Cari nama dari array employees global jika belum ada
+                            const empInfo = employees.find(e => e.id === emp.id);
+                            rekapMap[emp.id] = {
+                                nik: emp.id,
+                                nama: empInfo ? empInfo.name : emp.id, // Fallback ke ID jika tidak ditemukan di master
+                                totalJam: 0
+                            };
+                        }
+                        rekapMap[emp.id].totalJam += entryHours;
+                    }
+                });
+            });
+
+            // Konversi map ke array dan bulatkan total jam
+            const rekapResults = Object.values(rekapMap).map(item => ({
+                nik: item.nik,
+                nama: item.nama,
+                totalJam: parseFloat(item.totalJam.toFixed(2)) // Bulatkan ke 2 desimal
+            }));
+
+            // Urutkan berdasarkan nama
+            rekapResults.sort((a, b) => a.nama.localeCompare(b.nama));
+
+            // Tampilkan hasil
+            showRekapResult(rekapResults, startDate, endDate);
+
+            // Tutup modal filter
+            closeRekapModal();
+        });
 
         function populateLineOptions() {
             // Get unique departments from employees data (exclude empty departments)
