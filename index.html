@@ -513,7 +513,72 @@
             document.body.style.overflow = 'auto';
         }
 
-        // Fungsi untuk membuka modal Rekap
+         
+       // Fungsi untuk membuka modal Rekap
+        function openRekapModal() {
+            document.getElementById('rekapModal').classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+            // Isi dropdown karyawan
+            populateEmployeeFilter();
+        }
+
+        // Fungsi untuk menutup modal Rekap
+        function closeRekapModal() {
+            document.getElementById('rekapModal').classList.add('hidden');
+            document.body.style.overflow = 'auto';
+            document.getElementById('rekapForm').reset();
+        }
+
+        // Fungsi untuk menutup modal hasil Rekap
+        function closeRekapResultModal() {
+            document.getElementById('rekapResultModal').classList.add('hidden');
+            document.body.style.overflow = 'auto';
+        }
+
+        // Fungsi untuk mengisi dropdown filter karyawan
+        function populateEmployeeFilter() {
+            const select = document.getElementById('employeeFilter');
+            select.innerHTML = '<option value="">Semua Karyawan</option>'; // Reset
+            employees.forEach(emp => {
+                const option = document.createElement('option');
+                option.value = emp.id;
+                option.textContent = `${emp.name} (${emp.id})`;
+                select.appendChild(option);
+            });
+        }
+
+        // Fungsi untuk menampilkan hasil rekap
+        function showRekapResult(results, startDate, endDate) {
+            const resultModal = document.getElementById('rekapResultModal');
+            const dateRangeText = document.getElementById('rekapDateRangeText');
+            const tableBody = document.getElementById('rekapResultTableBody');
+
+            // Format tanggal untuk tampilan
+            const formattedStart = new Date(startDate).toLocaleDateString('id-ID');
+            const formattedEnd = new Date(endDate).toLocaleDateString('id-ID');
+            dateRangeText.textContent = `Tanggal: ${formattedStart} - ${formattedEnd}`;
+
+            // Kosongkan tabel sebelumnya
+            tableBody.innerHTML = '';
+
+            if (results.length === 0) {
+                tableBody.innerHTML = `<tr><td colspan="3" class="px-6 py-4 text-center text-gray-500">Tidak ada data lembur untuk periode dan karyawan yang dipilih.</td></tr>`;
+            } else {
+                results.forEach(result => {
+                    const row = document.createElement('tr');
+                    row.className = 'bg-white border-b hover:bg-gray-50';
+                    row.innerHTML = `
+                        <td class="px-6 py-4 font-medium text-gray-900">${result.nik}</td>
+                        <td class="px-6 py-4">${result.nama}</td>
+                        <td class="px-6 py-4 font-semibold">${result.totalJam} jam</td>
+                    `;
+                    tableBody.appendChild(row);
+                });
+            }
+
+            resultModal.classList.remove('hidden');
+            document.body.style.overflow = 'hidden'; // Untuk modal hasil juga
+        }
 
         // Event listener untuk form rekap
         document.getElementById('rekapForm').addEventListener('submit', function(e) {
