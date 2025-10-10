@@ -2519,7 +2519,7 @@
     </div>
     <script>
         // GANTI INI DENGAN URL DEPLOYMENT KAMU
-        const PROXY_URL = 'https://script.google.com/macros/s/AKfycby_jHi9q9sGt2hGz9qw1fB_ysawkaqY7eTKHvB8k3tZCPxxF3MvXlXUxXOJUJPZM32e/exec'; // <--- GANTI [ID_KAMU] !!!
+        const PROXY_URL = 'https://script.google.com/macros/s/AKfycbyhTVT10LQ6eh8STfXK3awL-XkDoBmvMhZUGK5MLc_hEp5dOvpTtCxArdX5bUrn5brD/exec'; // <--- GANTI [ID_KAMU] !!!
         const SHEET_ID = '12mqiDe4nF_gJozAij7t8lP9YaHrVZLr4pbsphhy4OMQ'; // Pastikan ini sesuai
 
         // Master data karyawan - akan diisi dari Google Sheets
@@ -2742,39 +2742,39 @@
              }
         }
 
-        async function saveToGoogleSheets(data) {
-    console.log('Menyimpan data ke Proxy:', data);
-    showLoading();
-    try {
-        // Tambahkan parameter origin ke URL. Gunakan domain GitHub Pages kamu.
-        // Contoh: jika repo kamu adalah https://ekorianto.github.io/repo-name/
-        // Maka origin-nya adalah: https://ekorianto.github.io
-        const ORIGIN = 'https://ekorianto.github.io'; // GANTI DENGAN ORIGIN GITHUB PAGES KAMU
-        const FETCH_URL = `${PROXY_URL}?action=submitOvertime&origin=${encodeURIComponent(ORIGIN)}`;
+                async function saveToGoogleSheets(data) {
+            console.log('Menyimpan data ke Proxy:', data);
+            showLoading();
+            try {
+                // Tambahkan parameter origin ke URL. Gunakan domain GitHub Pages kamu.
+                // Contoh: jika repo kamu adalah https://ekorianto.github.io/repo-name/
+                // Maka origin-nya adalah: https://ekorianto.github.io
+                const ORIGIN = 'https://ekorianto.github.io'; // GANTI DENGAN ORIGIN GITHUB PAGES KAMU
+                const FETCH_URL = `${PROXY_URL}?action=submitOvertime&origin=${encodeURIComponent(ORIGIN)}`;
 
-        const response = await fetch(FETCH_URL, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(data),
-        });
-        const result = await response.json();
-        hideLoading();
-        if (result.success) {
-            showNotification(result.message, 'success');
-            closeModal();
-            document.getElementById('successModal').classList.remove('hidden');
-            loadOvertimeData(); // Muat ulang setelah simpan
-        } else {
-            throw new Error(result.message || 'Gagal menyimpan data');
+                const response = await fetch(FETCH_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(data),
+                });
+                const result = await response.json();
+                hideLoading();
+                if (result.success) {
+                    showNotification(result.message, 'success');
+                    closeModal();
+                    document.getElementById('successModal').classList.remove('hidden');
+                    loadOvertimeData(); // Muat ulang setelah simpan
+                } else {
+                    throw new Error(result.message || 'Gagal menyimpan data');
+                }
+            } catch (error) {
+                hideLoading();
+                console.error('Gagal menyimpan ', error);
+                showNotification('❌ Gagal menyimpan  ' + error.message, 'error');
+            }
         }
-    } catch (error) {
-        hideLoading();
-        console.error('Gagal menyimpan ', error);
-        showNotification('❌ Gagal menyimpan  ' + error.message, 'error');
-    }
-}
 
         // --- Handler untuk data dari PROXY ---
         function processMasterData(data) {
