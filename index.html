@@ -4,8 +4,2104 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sistem Pengajuan Lembur - Mattress Pro</title>
-    <script src="https://cdn.tailwindcss.com"></script>
     <style>
+        /* ! tailwindcss v3.4.10 | MIT License | https://tailwindcss.com */
+        *,
+        ::before,
+        ::after {
+            box-sizing: border-box;
+            border-width: 0;
+            border-style: solid;
+            border-color: #e5e7eb;
+        }
+
+        html {
+            line-height: 1.5;
+            -webkit-text-size-adjust: 100%;
+            -moz-tab-size: 4;
+            tab-size: 4;
+            font-family: ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+            font-feature-settings: normal;
+            font-variation-settings: normal;
+        }
+
+        body {
+            margin: 0;
+            line-height: inherit;
+        }
+
+        hr {
+            height: 0;
+            color: inherit;
+            border-top-width: 1px;
+        }
+
+        abbr:where([title]) {
+            -webkit-text-decoration: underline dotted;
+            text-decoration: underline dotted;
+        }
+
+        h1,
+        h2,
+        h3,
+        h4,
+        h5,
+        h6 {
+            font-size: inherit;
+            font-weight: inherit;
+        }
+
+        a {
+            color: inherit;
+            text-decoration: inherit;
+        }
+
+        b,
+        strong {
+            font-weight: bolder;
+        }
+
+        code,
+        kbd,
+        samp,
+        pre {
+            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+            font-feature-settings: normal;
+            font-variation-settings: normal;
+            font-size: 1em;
+        }
+
+        small {
+            font-size: 80%;
+        }
+
+        sub,
+        sup {
+            font-size: 75%;
+            line-height: 0;
+            position: relative;
+            vertical-align: baseline;
+        }
+
+        sub {
+            bottom: -0.25em;
+        }
+
+        sup {
+            top: -0.5em;
+        }
+
+        table {
+            text-indent: 0;
+            border-color: inherit;
+            border-collapse: collapse;
+        }
+
+        button,
+        input,
+        optgroup,
+        select,
+        textarea {
+            font-family: inherit;
+            font-feature-settings: inherit;
+            font-variation-settings: inherit;
+            font-size: 100%;
+            font-weight: inherit;
+            line-height: inherit;
+            letter-spacing: inherit;
+            color: inherit;
+            margin: 0;
+            padding: 0;
+        }
+
+        button,
+        select {
+            text-transform: none;
+        }
+
+        button,
+        input:where([type='button']),
+        input:where([type='reset']),
+        input:where([type='submit']) {
+            -webkit-appearance: button;
+            background-color: transparent;
+            background-image: none;
+        }
+
+        :-moz-focusring {
+            outline: auto;
+        }
+
+        :-moz-ui-invalid {
+            box-shadow: none;
+        }
+
+        progress {
+            vertical-align: baseline;
+        }
+
+        ::-webkit-inner-spin-button,
+        ::-webkit-outer-spin-button {
+            height: auto;
+        }
+
+        [type='search'] {
+            -webkit-appearance: textfield;
+            outline-offset: -2px;
+        }
+
+        ::-webkit-search-decoration {
+            -webkit-appearance: none;
+        }
+
+        ::-webkit-file-upload-button {
+            -webkit-appearance: button;
+            font: inherit;
+        }
+
+        summary {
+            display: list-item;
+        }
+
+        blockquote,
+        dl,
+        dd,
+        h1,
+        h2,
+        h3,
+        h4,
+        h5,
+        h6,
+        hr,
+        figure,
+        p,
+        pre {
+            margin: 0;
+        }
+
+        fieldset {
+            margin: 0;
+            padding: 0;
+        }
+
+        legend {
+            padding: 0;
+        }
+
+        ol,
+        ul,
+        menu {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+
+        dialog {
+            padding: 0;
+        }
+
+        textarea {
+            vertical-align: top;
+        }
+
+        [hidden] {
+            display: none;
+        }
+
+        *, ::before, ::after {
+            --tw-border-spacing-x: 0;
+            --tw-border-spacing-y: 0;
+            --tw-translate-x: 0;
+            --tw-translate-y: 0;
+            --tw-rotate: 0;
+            --tw-skew-x: 0;
+            --tw-skew-y: 0;
+            --tw-scale-x: 1;
+            --tw-scale-y: 1;
+            --tw-pan-x:  ;
+            --tw-pan-y:  ;
+            --tw-pinch-zoom:  ;
+            --tw-scroll-snap-strictness: proximity;
+            --tw-gradient-from-position:  ;
+            --tw-gradient-via-position:  ;
+            --tw-gradient-to-position:  ;
+            --tw-ordinal:  ;
+            --tw-slashed-zero:  ;
+            --tw-numeric-figure:  ;
+            --tw-numeric-spacing:  ;
+            --tw-numeric-fraction:  ;
+            --tw-ring-inset:  ;
+            --tw-ring-offset-width: 0px;
+            --tw-ring-offset-color: #fff;
+            --tw-ring-color: rgb(59 130 246 / 0.5);
+            --tw-ring-offset-shadow: 0 0 #0000;
+            --tw-ring-shadow: 0 0 #0000;
+            --tw-shadow: 0 0 #0000;
+            --tw-shadow-colored: 0 0 #0000;
+            --tw-blur:  ;
+            --tw-brightness:  ;
+            --tw-contrast:  ;
+            --tw-grayscale:  ;
+            --tw-hue-rotate:  ;
+            --tw-invert:  ;
+            --tw-saturate:  ;
+            --tw-sepia:  ;
+            --tw-drop-shadow:  ;
+            --tw-backdrop-blur:  ;
+            --tw-backdrop-brightness:  ;
+            --tw-backdrop-contrast:  ;
+            --tw-backdrop-grayscale:  ;
+            --tw-backdrop-hue-rotate:  ;
+            --tw-backdrop-invert:  ;
+            --tw-backdrop-opacity:  ;
+            --tw-backdrop-saturate:  ;
+            --tw-backdrop-sepia:  ;
+        }
+
+        .container {
+            width: 100%;
+            margin-right: auto;
+            margin-left: auto;
+            padding-right: 1rem;
+            padding-left: 1rem;
+        }
+
+        @media (min-width: 640px) {
+            .container {
+                max-width: 640px;
+            }
+        }
+
+        @media (min-width: 768px) {
+            .container {
+                max-width: 768px;
+            }
+        }
+
+        @media (min-width: 1024px) {
+            .container {
+                max-width: 1024px;
+            }
+        }
+
+        @media (min-width: 1280px) {
+            .container {
+                max-width: 1280px;
+            }
+        }
+
+        @media (min-width: 1536px) {
+            .container {
+                max-width: 1536px;
+            }
+        }
+
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border-width: 0;
+        }
+
+        .pointer-events-none {
+            pointer-events: none;
+        }
+
+        .visible {
+            visibility: visible;
+        }
+
+        .fixed {
+            position: fixed;
+        }
+
+        .absolute {
+            position: absolute;
+        }
+
+        .relative {
+            position: relative;
+        }
+
+        .inset-0 {
+            inset: 0px;
+        }
+
+        .inset-y-0 {
+            top: 0px;
+            bottom: 0px;
+        }
+
+        .left-0 {
+            left: 0px;
+        }
+
+        .right-4 {
+            right: 1rem;
+        }
+
+        .top-4 {
+            top: 1rem;
+        }
+
+        .top-\[6px\] {
+            top: 6px;
+        }
+
+        .z-10 {
+            z-index: 10;
+        }
+
+        .z-20 {
+            z-index: 20;
+        }
+
+        .z-50 {
+            z-index: 50;
+        }
+
+        .mx-auto {
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .my-1 {
+            margin-top: 0.25rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .my-2 {
+            margin-top: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .-mb-1 {
+            margin-bottom: -0.25rem;
+        }
+
+        .-ml-1 {
+            margin-left: -0.25rem;
+        }
+
+        .-ml-px {
+            margin-left: -1px;
+        }
+
+        .-mr-1 {
+            margin-right: -0.25rem;
+        }
+
+        .-mt-6 {
+            margin-top: -1.5rem;
+        }
+
+        .mb-1 {
+            margin-bottom: 0.25rem;
+        }
+
+        .mb-2 {
+            margin-bottom: 0.5rem;
+        }
+
+        .mb-3 {
+            margin-bottom: 0.75rem;
+        }
+
+        .mb-4 {
+            margin-bottom: 1rem;
+        }
+
+        .mb-6 {
+            margin-bottom: 1.5rem;
+        }
+
+        .mb-8 {
+            margin-bottom: 2rem;
+        }
+
+        .ml-1 {
+            margin-left: 0.25rem;
+        }
+
+        .ml-2 {
+            margin-left: 0.5rem;
+        }
+
+        .ml-4 {
+            margin-left: 1rem;
+        }
+
+        .mr-1 {
+            margin-right: 0.25rem;
+        }
+
+        .mr-2 {
+            margin-right: 0.5rem;
+        }
+
+        .mt-1 {
+            margin-top: 0.25rem;
+        }
+
+        .mt-2 {
+            margin-top: 0.5rem;
+        }
+
+        .mt-4 {
+            margin-top: 1rem;
+        }
+
+        .mt-6 {
+            margin-top: 1.5rem;
+        }
+
+        .block {
+            display: block;
+        }
+
+        .inline-block {
+            display: inline-block;
+        }
+
+        .flex {
+            display: flex;
+        }
+
+        .inline-flex {
+            display: inline-flex;
+        }
+
+        .grid {
+            display: grid;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .h-0 {
+            height: 0px;
+        }
+
+        .h-0\.5 {
+            height: 0.125rem;
+        }
+
+        .h-1 {
+            height: 0.25rem;
+        }
+
+        .h-10 {
+            height: 2.5rem;
+        }
+
+        .h-12 {
+            height: 3rem;
+        }
+
+        .h-16 {
+            height: 4rem;
+        }
+
+        .h-2 {
+            height: 0.5rem;
+        }
+
+        .h-2\.5 {
+            height: 0.625rem;
+        }
+
+        .h-3 {
+            height: 0.75rem;
+        }
+
+        .h-4 {
+            height: 1rem;
+        }
+
+        .h-5 {
+            height: 1.25rem;
+        }
+
+        .h-6 {
+            height: 1.5rem;
+        }
+
+        .h-8 {
+            height: 2rem;
+        }
+
+        .h-\[1px\] {
+            height: 1px;
+        }
+
+        .h-\[calc\(100vh-200px\)\] {
+            height: calc(100vh - 200px);
+        }
+
+        .h-full {
+            height: 100%;
+        }
+
+        .max-h-\[90vh\] {
+            max-height: 90vh;
+        }
+
+        .max-h-32 {
+            max-height: 8rem;
+        }
+
+        .max-h-64 {
+            max-height: 16rem;
+        }
+
+        .max-h-screen {
+            max-height: 100vh;
+        }
+
+        .min-h-4 {
+            min-height: 1rem;
+        }
+
+        .min-h-\[150px\] {
+            min-height: 150px;
+        }
+
+        .min-h-\[200px\] {
+            min-height: 200px;
+        }
+
+        .min-h-\[300px\] {
+            min-height: 300px;
+        }
+
+        .min-h-\[400px\] {
+            min-height: 400px;
+        }
+
+        .min-h-\[60px\] {
+            min-height: 60px;
+        }
+
+        .min-h-screen {
+            min-height: 100vh;
+        }
+
+        .w-0 {
+            width: 0px;
+        }
+
+        .w-1 {
+            width: 0.25rem;
+        }
+
+        .w-10 {
+            width: 2.5rem;
+        }
+
+        .w-12 {
+            width: 3rem;
+        }
+
+        .w-16 {
+            width: 4rem;
+        }
+
+        .w-2 {
+            width: 0.5rem;
+        }
+
+        .w-2\.5 {
+            width: 0.625rem;
+        }
+
+        .w-3 {
+            width: 0.75rem;
+        }
+
+        .w-4 {
+            width: 1rem;
+        }
+
+        .w-5 {
+            width: 1.25rem;
+        }
+
+        .w-6 {
+            width: 1.5rem;
+        }
+
+        .w-8 {
+            width: 2rem;
+        }
+
+        .w-\[1px\] {
+            width: 1px;
+        }
+
+        .w-\[50\%\] {
+            width: 50%;
+        }
+
+        .w-\[80\%\] {
+            width: 80%;
+        }
+
+        .w-full {
+            width: 100%;
+        }
+
+        .max-w-3xl {
+            max-width: 48rem;
+        }
+
+        .max-w-4xl {
+            max-width: 56rem;
+        }
+
+        .max-w-\[100\%\] {
+            max-width: 100%;
+        }
+
+        .max-w-\[150px\] {
+            max-width: 150px;
+        }
+
+        .max-w-\[200px\] {
+            max-width: 200px;
+        }
+
+        .max-w-\[300px\] {
+            max-width: 300px;
+        }
+
+        .max-w-\[400px\] {
+            max-width: 400px;
+        }
+
+        .max-w-\[500px\] {
+            max-width: 500px;
+        }
+
+        .max-w-\[90\%\] {
+            max-width: 90%;
+        }
+
+        .max-w-md {
+            max-width: 28rem;
+        }
+
+        .max-w-sm {
+            max-width: 24rem;
+        }
+
+        .max-w-xl {
+            max-width: 36rem;
+        }
+
+        .flex-1 {
+            flex: 1 1 0%;
+        }
+
+        .flex-shrink-0 {
+            flex-shrink: 0;
+        }
+
+        .flex-grow {
+            flex-grow: 1;
+        }
+
+        .translate-x-0 {
+            --tw-translate-x: 0px;
+            transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
+        }
+
+        .translate-x-full {
+            --tw-translate-x: 100%;
+            transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
+        }
+
+        .transform {
+            transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
+        }
+
+        .cursor-pointer {
+            cursor: pointer;
+        }
+
+        .resize-none {
+            resize: none;
+        }
+
+        .resize {
+            resize: both;
+        }
+
+        .flex-col {
+            flex-direction: column;
+        }
+
+        .flex-wrap {
+            flex-wrap: wrap;
+        }
+
+        .items-center {
+            align-items: center;
+        }
+
+        .items-start {
+            align-items: flex-start;
+        }
+
+        .items-end {
+            align-items: flex-end;
+        }
+
+        .justify-center {
+            justify-content: center;
+        }
+
+        .justify-between {
+            justify-content: space-between;
+        }
+
+        .justify-end {
+            justify-content: flex-end;
+        }
+
+        .gap-1 {
+            gap: 0.25rem;
+        }
+
+        .gap-2 {
+            gap: 0.5rem;
+        }
+
+        .gap-3 {
+            gap: 0.75rem;
+        }
+
+        .gap-4 {
+            gap: 1rem;
+        }
+
+        .gap-6 {
+            gap: 1.5rem;
+        }
+
+        .space-x-1 > :not([hidden]) ~ :not([hidden]) {
+            --tw-space-x-reverse: 0;
+            margin-right: calc(0.25rem * var(--tw-space-x-reverse));
+            margin-left: calc(0.25rem * calc(1 - var(--tw-space-x-reverse)));
+        }
+
+        .space-x-2 > :not([hidden]) ~ :not([hidden]) {
+            --tw-space-x-reverse: 0;
+            margin-right: calc(0.5rem * var(--tw-space-x-reverse));
+            margin-left: calc(0.5rem * calc(1 - var(--tw-space-x-reverse)));
+        }
+
+        .space-x-3 > :not([hidden]) ~ :not([hidden]) {
+            --tw-space-x-reverse: 0;
+            margin-right: calc(0.75rem * var(--tw-space-x-reverse));
+            margin-left: calc(0.75rem * calc(1 - var(--tw-space-x-reverse)));
+        }
+
+        .space-x-4 > :not([hidden]) ~ :not([hidden]) {
+            --tw-space-x-reverse: 0;
+            margin-right: calc(1rem * var(--tw-space-x-reverse));
+            margin-left: calc(1rem * calc(1 - var(--tw-space-x-reverse)));
+        }
+
+        .space-y-1 > :not([hidden]) ~ :not([hidden]) {
+            --tw-space-y-reverse: 0;
+            margin-top: calc(0.25rem * calc(1 - var(--tw-space-y-reverse)));
+            margin-bottom: calc(0.25rem * var(--tw-space-y-reverse));
+        }
+
+        .space-y-2 > :not([hidden]) ~ :not([hidden]) {
+            --tw-space-y-reverse: 0;
+            margin-top: calc(0.5rem * calc(1 - var(--tw-space-y-reverse)));
+            margin-bottom: calc(0.5rem * var(--tw-space-y-reverse));
+        }
+
+        .space-y-3 > :not([hidden]) ~ :not([hidden]) {
+            --tw-space-y-reverse: 0;
+            margin-top: calc(0.75rem * calc(1 - var(--tw-space-y-reverse)));
+            margin-bottom: calc(0.75rem * var(--tw-space-y-reverse));
+        }
+
+        .space-y-4 > :not([hidden]) ~ :not([hidden]) {
+            --tw-space-y-reverse: 0;
+            margin-top: calc(1rem * calc(1 - var(--tw-space-y-reverse)));
+            margin-bottom: calc(1rem * var(--tw-space-y-reverse));
+        }
+
+        .space-y-6 > :not([hidden]) ~ :not([hidden]) {
+            --tw-space-y-reverse: 0;
+            margin-top: calc(1.5rem * calc(1 - var(--tw-space-y-reverse)));
+            margin-bottom: calc(1.5rem * var(--tw-space-y-reverse));
+        }
+
+        .overflow-hidden {
+            overflow: hidden;
+        }
+
+        .overflow-x-auto {
+            overflow-x: auto;
+        }
+
+        .overflow-y-auto {
+            overflow-y: auto;
+        }
+
+        .truncate {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .whitespace-nowrap {
+            white-space: nowrap;
+        }
+
+        .rounded {
+            border-radius: 0.25rem;
+        }
+
+        .rounded-full {
+            border-radius: 9999px;
+        }
+
+        .rounded-lg {
+            border-radius: 0.5rem;
+        }
+
+        .rounded-xl {
+            border-radius: 0.75rem;
+        }
+
+        .rounded-2xl {
+            border-radius: 1rem;
+        }
+
+        .rounded-l-md {
+            border-top-left-radius: 0.375rem;
+            border-bottom-left-radius: 0.375rem;
+        }
+
+        .rounded-r-md {
+            border-top-right-radius: 0.375rem;
+            border-bottom-right-radius: 0.375rem;
+        }
+
+        .rounded-t-2xl {
+            border-top-left-radius: 1rem;
+            border-top-right-radius: 1rem;
+        }
+
+        .rounded-t-lg {
+            border-top-left-radius: 0.5rem;
+            border-top-right-radius: 0.5rem;
+        }
+
+        .border {
+            border-width: 1px;
+        }
+
+        .border-0 {
+            border-width: 0px;
+        }
+
+        .border-2 {
+            border-width: 2px;
+        }
+
+        .border-b {
+            border-bottom-width: 1px;
+        }
+
+        .border-l-4 {
+            border-left-width: 4px;
+        }
+
+        .border-t-2 {
+            border-top-width: 2px;
+        }
+
+        .border-t-4 {
+            border-top-width: 4px;
+        }
+
+        .border-dashed {
+            border-style: dashed;
+        }
+
+        .border-blue-100 {
+            --tw-border-opacity: 1;
+            border-color: rgb(219 234 254 / var(--tw-border-opacity));
+        }
+
+        .border-blue-200 {
+            --tw-border-opacity: 1;
+            border-color: rgb(191 219 254 / var(--tw-border-opacity));
+        }
+
+        .border-blue-500 {
+            --tw-border-opacity: 1;
+            border-color: rgb(59 130 246 / var(--tw-border-opacity));
+        }
+
+        .border-gray-200 {
+            --tw-border-opacity: 1;
+            border-color: rgb(229 231 235 / var(--tw-border-opacity));
+        }
+
+        .border-gray-300 {
+            --tw-border-opacity: 1;
+            border-color: rgb(209 213 219 / var(--tw-border-opacity));
+        }
+
+        .border-gray-400 {
+            --tw-border-opacity: 1;
+            border-color: rgb(156 163 175 / var(--tw-border-opacity));
+        }
+
+        .border-transparent {
+            border-color: transparent;
+        }
+
+        .bg-black {
+            --tw-bg-opacity: 1;
+            background-color: rgb(0 0 0 / var(--tw-bg-opacity));
+        }
+
+        .bg-blue-100 {
+            --tw-bg-opacity: 1;
+            background-color: rgb(219 234 254 / var(--tw-bg-opacity));
+        }
+
+        .bg-blue-50 {
+            --tw-bg-opacity: 1;
+            background-color: rgb(239 246 255 / var(--tw-bg-opacity));
+        }
+
+        .bg-blue-600 {
+            --tw-bg-opacity: 1;
+            background-color: rgb(37 99 235 / var(--tw-bg-opacity));
+        }
+
+        .bg-gray-100 {
+            --tw-bg-opacity: 1;
+            background-color: rgb(243 244 246 / var(--tw-bg-opacity));
+        }
+
+        .bg-gray-50 {
+            --tw-bg-opacity: 1;
+            background-color: rgb(249 250 251 / var(--tw-bg-opacity));
+        }
+
+        .bg-gray-500 {
+            --tw-bg-opacity: 1;
+            background-color: rgb(107 114 128 / var(--tw-bg-opacity));
+        }
+
+        .bg-green-100 {
+            --tw-bg-opacity: 1;
+            background-color: rgb(220 252 231 / var(--tw-bg-opacity));
+        }
+
+        .bg-green-500 {
+            --tw-bg-opacity: 1;
+            background-color: rgb(34 197 94 / var(--tw-bg-opacity));
+        }
+
+        .bg-green-600 {
+            --tw-bg-opacity: 1;
+            background-color: rgb(22 163 74 / var(--tw-bg-opacity));
+        }
+
+        .bg-indigo-100 {
+            --tw-bg-opacity: 1;
+            background-color: rgb(224 231 255 / var(--tw-bg-opacity));
+        }
+
+        .bg-indigo-600 {
+            --tw-bg-opacity: 1;
+            background-color: rgb(79 70 229 / var(--tw-bg-opacity));
+        }
+
+        .bg-purple-100 {
+            --tw-bg-opacity: 1;
+            background-color: rgb(243 232 255 / var(--tw-bg-opacity));
+        }
+
+        .bg-purple-600 {
+            --tw-bg-opacity: 1;
+            background-color: rgb(147 51 234 / var(--tw-bg-opacity));
+        }
+
+        .bg-red-100 {
+            --tw-bg-opacity: 1;
+            background-color: rgb(254 226 226 / var(--tw-bg-opacity));
+        }
+
+        .bg-red-500 {
+            --tw-bg-opacity: 1;
+            background-color: rgb(239 68 68 / var(--tw-bg-opacity));
+        }
+
+        .bg-white {
+            --tw-bg-opacity: 1;
+            background-color: rgb(255 255 255 / var(--tw-bg-opacity));
+        }
+
+        .bg-yellow-100 {
+            --tw-bg-opacity: 1;
+            background-color: rgb(254 249 195 / var(--tw-bg-opacity));
+        }
+
+        .bg-yellow-500 {
+            --tw-bg-opacity: 1;
+            background-color: rgb(234 179 8 / var(--tw-bg-opacity));
+        }
+
+        .bg-gradient-to-r {
+            background-image: linear-gradient(to right, var(--tw-gradient-stops));
+        }
+
+        .from-blue-50 {
+            --tw-gradient-from: #eff6ff var(--tw-gradient-from-position);
+            --tw-gradient-to: rgb(239 246 255 / 0) var(--tw-gradient-to-position);
+            --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to);
+        }
+
+        .from-blue-600 {
+            --tw-gradient-from: #2563eb var(--tw-gradient-from-position);
+            --tw-gradient-to: rgb(37 99 235 / 0) var(--tw-gradient-to-position);
+            --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to);
+        }
+
+        .from-gray-50 {
+            --tw-gradient-from: #f9fafb var(--tw-gradient-from-position);
+            --tw-gradient-to: rgb(249 250 251 / 0) var(--tw-gradient-to-position);
+            --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to);
+        }
+
+        .from-green-600 {
+            --tw-gradient-from: #16a34a var(--tw-gradient-from-position);
+            --tw-gradient-to: rgb(22 163 74 / 0) var(--tw-gradient-to-position);
+            --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to);
+        }
+
+        .from-indigo-600 {
+            --tw-gradient-from: #4f46e5 var(--tw-gradient-from-position);
+            --tw-gradient-to: rgb(79 70 229 / 0) var(--tw-gradient-to-position);
+            --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to);
+        }
+
+        .from-purple-600 {
+            --tw-gradient-from: #9333ea var(--tw-gradient-from-position);
+            --tw-gradient-to: rgb(147 51 234 / 0) var(--tw-gradient-to-position);
+            --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to);
+        }
+
+        .from-yellow-500 {
+            --tw-gradient-from: #eab308 var(--tw-gradient-from-position);
+            --tw-gradient-to: rgb(234 179 8 / 0) var(--tw-gradient-to-position);
+            --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to);
+        }
+
+        .via-blue-50 {
+            --tw-gradient-to: rgb(239 246 255 / 0)  var(--tw-gradient-to-position);
+            --tw-gradient-stops: var(--tw-gradient-from), #eff6ff var(--tw-gradient-via-position), var(--tw-gradient-to);
+        }
+
+        .via-indigo-50 {
+            --tw-gradient-to: rgb(238 242 255 / 0)  var(--tw-gradient-to-position);
+            --tw-gradient-stops: var(--tw-gradient-from), #eef2ff var(--tw-gradient-via-position), var(--tw-gradient-to);
+        }
+
+        .to-blue-700 {
+            --tw-gradient-to: #1d4ed8 var(--tw-gradient-to-position);
+        }
+
+        .to-blue-800 {
+            --tw-gradient-to: #1e40af var(--tw-gradient-to-position);
+        }
+
+        .to-gray-100 {
+            --tw-gradient-to: #f3f4f6 var(--tw-gradient-to-position);
+        }
+
+        .to-green-700 {
+            --tw-gradient-to: #15803d var(--tw-gradient-to-position);
+        }
+
+        .to-indigo-600 {
+            --tw-gradient-to: #4f46e5 var(--tw-gradient-to-position);
+        }
+
+        .to-indigo-700 {
+            --tw-gradient-to: #4338ca var(--tw-gradient-to-position);
+        }
+
+        .to-purple-700 {
+            --tw-gradient-to: #7e22ce var(--tw-gradient-to-position);
+        }
+
+        .to-yellow-600 {
+            --tw-gradient-to: #ca8a04 var(--tw-gradient-to-position);
+        }
+
+        .to-yellow-700 {
+            --tw-gradient-to: #a16207 var(--tw-gradient-to-position);
+        }
+
+        .bg-cover {
+            background-size: cover;
+        }
+
+        .bg-clip-padding {
+            background-clip: padding-box;
+        }
+
+        .bg-center {
+            background-position: center;
+        }
+
+        .fill-current {
+            fill: currentColor;
+        }
+
+        .stroke-current {
+            stroke: currentColor;
+        }
+
+        .p-1 {
+            padding: 0.25rem;
+        }
+
+        .p-2 {
+            padding: 0.5rem;
+        }
+
+        .p-3 {
+            padding: 0.75rem;
+        }
+
+        .p-4 {
+            padding: 1rem;
+        }
+
+        .p-6 {
+            padding: 1.5rem;
+        }
+
+        .p-8 {
+            padding: 2rem;
+        }
+
+        .px-1 {
+            padding-left: 0.25rem;
+            padding-right: 0.25rem;
+        }
+
+        .px-2 {
+            padding-left: 0.5rem;
+            padding-right: 0.5rem;
+        }
+
+        .px-3 {
+            padding-left: 0.75rem;
+            padding-right: 0.75rem;
+        }
+
+        .px-4 {
+            padding-left: 1rem;
+            padding-right: 1rem;
+        }
+
+        .px-6 {
+            padding-left: 1.5rem;
+            padding-right: 1.5rem;
+        }
+
+        .px-8 {
+            padding-left: 2rem;
+            padding-right: 2rem;
+        }
+
+        .py-1 {
+            padding-top: 0.25rem;
+            padding-bottom: 0.25rem;
+        }
+
+        .py-12 {
+            padding-top: 3rem;
+            padding-bottom: 3rem;
+        }
+
+        .py-2 {
+            padding-top: 0.5rem;
+            padding-bottom: 0.5rem;
+        }
+
+        .py-3 {
+            padding-top: 0.75rem;
+            padding-bottom: 0.75rem;
+        }
+
+        .py-4 {
+            padding-top: 1rem;
+            padding-bottom: 1rem;
+        }
+
+        .py-6 {
+            padding-top: 1.5rem;
+            padding-bottom: 1.5rem;
+        }
+
+        .py-8 {
+            padding-top: 2rem;
+            padding-bottom: 2rem;
+        }
+
+        .pb-8 {
+            padding-bottom: 2rem;
+        }
+
+        .pl-3 {
+            padding-left: 0.75rem;
+        }
+
+        .pr-4 {
+            padding-right: 1rem;
+        }
+
+        .pt-6 {
+            padding-top: 1.5rem;
+        }
+
+        .text-center {
+            text-align: center;
+        }
+
+        .text-right {
+            text-align: right;
+        }
+
+        .align-middle {
+            vertical-align: middle;
+        }
+
+        .font-mono {
+            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+        }
+
+        .text-2xl {
+            font-size: 1.5rem;
+            line-height: 2rem;
+        }
+
+        .text-3xl {
+            font-size: 1.875rem;
+            line-height: 2.25rem;
+        }
+
+        .text-4xl {
+            font-size: 2.25rem;
+            line-height: 2.5rem;
+        }
+
+        .text-5xl {
+            font-size: 3rem;
+            line-height: 1;
+        }
+
+        .text-\[0\.8rem\] {
+            font-size: 0.8rem;
+        }
+
+        .text-\[1\.125rem\] {
+            font-size: 1.125rem;
+        }
+
+        .text-\[1rem\] {
+            font-size: 1rem;
+        }
+
+        .text-lg {
+            font-size: 1.125rem;
+            line-height: 1.75rem;
+        }
+
+        .text-sm {
+            font-size: 0.875rem;
+            line-height: 1.25rem;
+        }
+
+        .text-xs {
+            font-size: 0.75rem;
+            line-height: 1rem;
+        }
+
+        .font-bold {
+            font-weight: 700;
+        }
+
+        .font-extrabold {
+            font-weight: 800;
+        }
+
+        .font-medium {
+            font-weight: 500;
+        }
+
+        .font-semibold {
+            font-weight: 600;
+        }
+
+        .uppercase {
+            text-transform: uppercase;
+        }
+
+        .italic {
+            font-style: italic;
+        }
+
+        .leading-6 {
+            line-height: 1.5rem;
+        }
+
+        .leading-9 {
+            line-height: 2.25rem;
+        }
+
+        .tracking-tight {
+            letter-spacing: -0.025em;
+        }
+
+        .tracking-wider {
+            letter-spacing: 0.05em;
+        }
+
+        .text-blue-100 {
+            --tw-text-opacity: 1;
+            color: rgb(219 234 254 / var(--tw-text-opacity));
+        }
+
+        .text-blue-600 {
+            --tw-text-opacity: 1;
+            color: rgb(37 99 235 / var(--tw-text-opacity));
+        }
+
+        .text-blue-800 {
+            --tw-text-opacity: 1;
+            color: rgb(30 64 175 / var(--tw-text-opacity));
+        }
+
+        .text-gray-200 {
+            --tw-text-opacity: 1;
+            color: rgb(229 231 235 / var(--tw-text-opacity));
+        }
+
+        .text-gray-300 {
+            --tw-text-opacity: 1;
+            color: rgb(209 213 219 / var(--tw-text-opacity));
+        }
+
+        .text-gray-400 {
+            --tw-text-opacity: 1;
+            color: rgb(156 163 175 / var(--tw-text-opacity));
+        }
+
+        .text-gray-500 {
+            --tw-text-opacity: 1;
+            color: rgb(107 114 128 / var(--tw-text-opacity));
+        }
+
+        .text-gray-600 {
+            --tw-text-opacity: 1;
+            color: rgb(75 85 99 / var(--tw-text-opacity));
+        }
+
+        .text-gray-700 {
+            --tw-text-opacity: 1;
+            color: rgb(55 65 81 / var(--tw-text-opacity));
+        }
+
+        .text-gray-800 {
+            --tw-text-opacity: 1;
+            color: rgb(31 41 55 / var(--tw-text-opacity));
+        }
+
+        .text-gray-900 {
+            --tw-text-opacity: 1;
+            color: rgb(17 24 39 / var(--tw-text-opacity));
+        }
+
+        .text-green-500 {
+            --tw-text-opacity: 1;
+            color: rgb(34 197 94 / var(--tw-text-opacity));
+        }
+
+        .text-green-800 {
+            --tw-text-opacity: 1;
+            color: rgb(22 101 52 / var(--tw-text-opacity));
+        }
+
+        .text-indigo-600 {
+            --tw-text-opacity: 1;
+            color: rgb(79 70 229 / var(--tw-text-opacity));
+        }
+
+        .text-purple-800 {
+            --tw-text-opacity: 1;
+            color: rgb(107 33 168 / var(--tw-text-opacity));
+        }
+
+        .text-red-500 {
+            --tw-text-opacity: 1;
+            color: rgb(239 68 68 / var(--tw-text-opacity));
+        }
+
+        .text-white {
+            --tw-text-opacity: 1;
+            color: rgb(255 255 255 / var(--tw-text-opacity));
+        }
+
+        .text-yellow-100 {
+            --tw-text-opacity: 1;
+            color: rgb(254 249 195 / var(--tw-text-opacity));
+        }
+
+        .text-yellow-800 {
+            --tw-text-opacity: 1;
+            color: rgb(133 77 14 / var(--tw-text-opacity));
+        }
+
+        .underline {
+            text-decoration-line: underline;
+        }
+
+        .antialiased {
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        .opacity-0 {
+            opacity: 0;
+        }
+
+        .opacity-100 {
+            opacity: 1;
+        }
+
+        .opacity-50 {
+            opacity: 0.5;
+        }
+
+        .opacity-90 {
+            opacity: 0.9;
+        }
+
+        .shadow {
+            --tw-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+            --tw-shadow-colored: 0 1px 3px 0 var(--tw-shadow-color), 0 1px 2px -1px var(--tw-shadow-color);
+            box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
+        }
+
+        .shadow-2xl {
+            --tw-shadow: 0 25px 50px -12px rgb(0 0 0 / 0.25);
+            --tw-shadow-colored: 0 25px 50px -12px var(--tw-shadow-color);
+            box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
+        }
+
+        .shadow-lg {
+            --tw-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+            --tw-shadow-colored: 0 10px 15px -3px var(--tw-shadow-color), 0 4px 6px -4px var(--tw-shadow-color);
+            box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
+        }
+
+        .shadow-xl {
+            --tw-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+            --tw-shadow-colored: 0 20px 25px -5px var(--tw-shadow-color), 0 8px 10px -6px var(--tw-shadow-color);
+            box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
+        }
+
+        .outline {
+            outline-style: solid;
+        }
+
+        .ring-0 {
+            --tw-ring-offset-shadow: var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);
+            --tw-ring-shadow: var(--tw-ring-inset) 0 0 0 calc(0px + var(--tw-ring-offset-width)) var(--tw-ring-color);
+            box-shadow: var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow, 0 0 #0000);
+        }
+
+        .ring-1 {
+            --tw-ring-offset-shadow: var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);
+            --tw-ring-shadow: var(--tw-ring-inset) 0 0 0 calc(1px + var(--tw-ring-offset-width)) var(--tw-ring-color);
+            box-shadow: var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow, 0 0 #0000);
+        }
+
+        .ring-black {
+            --tw-ring-opacity: 1;
+            --tw-ring-color: rgb(0 0 0 / var(--tw-ring-opacity));
+        }
+
+        .ring-gray-300 {
+            --tw-ring-color: #d1d5db;
+        }
+
+        .ring-opacity-5 {
+            --tw-ring-opacity: 0.05;
+        }
+
+        .blur {
+            --tw-blur: blur(8px);
+            filter: var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow);
+        }
+
+        .filter {
+            filter: var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow);
+        }
+
+        .transition {
+            transition-property: color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform, filter, -webkit-backdrop-filter;
+            transition-property: color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform, filter, backdrop-filter;
+            transition-property: color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform, filter, backdrop-filter, -webkit-backdrop-filter;
+            transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+            transition-duration: 150ms;
+        }
+
+        .transition-all {
+            transition-property: all;
+            transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+            transition-duration: 150ms;
+        }
+
+        .transition-colors {
+            transition-property: color, background-color, border-color, text-decoration-color, fill, stroke;
+            transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+            transition-duration: 150ms;
+        }
+
+        .duration-100 {
+            transition-duration: 100ms;
+        }
+
+        .duration-200 {
+            transition-duration: 200ms;
+        }
+
+        .duration-300 {
+            transition-duration: 300ms;
+        }
+
+        .ease-in-out {
+            transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .ease-out {
+            transition-timing-function: cubic-bezier(0, 0, 0.2, 1);
+        }
+
+        .hover\:border-blue-200:hover {
+            --tw-border-opacity: 1;
+            border-color: rgb(191 219 254 / var(--tw-border-opacity));
+        }
+
+        .hover\:bg-blue-50:hover {
+            --tw-bg-opacity: 1;
+            background-color: rgb(239 246 255 / var(--tw-bg-opacity));
+        }
+
+        .hover\:bg-gray-50:hover {
+            --tw-bg-opacity: 1;
+            background-color: rgb(249 250 251 / var(--tw-bg-opacity));
+        }
+
+        .hover\:bg-gray-600:hover {
+            --tw-bg-opacity: 1;
+            background-color: rgb(75 85 99 / var(--tw-bg-opacity));
+        }
+
+        .hover\:bg-green-700:hover {
+            --tw-bg-opacity: 1;
+            background-color: rgb(21 128 61 / var(--tw-bg-opacity));
+        }
+
+        .hover\:bg-indigo-700:hover {
+            --tw-bg-opacity: 1;
+            background-color: rgb(67 56 202 / var(--tw-bg-opacity));
+        }
+
+        .hover\:bg-purple-700:hover {
+            --tw-bg-opacity: 1;
+            background-color: rgb(126 34 206 / var(--tw-bg-opacity));
+        }
+
+        .hover\:bg-yellow-600:hover {
+            --tw-bg-opacity: 1;
+            background-color: rgb(202 138 4 / var(--tw-bg-opacity));
+        }
+
+        .hover\:text-blue-600:hover {
+            --tw-text-opacity: 1;
+            color: rgb(37 99 235 / var(--tw-text-opacity));
+        }
+
+        .hover\:text-gray-200:hover {
+            --tw-text-opacity: 1;
+            color: rgb(229 231 235 / var(--tw-text-opacity));
+        }
+
+        .hover\:text-gray-900:hover {
+            --tw-text-opacity: 1;
+            color: rgb(17 24 39 / var(--tw-text-opacity));
+        }
+
+        .hover\:underline:hover {
+            text-decoration-line: underline;
+        }
+
+        .focus\:border-blue-500:focus {
+            --tw-border-opacity: 1;
+            border-color: rgb(59 130 246 / var(--tw-border-opacity));
+        }
+
+        .focus\:outline-none:focus {
+            outline: 2px solid transparent;
+            outline-offset: 2px;
+        }
+
+        .focus\:ring-2:focus {
+            --tw-ring-offset-shadow: var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);
+            --tw-ring-shadow: var(--tw-ring-inset) 0 0 0 calc(2px + var(--tw-ring-offset-width)) var(--tw-ring-color);
+            box-shadow: var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow, 0 0 #0000);
+        }
+
+        .focus\:ring-blue-500:focus {
+            --tw-ring-opacity: 1;
+            --tw-ring-color: rgb(59 130 246 / var(--tw-ring-opacity));
+        }
+
+        .focus\:ring-opacity-50:focus {
+            --tw-ring-opacity: 0.5;
+        }
+
+        .active\:bg-blue-700:active {
+            --tw-bg-opacity: 1;
+            background-color: rgb(29 78 216 / var(--tw-bg-opacity));
+        }
+
+        .active\:bg-gray-100:active {
+            --tw-bg-opacity: 1;
+            background-color: rgb(243 244 246 / var(--tw-bg-opacity));
+        }
+
+        .active\:bg-gray-200:active {
+            --tw-bg-opacity: 1;
+            background-color: rgb(229 231 235 / var(--tw-bg-opacity));
+        }
+
+        .active\:text-gray-700:active {
+            --tw-text-opacity: 1;
+            color: rgb(55 65 81 / var(--tw-text-opacity));
+        }
+
+        .active\:text-white:active {
+            --tw-text-opacity: 1;
+            color: rgb(255 255 255 / var(--tw-text-opacity));
+        }
+
+        .group:hover .group-hover\:text-gray-900 {
+            --tw-text-opacity: 1;
+            color: rgb(17 24 39 / var(--tw-text-opacity));
+        }
+
+        .group:hover .group-hover\:text-indigo-600 {
+            --tw-text-opacity: 1;
+            color: rgb(79 70 229 / var(--tw-text-opacity));
+        }
+
+        @media (min-width: 640px) {
+            .sm\:ml-0 {
+                margin-left: 0px;
+            }
+
+            .sm\:flex {
+                display: flex;
+            }
+
+            .sm\:table-cell {
+                display: table-cell;
+            }
+
+            .sm\:hidden {
+                display: none;
+            }
+
+            .sm\:max-w-md {
+                max-width: 28rem;
+            }
+
+            .sm\:flex-1 {
+                flex: 1 1 0%;
+            }
+
+            .sm\:items-center {
+                align-items: center;
+            }
+
+            .sm\:justify-between {
+                justify-content: space-between;
+            }
+
+            .sm\:p-0 {
+                padding: 0px;
+            }
+
+            .sm\:p-6 {
+                padding: 1.5rem;
+            }
+
+            .sm\:px-6 {
+                padding-left: 1.5rem;
+                padding-right: 1.5rem;
+            }
+
+            .sm\:px-64 {
+                padding-left: 16rem;
+                padding-right: 16rem;
+            }
+
+            .sm\:text-left {
+                text-align: left;
+            }
+
+            .sm\:text-sm {
+                font-size: 0.875rem;
+                line-height: 1.25rem;
+            }
+
+            .sm\:text-xl {
+                font-size: 1.25rem;
+                line-height: 1.75rem;
+            }
+        }
+
+        @media (min-width: 768px) {
+            .md\:mx-auto {
+                margin-left: auto;
+                margin-right: auto;
+            }
+
+            .md\:ml-4 {
+                margin-left: 1rem;
+            }
+
+            .md\:mt-0 {
+                margin-top: 0px;
+            }
+
+            .md\:block {
+                display: block;
+            }
+
+            .md\:flex {
+                display: flex;
+            }
+
+            .md\:table-cell {
+                display: table-cell;
+            }
+
+            .md\:hidden {
+                display: none;
+            }
+
+            .md\:w-1\/2 {
+                width: 50%;
+            }
+
+            .md\:w-8\/12 {
+                width: 66.666667%;
+            }
+
+            .md\:w-auto {
+                width: auto;
+            }
+
+            .md\:max-w-2xl {
+                max-width: 42rem;
+            }
+
+            .md\:max-w-3xl {
+                max-width: 48rem;
+            }
+
+            .md\:max-w-xl {
+                max-width: 36rem;
+            }
+
+            .md\:flex-1 {
+                flex: 1 1 0%;
+            }
+
+            .md\:grid-cols-2 {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+
+            .md\:grid-cols-3 {
+                grid-template-columns: repeat(3, minmax(0, 1fr));
+            }
+
+            .md\:flex-row {
+                flex-direction: row;
+            }
+
+            .md\:items-center {
+                align-items: center;
+            }
+
+            .md\:justify-between {
+                justify-content: space-between;
+            }
+
+            .md\:space-x-8 > :not([hidden]) ~ :not([hidden]) {
+                --tw-space-x-reverse: 0;
+                margin-right: calc(2rem * var(--tw-space-x-reverse));
+                margin-left: calc(2rem * calc(1 - var(--tw-space-x-reverse)));
+            }
+
+            .md\:space-y-0 > :not([hidden]) ~ :not([hidden]) {
+                --tw-space-y-reverse: 0;
+                margin-top: calc(0px * calc(1 - var(--tw-space-y-reverse)));
+                margin-bottom: calc(0px * var(--tw-space-y-reverse));
+            }
+
+            .md\:space-y-4 > :not([hidden]) ~ :not([hidden]) {
+                --tw-space-y-reverse: 0;
+                margin-top: calc(1rem * calc(1 - var(--tw-space-y-reverse)));
+                margin-bottom: calc(1rem * var(--tw-space-y-reverse));
+            }
+
+            .md\:border-t-0 {
+                border-top-width: 0px;
+            }
+
+            .md\:border-l {
+                border-left-width: 1px;
+            }
+
+            .md\:p-0 {
+                padding: 0px;
+            }
+
+            .md\:p-8 {
+                padding: 2rem;
+            }
+
+            .md\:px-6 {
+                padding-left: 1.5rem;
+                padding-right: 1.5rem;
+            }
+
+            .md\:px-8 {
+                padding-left: 2rem;
+                padding-right: 2rem;
+            }
+
+            .md\:py-4 {
+                padding-top: 1rem;
+                padding-bottom: 1rem;
+            }
+
+            .md\:pb-0 {
+                padding-bottom: 0px;
+            }
+
+            .md\:pb-4 {
+                padding-bottom: 1rem;
+            }
+
+            .md\:pl-0 {
+                padding-left: 0px;
+            }
+
+            .md\:pl-4 {
+                padding-left: 1rem;
+            }
+
+            .md\:pt-0 {
+                padding-top: 0px;
+            }
+
+            .md\:text-4xl {
+                font-size: 2.25rem;
+                line-height: 2.5rem;
+            }
+
+            .md\:text-5xl {
+                font-size: 3rem;
+                line-height: 1;
+            }
+
+            .md\:text-6xl {
+                font-size: 3.75rem;
+                line-height: 1;
+            }
+
+            .md\:text-lg {
+                font-size: 1.125rem;
+                line-height: 1.75rem;
+            }
+        }
+
+        @media (min-width: 1024px) {
+            .lg\:col-span-1 {
+                grid-column: span 1 / span 1;
+            }
+
+            .lg\:col-span-2 {
+                grid-column: span 2 / span 2;
+            }
+
+            .lg\:col-span-3 {
+                grid-column: span 3 / span 3;
+            }
+
+            .lg\:col-span-4 {
+                grid-column: span 4 / span 4;
+            }
+
+            .lg\:col-span-5 {
+                grid-column: span 5 / span 5;
+            }
+
+            .lg\:col-span-6 {
+                grid-column: span 6 / span 6;
+            }
+
+            .lg\:col-span-7 {
+                grid-column: span 7 / span 7;
+            }
+
+            .lg\:col-span-8 {
+                grid-column: span 8 / span 8;
+            }
+
+            .lg\:col-span-9 {
+                grid-column: span 9 / span 9;
+            }
+
+            .lg\:col-span-10 {
+                grid-column: span 10 / span 10;
+            }
+
+            .lg\:col-span-11 {
+                grid-column: span 11 / span 11;
+            }
+
+            .lg\:col-span-12 {
+                grid-column: span 12 / span 12;
+            }
+
+            .lg\:block {
+                display: block;
+            }
+
+            .lg\:flex {
+                display: flex;
+            }
+
+            .lg\:table-cell {
+                display: table-cell;
+            }
+
+            .lg\:hidden {
+                display: none;
+            }
+
+            .lg\:max-w-7xl {
+                max-width: 80rem;
+            }
+
+            .lg\:grid-cols-1 {
+                grid-template-columns: repeat(1, minmax(0, 1fr));
+            }
+
+            .lg\:grid-cols-2 {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+
+            .lg\:grid-cols-3 {
+                grid-template-columns: repeat(3, minmax(0, 1fr));
+            }
+
+            .lg\:grid-cols-4 {
+                grid-template-columns: repeat(4, minmax(0, 1fr));
+            }
+
+            .lg\:grid-cols-5 {
+                grid-template-columns: repeat(5, minmax(0, 1fr));
+            }
+
+            .lg\:grid-cols-6 {
+                grid-template-columns: repeat(6, minmax(0, 1fr));
+            }
+
+            .lg\:grid-cols-7 {
+                grid-template-columns: repeat(7, minmax(0, 1fr));
+            }
+
+            .lg\:grid-cols-8 {
+                grid-template-columns: repeat(8, minmax(0, 1fr));
+            }
+
+            .lg\:grid-cols-9 {
+                grid-template-columns: repeat(9, minmax(0, 1fr));
+            }
+
+            .lg\:grid-cols-10 {
+                grid-template-columns: repeat(10, minmax(0, 1fr));
+            }
+
+            .lg\:grid-cols-11 {
+                grid-template-columns: repeat(11, minmax(0, 1fr));
+            }
+
+            .lg\:grid-cols-12 {
+                grid-template-columns: repeat(12, minmax(0, 1fr));
+            }
+
+            .lg\:flex-row {
+                flex-direction: row;
+            }
+
+            .lg\:items-center {
+                align-items: center;
+            }
+
+            .lg\:justify-between {
+                justify-content: space-between;
+        }
+
+        @media (min-width: 1280px) {
+            .xl\:hidden {
+                display: none;
+            }
+        }
+
+        /* Gaya kustom kamu */
         body {
             box-sizing: border-box;
             font-size: 18px; /* text-lg */
@@ -79,6 +2175,7 @@
         .success-modal-title { font-size: 1.5rem; }
         .success-modal-text { font-size: 1.125rem; }
         .notification-text { font-size: 1rem; }
+
     </style>
 </head>
 <body class="bg-gray-50 min-h-screen">
@@ -317,7 +2414,6 @@
             </div>
         </div>
     </div>
-
     <!-- Modal Rekap Lembur -->
     <div id="rekapModal" class="fixed inset-0 bg-black bg-opacity-50 modal-backdrop hidden z-50">
         <div class="flex items-center justify-center min-h-screen p-4">
@@ -404,7 +2500,6 @@
             </div>
         </div>
     </div>
-
     <!-- Success Modal -->
     <div id="successModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50">
         <div class="flex items-center justify-center min-h-screen p-4">
@@ -423,10 +2518,10 @@
         </div>
     </div>
     <script>
-        // Google Sheets Configuration
-        const SHEET_ID = '1xad_Ig38yxi86To7mpOTOjPDdBLX9h7yIj1GoeIz9_I';
         // GANTI INI DENGAN URL DEPLOYMENT KAMU
-        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwVmEF6Ou5wmr13ENgjoKKHE4I4nYi1RjG4uvVIyZiGWt8I--pJ41N0ldxeW8S6rM8MsA/exec'; // <--- GANTI INI !!!
+        const PROXY_URL = 'https://script.google.com/macros/s/AKfycbzNiuUSV9z3pJEbs8egmHgBUC86rMbrdgJxD454_Am1N0kZcoO-xmSWwKAJRe6vIXgsTw/exec'; // <--- GANTI [ID_KAMU] !!!
+        const SHEET_ID = '1xad_Ig38yxi86To7mpOTOjPDdBLX9h7yIj1GoeIz9_I'; // Pastikan ini sesuai
+
         // Master data karyawan - akan diisi dari Google Sheets
         let employees = [];
         // Data pengajuan lembur (dari Google Sheets)
@@ -606,80 +2701,91 @@
             }, 5000);
         }
 
-        // --- Fungsi-fungsi untuk komunikasi dengan GAS ---
-        function loadMasterData() {
-            console.log('Memuat master data dari Google Sheets...');
+        // --- Fungsi-fungsi untuk komunikasi dengan PROXY ---
+        async function loadMasterData() {
+            console.log('Memuat master data dari Proxy...');
             showNotification('🔄 Memuat data karyawan...', 'info');
-            google.script.run
-                .withSuccessHandler(processMasterData)
-                .withFailureHandler(function(error) {
-                    console.error('Gagal memuat master ', error);
-                    showNotification('❌ Gagal memuat master  ' + error.message, 'error');
-                })
-                .getMasterDataFromSheet();
+            try {
+                const response = await fetch(`${PROXY_URL}?action=getMasterData`);
+                const result = await response.json();
+                if (result.success) {
+                    processMasterData(result.data);
+                    showNotification(`✅ Master data dimuat: ${employees.length} karyawan`, 'success');
+                } else {
+                    throw new Error(result.message || 'Gagal memuat master data');
+                }
+            } catch (error) {
+                console.error('Gagal memuat master ', error);
+                showNotification('❌ Gagal memuat master  ' + error.message, 'error');
+            }
         }
 
-        // Fungsi baru untuk memuat data lembur dari GAS
-        function loadOvertimeData() {
-             console.log('Memuat data lembur dari Google Sheets...');
-             google.script.run
-                 .withSuccessHandler(updateTableAndStats)
-                 .withFailureHandler(function(error) {
-                     console.error('Gagal memuat data lembur:', error);
-                     showNotification('❌ Gagal memuat data lembur: ' + error.message, 'error');
-                 })
-                 .getAllOvertimeData();
+        async function loadOvertimeData() {
+             console.log('Memuat data lembur dari Proxy...');
+             try {
+                 const response = await fetch(`${PROXY_URL}?action=getOvertimeData`);
+                 const result = await response.json();
+                 if (result.success) {
+                     updateTableAndStats(result.data);
+                 } else {
+                     throw new Error(result.message || 'Gagal memuat data lembur');
+                 }
+             } catch (error) {
+                 console.error('Gagal memuat data lembur:', error);
+                 showNotification('❌ Gagal memuat data lembur: ' + error.message, 'error');
+             }
         }
 
-        function saveToGoogleSheets(data) {
-            console.log('Menyimpan data ke Google Sheets:', data);
+        async function saveToGoogleSheets(data) {
+            console.log('Menyimpan data ke Proxy:', data);
             showLoading();
-            google.script.run
-                .withSuccessHandler(function(result) {
-                    hideLoading();
-                    console.log('Data berhasil disimpan:', result);
-                    if (result.success) {
-                        showNotification(result.message, 'success');
-                        // Tutup modal dan tampilkan success
-                        closeModal();
-                        document.getElementById('successModal').classList.remove('hidden');
-                        // Muat ulang data dari Google Sheets untuk menampilkan yang baru
-                        loadOvertimeData(); // Panggil fungsi untuk memuat data lembur setelah simpan
-                    } else {
-                        throw new Error(result.error || 'Gagal menyimpan data');
-                    }
-                })
-                .withFailureHandler(function(error) {
-                    hideLoading();
-                    console.error('Gagal menyimpan data:', error);
-                    showNotification('❌ Gagal menyimpan  ' + error.message, 'error');
-                })
-                .submitOvertimeBulk(data);
+            try {
+                const response = await fetch(`${PROXY_URL}?action=submitOvertime`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(data),
+                });
+                const result = await response.json();
+                hideLoading();
+                if (result.success) {
+                    showNotification(result.message, 'success');
+                    closeModal();
+                    document.getElementById('successModal').classList.remove('hidden');
+                    loadOvertimeData(); // Muat ulang setelah simpan
+                } else {
+                    throw new Error(result.message || 'Gagal menyimpan data');
+                }
+            } catch (error) {
+                hideLoading();
+                console.error('Gagal menyimpan ', error);
+                showNotification('❌ Gagal menyimpan data: ' + error.message, 'error');
+            }
         }
 
-        // --- Handler untuk google.script.run ---
+        // --- Handler untuk data dari PROXY ---
         function processMasterData(data) {
             try {
-                console.log('Processing master data from GAS:', data);
-                employees = data.slice(1).map(row => ({
-                    id: String(row[0] || "").trim(),
-                    name: String(row[1] || "").trim(),
-                    dept: String(row[2] || "").trim()
-                })).filter(emp => emp.id && emp.name); // Filter baris kosong
-
+                console.log('Processing master data from Proxy:', data);
+                // Asumsikan header dari sheet adalah ['nik', 'nama', 'dept']
+                employees = data.map(row => ({
+                    id: String(row.nik || row['nik'] || "").trim(), // Sesuaikan nama kolom jika berbeda
+                    name: String(row.nama || row['nama'] || "").trim(),
+                    dept: String(row.dept || row['dept'] || "").trim()
+                })).filter(emp => emp.id && emp.name);
                 document.getElementById('totalEmployees').textContent = employees.length;
                 populateLineOptions();
                 console.log('✅ Master data berhasil dimuat:', employees.length, 'karyawan');
-                showNotification(`✅ Master data dimuat: ${employees.length} karyawan`, 'success');
             } catch (error) {
                 console.error('Error processing master ', error);
-                showNotification(`❌ Error memproses  ${error.message}`, 'error');
+                showNotification(`❌ Error memproses master data ${error.message}`, 'error');
             }
         }
 
         function updateTableAndStats(data) {
-             console.log('Updating table and stats with data from GAS:', data);
-             overtimeData = data; // Update data lokal dengan data dari Google Sheets
+             console.log('Updating table and stats with data from Proxy:', data);
+             overtimeData = data;
              updateTable();
              updateStats();
         }
@@ -696,7 +2802,6 @@
                 employees: [],
                 timestamp: new Date().toISOString()
             };
-
             const selectedCheckboxes = document.querySelectorAll('input[name="selectedEmployees"]:checked');
             selectedCheckboxes.forEach(checkbox => {
                 const employee = employees.find(emp => emp.id === checkbox.value);
@@ -707,12 +2812,10 @@
                     });
                 }
             });
-
             if (formData.employees.length === 0) {
                 alert('Pilih minimal satu karyawan untuk lembur!');
                 return;
             }
-
             saveToGoogleSheets(formData);
         });
 
@@ -741,7 +2844,6 @@
                 // Perbaikan untuk Karyawan: Tampilkan satu nama per baris
                 // Pastikan data.employees adalah array
                 const employeeNamesDiv = (data.employees || []).map(emp => `<div>${emp.name}</div>`).join('');
-
                 // Perbaikan untuk Waktu: Gunakan startTime dan endTime dari data (format HH:MM)
                 // Validasi format HH:MM atau ambil dari objek Date jika perlu
                 let startTimeFormatted, endTimeFormatted;
@@ -753,7 +2855,6 @@
                 } else {
                     startTimeFormatted = 'N/A';
                 }
-
                 if (typeof data.endTime === 'string' && data.endTime.match(/^\d{2}:\d{2}$/)) {
                     endTimeFormatted = data.endTime;
                 } else if (data.endTime instanceof Date) {
@@ -762,9 +2863,7 @@
                 } else {
                     endTimeFormatted = 'N/A';
                 }
-
                 const timeRange = `${startTimeFormatted} - ${endTimeFormatted}`;
-
                 // Perbaikan untuk Durasi: Gunakan duration dari data (dari Google Sheets, sudah dikurangi istirahat)
                 // Atau hitung ulang berdasarkan startTime dan endTime jika data.duration tidak tersedia
                 let duration;
@@ -793,7 +2892,6 @@
                     const diffMinutes = Math.floor((diffMs % (1000 * 60 * 60)) / (1000 * 60));
                     duration = `${diffHours}j ${diffMinutes}m`;
                 }
-
                 // Dynamic color for line badges
                 const lineColors = {
                     'MATTRESS': 'bg-blue-100 text-blue-800',
@@ -822,7 +2920,6 @@
             });
             tbody.innerHTML = html;
         }
-
         function updateStats() {
             const today = new Date().toISOString().split('T')[0];
             const currentMonth = new Date().getMonth();
@@ -835,7 +2932,6 @@
             document.getElementById('todayCount').textContent = todayData.length;
             document.getElementById('monthlyCount').textContent = monthlyData.length;
         }
-
         function filterData() {
             const filterDate = document.getElementById('filterDate').value;
             const filterLine = document.getElementById('filterLine').value;
@@ -852,14 +2948,12 @@
             });
             updateTable();
         }
-
         function clearFilters() {
             document.getElementById('filterDate').value = '';
             document.getElementById('filterLine').value = '';
             filteredData = [];
             updateTable();
         }
-
         function refreshData() {
             const refreshIcon = document.getElementById('refreshIcon');
             refreshIcon.style.animation = 'spin 1s linear infinite';
@@ -868,13 +2962,13 @@
                 loadOvertimeData(); // Muat ulang data
             }, 1000);
         }
-
         function exportToCSV() {
             if (overtimeData.length === 0) {
                 showNotification('Tidak ada data untuk diekspor!', 'error');
                 return;
             }
-            let csv = 'Tanggal,Line,Jam Mulai,Jam Selesai,Durasi (jam),NIK,Nama Karyawan,Tugas Lembur,Timestamp\n';
+            let csv = 'Tanggal,Line,Jam Mulai,Jam Selesai,Durasi (jam),NIK,Nama Karyawan,Tugas Lembur,Timestamp
+';
             overtimeData.forEach(data => {
                 const start = new Date(`2000-01-01 ${data.startTime}`);
                 const end = new Date(`2000-01-01 ${data.endTime}`);
@@ -883,7 +2977,8 @@
                 const diffMinutes = Math.floor((diffMs % (1000 * 60 * 60)) / (1000 * 60));
                 const duration = `${diffHours}:${diffMinutes.toString().padStart(2, '0')}`;
                 data.employees.forEach(employee => {
-                    csv += `"${data.date}","${data.line}","${data.startTime}","${data.endTime}","${duration}","${employee.id}","${employee.name}","${data.task}","${data.timestamp}"\n`;
+                    csv += `"${data.date}","${data.line}","${data.startTime}","${data.endTime}","${duration}","${employee.id}","${employee.name}","${data.task}","${data.timestamp}"
+`;
                 });
             });
             const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
@@ -897,7 +2992,6 @@
             document.body.removeChild(link);
             showNotification('File CSV berhasil diunduh!', 'success');
         }
-
         // --- Fungsi Rekap Lembur ---
         function openRekapModal() {
             document.getElementById('rekapModal').classList.remove('hidden');
@@ -905,18 +2999,15 @@
             // Isi dropdown karyawan
             populateEmployeeFilter();
         }
-
         function closeRekapModal() {
             document.getElementById('rekapModal').classList.add('hidden');
             document.body.style.overflow = 'auto';
             document.getElementById('rekapForm').reset();
         }
-
         function closeRekapResultModal() {
             document.getElementById('rekapResultModal').classList.add('hidden');
             document.body.style.overflow = 'auto';
         }
-
         function populateEmployeeFilter() {
             const select = document.getElementById('employeeFilter');
             select.innerHTML = '<option value="">Semua Karyawan</option>'; // Reset
@@ -927,20 +3018,16 @@
                 select.appendChild(option);
             });
         }
-
         function showRekapResult(results, startDate, endDate) {
             const resultModal = document.getElementById('rekapResultModal');
             const dateRangeText = document.getElementById('rekapDateRangeText');
             const tableBody = document.getElementById('rekapResultTableBody');
-
             // Format tanggal untuk tampilan
             const formattedStart = new Date(startDate).toLocaleDateString('id-ID');
             const formattedEnd = new Date(endDate).toLocaleDateString('id-ID');
             dateRangeText.textContent = `Tanggal: ${formattedStart} - ${formattedEnd}`;
-
             // Kosongkan tabel sebelumnya
             tableBody.innerHTML = '';
-
             if (results.length === 0) {
                 tableBody.innerHTML = `<tr><td colspan="3" class="px-6 py-4 text-center text-gray-500">Tidak ada data lembur untuk periode dan karyawan yang dipilih.</td></tr>`;
             } else {
@@ -955,29 +3042,24 @@
                     tableBody.appendChild(row);
                 });
             }
-
             resultModal.classList.remove('hidden');
             document.body.style.overflow = 'hidden'; // Untuk modal hasil juga
         }
-
         // Event listener untuk form rekap
         document.getElementById('rekapForm').addEventListener('submit', function(e) {
             e.preventDefault();
             const startDate = document.getElementById('startDate').value;
             const endDate = document.getElementById('endDate').value;
             const selectedEmployeeId = document.getElementById('employeeFilter').value; // Bisa kosong
-
             // Tambahkan log untuk debugging
             console.log("Filter Tanggal Mulai:", startDate);
             console.log("Filter Tanggal Selesai:", endDate);
             console.log("Filter NIK Karyawan:", selectedEmployeeId);
             console.log("Data lembur lokal (overtimeData):", overtimeData);
-
             if (!startDate || !endDate) {
                 alert('Pilih tanggal mulai dan tanggal selesai.');
                 return;
             }
-
             // Convert to Date objects for comparison
             const start = new Date(startDate);
             const end = new Date(endDate);
@@ -985,7 +3067,6 @@
                 alert('Tanggal mulai tidak boleh setelah tanggal selesai.');
                 return;
             }
-
             // Ambil data lembur dari overtimeData (data lokal yang diambil dari Google Sheets)
             const filteredData = overtimeData.filter(entry => {
                 const entryDate = new Date(entry.date);
@@ -993,22 +3074,18 @@
                 const isSelectedEmp = !selectedEmployeeId || entry.employees.some(emp => emp.id === selectedEmployeeId);
                 return isInRange && isSelectedEmp;
             });
-
             // Tambahkan log untuk debugging hasil filter
             console.log("Data yang difilter:", filteredData);
-
             // Hitung total jam per karyawan
             const rekapMap = {}; // { nik: { nama: "...", totalJam: 0 } }
             filteredData.forEach(entry => {
                 // Pastikan startTime dan endTime adalah string HH:MM
                 const entryStartTime = entry.startTime;
                 const entryEndTime = entry.endTime;
-
                 if (!entryStartTime || !entryEndTime) {
                     console.warn("Waktu mulai atau selesai tidak valid untuk entry:", entry);
                     return; // Lewati entry ini jika waktu tidak valid
                 }
-
                 const entryStart = new Date(`2000-01-01T${entryStartTime}:00`);
                 const entryEnd = new Date(`2000-01-01T${entryEndTime}:00`);
                 let diffMs = entryEnd - entryStart;
@@ -1023,7 +3100,6 @@
                     diffMs = 0;
                 }
                 const entryHours = diffMs / (1000 * 60 * 60);
-
                 entry.employees.forEach(emp => {
                     // Filter karyawan di sini juga, karena filter di atas hanya menyaring entry
                     if (!selectedEmployeeId || emp.id === selectedEmployeeId) {
@@ -1040,36 +3116,27 @@
                     }
                 });
             }); // <-- forEach filteredData TUTUP DENGAN BENAR
-
             // Konversi map ke array dan bulatkan total jam
             const rekapResults = Object.values(rekapMap).map(item => ({
                 nik: item.nik,
                 nama: item.nama,
                 totalJam: parseFloat(item.totalJam.toFixed(2)) // Bulatkan ke 2 desimal
             }));
-
             // Urutkan berdasarkan nama
             rekapResults.sort((a, b) => a.nama.localeCompare(b.nama));
-
             // Tampilkan hasil
             showRekapResult(rekapResults, startDate, endDate);
-
             // Tutup modal filter
             closeRekapModal();
         });
-
         // Initialize application
         function initializeApp() {
             document.getElementById('overtimeDate').valueAsDate = new Date();
             loadMasterData(); // Muat master data saat halaman dimuat
             loadOvertimeData(); // Muat data lembur saat halaman dimuat
         }
-
         // Start the application when page loads
         document.addEventListener('DOMContentLoaded', initializeApp);
-
     </script>
-    <!-- Hapus script Cloudflare jika tidak relevan -->
-    <!-- <script>(function(){...})()</script> -->
 </body>
 </html>
