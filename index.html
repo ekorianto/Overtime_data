@@ -420,7 +420,7 @@
 
     <script>
         // === CONFIGURASI ===
-        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbybWRpBN084aFDMJ11ULozGhDBZCkbp45kNfy4jC4I0Qkj5RzCa7VTViUNRxN8t1uGg/exec'; // 🔴 GANTI DENGAN URL DEPLOYMENT-MU
+        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxXBs-9zMC9PIDBFYe4BBuqwyCMMxgqYjJz3UzjeySkd7XFiq2LVRdjso-v87moSxaj/exec'; // 🔴 GANTI DENGAN URL DEPLOYMENT-MU
 
         let employees = [];
         let overtimeData = [];
@@ -759,7 +759,6 @@
 
         async function saveToGoogleSheets(data) {
     try {
-        console.log('Menyimpan data ke Google Sheets via POST...', data);
         const response = await fetch(SCRIPT_URL, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -780,15 +779,12 @@
         }
 
         const result = await response.json();
-        if (result.success) {
-            return result;
-        } else {
-            throw new Error(result.error || 'Respons sukses tapi tidak valid');
-        }
+        if (result.success) return result;
+        throw new Error(result.error || 'Gagal simpan');
     } catch (error) {
-        console.error('❌ Gagal menyimpan via POST:', error);
-        // TIDAK ADA FALLBACK KE JSONP!
-        throw new Error('Gagal menyimpan data: ' + error.message);
+        console.error('❌ Gagal menyimpan:', error);
+        // JANGAN fallback ke JSONP!
+        throw error;
     }
 }
 
