@@ -518,25 +518,31 @@
             const startDate = document.getElementById('startDate').value;
             const endDate = document.getElementById('endDate').value;
             const selectedEmployeeId = document.getElementById('employeeFilter').value;
+
             if (!startDate || !endDate) {
                 alert('Pilih tanggal mulai dan selesai.');
                 return;
             }
+
             const start = new Date(startDate);
             const end = new Date(endDate);
             if (start > end) {
                 alert('Tanggal mulai tidak boleh setelah tanggal selesai.');
                 return;
             }
-            const filteredData = overtimeData.filter(entry => {
+
+            // Filter data berdasarkan tanggal & karyawan
+            const filteredEntries = overtimeData.filter(entry => {
                 const entryDate = new Date(entry.date);
-                const isInRange = entryDate >= start && entryDate <= end;
-                const isSelectedEmp = !selectedEmployeeId || entry.employees.some(emp => emp.id === selectedEmployeeId);
-                return isInRange && isSelectedEmp;
+                const inDateRange = entryDate >= start && entryDate <= end;
+                const matchesEmployee = !selectedEmployeeId || 
+                    entry.employees.some(emp => emp.id === selectedEmployeeId);
+                return inDateRange && matchesEmployee;
             });
-            // Ganti bagian perhitungan rekapMap dengan ini:
+
+            // Hitung total jam per karyawan — GUNAKAN entry.duration LANGSUNG
             const rekapMap = {};
-            filteredData.forEach(entry => {
+            filteredEntries.forEach(entry => {
                 const entryDuration = parseFloat(entry.duration) || 0;
                 entry.employees.forEach(emp => {
                     if (!selectedEmployeeId || emp.id === selectedEmployeeId) {
@@ -552,14 +558,18 @@
                     }
                 });
             });
-            const rekapResults = Object.values(rekapMap).map(item => ({
-                nik: item.nik,
-                nama: item.nama,
-                totalJam: parseFloat(item.totalJam.toFixed(2))
-            })).sort((a, b) => a.nama.localeCompare(b.nama));
+
+            const rekapResults = Object.values(rekapMap)
+                .map(item => ({
+                    nik: item.nik,
+                    nama: item.nama,
+                    totalJam: parseFloat(item.totalJam.toFixed(2))
+                }))
+                .sort((a, b) => a.nama.localeCompare(b.nama));
+
             showRekapResult(rekapResults, startDate, endDate);
             closeRekapModal();
-        });
+});
 
         // --- Master Data ---
         function populateLineOptions() {
@@ -892,13 +902,15 @@
         function filterData() {
         const filterDate = document.getElementById('filterDate').value;
         const filterLine = document.getElementById('filterLine').value;
-        filteredData = overtimeData.filter(data => {
-            const matchDate = !filterDate || data.date === filterDate;
-            const matchLine = !filterLine || data.line === filterLine;
+
+        filteredData = overtimeData.filter(entry => {
+            const matchDate = !filterDate || entry.date === filterDate;
+            const matchLine = !filterLine || entry.line === filterLine;
             return matchDate && matchLine;
         });
-        updateTable(); // 🔥 WAJIB DITAMBAHKAN
-    }
+
+        updateTable(); // ✅ Pastikan ini dipanggil
+        }
 
         function clearFilters() {
             document.getElementById('filterDate').value = '';
