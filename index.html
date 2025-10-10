@@ -534,15 +534,10 @@
                 const isSelectedEmp = !selectedEmployeeId || entry.employees.some(emp => emp.id === selectedEmployeeId);
                 return isInRange && isSelectedEmp;
             });
+            // Ganti bagian perhitungan rekapMap dengan ini:
             const rekapMap = {};
             filteredData.forEach(entry => {
-                const entryStart = new Date(`2000-01-01T${entry.startTime}:00`);
-                const entryEnd = new Date(`2000-01-01T${entry.endTime}:00`);
-                let diffMs = entryEnd - entryStart;
-                if (diffMs < 0) diffMs += 24 * 60 * 60 * 1000;
-                diffMs -= 1 * 60 * 60 * 1000; // minus 1 jam istirahat
-                if (diffMs < 0) diffMs = 0;
-                const entryHours = diffMs / (1000 * 60 * 60);
+                const entryDuration = parseFloat(entry.duration) || 0;
                 entry.employees.forEach(emp => {
                     if (!selectedEmployeeId || emp.id === selectedEmployeeId) {
                         if (!rekapMap[emp.id]) {
@@ -553,7 +548,7 @@
                                 totalJam: 0
                             };
                         }
-                        rekapMap[emp.id].totalJam += entryHours;
+                        rekapMap[emp.id].totalJam += entryDuration;
                     }
                 });
             });
@@ -895,13 +890,15 @@
         }
 
         function filterData() {
-            const date = document.getElementById('filterDate').value;
-            const line = document.getElementById('filterLine').value;
-            filteredData = overtimeData.filter(d => {
-                return (!date || d.date === date) && (!line || d.line === line);
-            });
-            updateTable();
-        }
+        const filterDate = document.getElementById('filterDate').value;
+        const filterLine = document.getElementById('filterLine').value;
+        filteredData = overtimeData.filter(data => {
+            const matchDate = !filterDate || data.date === filterDate;
+            const matchLine = !filterLine || data.line === filterLine;
+            return matchDate && matchLine;
+        });
+        updateTable(); // 🔥 WAJIB DITAMBAHKAN
+    }
 
         function clearFilters() {
             document.getElementById('filterDate').value = '';
