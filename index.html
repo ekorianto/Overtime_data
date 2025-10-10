@@ -420,7 +420,7 @@
 
     <script>
         // === CONFIGURASI ===
-        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxHvjgIIKwshoeodMXpSjw482QDNSIFfzIgp7XxyB6Xg61IXcKApAIRNOp9b-SXLl7j/exec'; // 🔴 GANTI DENGAN URL DEPLOYMENT-MU
+        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzOc4bSWA5CtS7pN9ngXHs0Bnf5gr5nbTo1Z2vv7OURELRTaEceTp5PVjhOkrdqNJj-/exec'; // 🔴 GANTI DENGAN URL DEPLOYMENT-MU
 
         let employees = [];
         let overtimeData = [];
@@ -758,34 +758,42 @@
         }
 
         async function saveToGoogleSheets(data) {
-    try {
-        const response = await fetch(SCRIPT_URL, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                action: 'saveOvertimeData',
-                date: data.date,
-                line: data.line,
-                startTime: data.startTime,
-                endTime: data.endTime,
-                task: data.task,
-                employees: data.employees
-            })
+    return new Promise((resolve, reject) => {
+        const ts = Date.now();
+        const cb = `saveCallback${ts}`;
+        const to = setTimeout(() => {
+            cleanup();
+            reject(new Error('Timeout simpan'));
+        }, 15000);
+        const cleanup = () => {
+            delete window[cb];
+            const s = document.querySelector(`script[src*="${cb}"]`);
+            if (s?.parentNode) s.parentNode.removeChild(s);
+            clearTimeout(to);
+        };
+        window[cb] = (res) => {
+            cleanup();
+            if (res?.success) resolve(res);
+            else reject(new Error(res?.error || 'Simpan gagal'));
+        };
+        const params = new URLSearchParams({
+            action: 'saveOvertimeData',
+            date: data.date,
+            line: data.line,
+            startTime: data.startTime,
+            endTime: data.endTime,
+            task: data.task,
+            employees: JSON.stringify(data.employees),
+            callback: cb
         });
-
-        if (!response.ok) {
-            const errorText = await response.text();
-            throw new Error(`HTTP ${response.status}: ${errorText}`);
-        }
-
-        const result = await response.json();
-        if (result.success) return result;
-        throw new Error(result.error || 'Gagal simpan');
-    } catch (error) {
-        console.error('❌ Gagal menyimpan:', error);
-        // JANGAN fallback ke JSONP!
-        throw error;
-    }
+        const script = document.createElement('script');
+        script.src = `${SCRIPT_URL}?${params.toString()}`;
+        script.onerror = () => {
+            cleanup();
+            reject(new Error('Gagal memuat script simpan'));
+        };
+        document.head.appendChild(script);
+    });
 }
 
         // --- Form Submit ---
