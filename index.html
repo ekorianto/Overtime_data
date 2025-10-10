@@ -2743,32 +2743,38 @@
         }
 
         async function saveToGoogleSheets(data) {
-            console.log('Menyimpan data ke Proxy:', data);
-            showLoading();
-            try {
-                const response = await fetch(`${PROXY_URL}?action=submitOvertime`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify(data),
-                });
-                const result = await response.json();
-                hideLoading();
-                if (result.success) {
-                    showNotification(result.message, 'success');
-                    closeModal();
-                    document.getElementById('successModal').classList.remove('hidden');
-                    loadOvertimeData(); // Muat ulang setelah simpan
-                } else {
-                    throw new Error(result.message || 'Gagal menyimpan data');
-                }
-            } catch (error) {
-                hideLoading();
-                console.error('Gagal menyimpan ', error);
-                showNotification('❌ Gagal menyimpan  ' + error.message, 'error');
-            }
+    console.log('Menyimpan data ke Proxy:', data);
+    showLoading();
+    try {
+        // Tambahkan parameter origin ke URL. Gunakan domain GitHub Pages kamu.
+        // Contoh: jika repo kamu adalah https://ekorianto.github.io/repo-name/
+        // Maka origin-nya adalah: https://ekorianto.github.io
+        const ORIGIN = 'https://ekorianto.github.io'; // GANTI DENGAN ORIGIN GITHUB PAGES KAMU
+        const FETCH_URL = `${PROXY_URL}?action=submitOvertime&origin=${encodeURIComponent(ORIGIN)}`;
+
+        const response = await fetch(FETCH_URL, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(data),
+        });
+        const result = await response.json();
+        hideLoading();
+        if (result.success) {
+            showNotification(result.message, 'success');
+            closeModal();
+            document.getElementById('successModal').classList.remove('hidden');
+            loadOvertimeData(); // Muat ulang setelah simpan
+        } else {
+            throw new Error(result.message || 'Gagal menyimpan data');
         }
+    } catch (error) {
+        hideLoading();
+        console.error('Gagal menyimpan ', error);
+        showNotification('❌ Gagal menyimpan  ' + error.message, 'error');
+    }
+}
 
         // --- Handler untuk data dari PROXY ---
         function processMasterData(data) {
