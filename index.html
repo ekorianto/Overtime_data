@@ -170,6 +170,12 @@
                 </svg>
                 <span>Export Data</span>
             </button>
+            <button onclick="openRekapModal()" class="bg-gradient-to-r from-yellow-500 to-yellow-600 hover:from-yellow-600 hover:to-yellow-700 text-white px-6 py-4 rounded-xl font-semibold shadow-lg transition-all duration-300 flex items-center space-x-2">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+                </svg>
+                <span>Rekap Lembur</span>
+            </button>
         </div>
         <!-- Filter Section -->
         <div class="bg-white rounded-xl shadow-lg p-6 mb-8">
@@ -329,12 +335,124 @@
             </div>
         </div>
     </div>
+        <!-- Modal untuk Detail Karyawan -->
+    <div id="employeeDetailModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50">
+        <div class="flex items-center justify-center min-h-screen p-4">
+            <!-- Perbesar max-w dan tambahkan max-h -->
+            <div class="bg-white rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-hidden">
+                <div class="px-6 py-4 bg-gradient-to-r from-blue-50 to-indigo-50 border-b">
+                    <div class="flex justify-between items-center">
+                        <h3 class="text-lg font-bold">Detail Pengajuan Lembur</h3>
+                        <button onclick="closeEmployeeDetailModal()" class="text-gray-500 hover:text-gray-700 text-2xl">&times;</button>
+                    </div>
+                </div>
+                <div class="p-6">
+                    <!-- Tambahkan elemen untuk menampilkan info tambahan -->
+                    <div id="employeeDetailDate" class="text-sm font-semibold text-gray-700 mb-1"></div>
+                    <div id="employeeDetailTime" class="text-sm font-semibold text-gray-700 mb-1"></div>
+                    <div id="employeeDetailDuration" class="text-sm font-semibold text-gray-700 mb-4"></div>
+                    <div id="employeeDetailList" class="max-h-96 overflow-y-auto border border-gray-200 rounded-lg p-2">
+                        <!-- Nama-nama karyawan akan diisi di sini -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Modal Rekap Lembur -->
+    <div id="rekapModal" class="fixed inset-0 bg-black bg-opacity-50 modal-backdrop hidden z-50">
+        <div class="flex items-center justify-center min-h-screen p-4">
+            <div class="bg-white rounded-2xl shadow-2xl max-w-3xl w-full max-h-[90vh] overflow-y-auto transform transition-all">
+                <!-- Modal Header -->
+                <div class="px-8 py-6 bg-gradient-to-r from-yellow-500 to-yellow-600 text-white rounded-t-2xl">
+                    <div class="flex justify-between items-center">
+                        <div>
+                            <h3 class="text-2xl font-bold">📋 Rekap Lembur</h3>
+                            <p class="text-yellow-100 mt-1">Filter berdasarkan tanggal dan karyawan</p>
+                        </div>
+                        <button onclick="closeRekapModal()" class="text-white hover:text-gray-200 text-3xl font-bold transition-colors">&times;</button>
+                    </div>
+                </div>
+                <!-- Modal Body -->
+                <form id="rekapForm" class="p-8 space-y-6">
+                    <!-- Tanggal Mulai -->
+                    <div class="space-y-2">
+                        <label class="block text-sm font-semibold text-gray-700">📅 Tanggal Mulai</label>
+                        <input type="date" id="startDate" required class="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500 transition-all">
+                    </div>
+                    <!-- Tanggal Selesai -->
+                    <div class="space-y-2">
+                        <label class="block text-sm font-semibold text-gray-700">📅 Tanggal Selesai</label>
+                        <input type="date" id="endDate" required class="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500 transition-all">
+                    </div>
+                    <!-- Pilih Karyawan -->
+                    <div class="space-y-2">
+                        <label class="block text-sm font-semibold text-gray-700">👥 Pilih Karyawan (Opsional)</label>
+                        <select id="employeeFilter" class="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500 transition-all">
+                            <option value="">Semua Karyawan</option>
+                        </select>
+                    </div>
+                    <!-- Submit Button -->
+                    <div class="flex justify-end space-x-4 pt-6 border-t-2 border-gray-100">
+                        <button type="button" onclick="closeRekapModal()" class="px-8 py-3 border-2 border-gray-300 text-gray-700 rounded-xl hover:bg-gray-50 transition-all font-semibold">
+                            Batal
+                        </button>
+                        <button type="submit" id="rekapSubmitBtn" class="px-8 py-3 bg-gradient-to-r from-yellow-500 to-yellow-600 text-white rounded-xl hover:from-yellow-600 hover:to-yellow-700 transition-all font-semibold flex items-center space-x-2">
+                            <span>Generate Rekap</span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <!-- Modal untuk menampilkan hasil Rekap -->
+    <div id="rekapResultModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50">
+        <div class="flex items-center justify-center min-h-screen p-4">
+            <div class="bg-white rounded-2xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-hidden transform transition-all">
+                <!-- Modal Header -->
+                <div class="px-8 py-6 bg-gradient-to-r from-yellow-500 to-yellow-600 text-white rounded-t-2xl">
+                    <div class="flex justify-between items-center">
+                        <div>
+                            <h3 class="text-2xl font-bold">📊 Hasil Rekap Lembur</h3>
+                            <p class="text-yellow-100 mt-1" id="rekapDateRangeText">Tanggal: ... - ...</p>
+                        </div>
+                        <button onclick="closeRekapResultModal()" class="text-white hover:text-gray-200 text-3xl font-bold transition-colors">&times;</button>
+                    </div>
+                </div>
+                <!-- Modal Body -->
+                <div class="p-6 overflow-y-auto max-h-[calc(90vh-200px)]"> <!-- Adjust max-h if needed -->
+                    <div id="rekapResultTableContainer">
+                        <!-- Tabel hasil akan diisi di sini -->
+                        <table class="w-full text-sm text-left text-gray-700">
+                            <thead class="text-xs text-gray-700 uppercase bg-gray-50">
+                                <tr>
+                                    <th scope="col" class="px-6 py-3">NIK</th>
+                                    <th scope="col" class="px-6 py-3">Nama Karyawan</th>
+                                    <th scope="col" class="px-6 py-3">Total Jam Lembur</th>
+                                </tr>
+                            </thead>
+                            <tbody id="rekapResultTableBody">
+                                <!-- Baris hasil akan ditambahkan di sini -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="p-6 border-t border-gray-200">
+                    <button onclick="closeRekapResultModal()" class="w-full px-6 py-3 bg-gray-500 hover:bg-gray-600 text-white rounded-lg font-semibold transition-colors">
+                        Tutup
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
     <script>
+        // Google Sheets Configuration
+        const SHEET_ID = '1xad_Ig38yxi86To7mpOTOjPDdBLX9h7yIj1GoeIz9_I';
+       // GANTI INI DENGAN URL DEPLOYMENT KAMU
+        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwVmEF6Ou5wmr13ENgjoKKHE4I4nYi1RjG4uvVIyZiGWt8I--pJ41N0ldxeW8S6rM8MsA/exec'; // <--- GANTI INI !!!
         // Master data karyawan - akan diisi dari Google Sheets
         let employees = [];
-        // Data pengajuan lembur (dari Google Sheets)
+        // Data pengajuan lembur (dari Google Sheets) - GANTI INI: Gunakan ini untuk menampilkan riwayat
         let overtimeData = [];
-        // Data pengajuan lembur setelah difilter
         let filteredData = [];
 
         // --- Fungsi-fungsi Modal dan Utilitas ---
@@ -342,6 +460,7 @@
             document.getElementById('overtimeModal').classList.remove('hidden');
             document.body.style.overflow = 'hidden';
         }
+
         function closeModal() {
             document.getElementById('overtimeModal').classList.add('hidden');
             document.body.style.overflow = 'auto';
@@ -357,15 +476,221 @@
             document.getElementById('durationDisplay').classList.add('hidden');
             document.getElementById('selectedCount').classList.add('hidden');
         }
+
         function closeSuccessModal() {
             document.getElementById('successModal').classList.add('hidden');
         }
+
+        // Fungsi untuk membuka modal detail karyawan
+        function openEmployeeDetailModal(date, startTime, endTime, duration, employees) {
+            const modal = document.getElementById('employeeDetailModal');
+            const dateDiv = document.getElementById('employeeDetailDate');
+            const timeDiv = document.getElementById('employeeDetailTime');
+            const durationDiv = document.getElementById('employeeDetailDuration');
+            const listDiv = document.getElementById('employeeDetailList');
+
+            // Kosongkan list sebelumnya
+            listDiv.innerHTML = '';
+
+            // Tampilkan tanggal, waktu, durasi
+            dateDiv.textContent = `Tanggal: ${new Date(date).toLocaleDateString('id-ID')}`;
+            timeDiv.textContent = `Waktu: ${startTime} - ${endTime}`;
+            durationDiv.textContent = `Durasi: ${duration}`;
+
+            // Tambahkan nama karyawan ke dalam list
+            (employees || []).forEach(emp => {
+                const div = document.createElement('div');
+                div.className = 'py-1 px-2 border-b border-gray-200'; // Gaya sederhana
+                div.textContent = `${emp.name} (${emp.id})`; // Tampilkan nama dan ID
+                listDiv.appendChild(div);
+            });
+
+            modal.classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+        }
+
+        // Fungsi untuk menutup modal detail karyawan
+        function closeEmployeeDetailModal() {
+            document.getElementById('employeeDetailModal').classList.add('hidden');
+            document.body.style.overflow = 'auto';
+        }
+
+       // Fungsi untuk membuka modal Rekap
+        function openRekapModal() {
+            document.getElementById('rekapModal').classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+            // Isi dropdown karyawan
+            populateEmployeeFilter();
+        }
+
+        // Fungsi untuk menutup modal Rekap
+        function closeRekapModal() {
+            document.getElementById('rekapModal').classList.add('hidden');
+            document.body.style.overflow = 'auto';
+            document.getElementById('rekapForm').reset();
+        }
+
+        // Fungsi untuk menutup modal hasil Rekap
+        function closeRekapResultModal() {
+            document.getElementById('rekapResultModal').classList.add('hidden');
+            document.body.style.overflow = 'auto';
+        }
+
+        // Fungsi untuk mengisi dropdown filter karyawan
+        function populateEmployeeFilter() {
+            const select = document.getElementById('employeeFilter');
+            select.innerHTML = '<option value="">Semua Karyawan</option>'; // Reset
+            employees.forEach(emp => {
+                const option = document.createElement('option');
+                option.value = emp.id;
+                option.textContent = `${emp.name} (${emp.id})`;
+                select.appendChild(option);
+            });
+        }
+
+        // Fungsi untuk menampilkan hasil rekap
+        function showRekapResult(results, startDate, endDate) {
+            const resultModal = document.getElementById('rekapResultModal');
+            const dateRangeText = document.getElementById('rekapDateRangeText');
+            const tableBody = document.getElementById('rekapResultTableBody');
+
+            // Format tanggal untuk tampilan
+            const formattedStart = new Date(startDate).toLocaleDateString('id-ID');
+            const formattedEnd = new Date(endDate).toLocaleDateString('id-ID');
+            dateRangeText.textContent = `Tanggal: ${formattedStart} - ${formattedEnd}`;
+
+            // Kosongkan tabel sebelumnya
+            tableBody.innerHTML = '';
+
+            if (results.length === 0) {
+                tableBody.innerHTML = `<tr><td colspan="3" class="px-6 py-4 text-center text-gray-500">Tidak ada data lembur untuk periode dan karyawan yang dipilih.</td></tr>`;
+            } else {
+                results.forEach(result => {
+                    const row = document.createElement('tr');
+                    row.className = 'bg-white border-b hover:bg-gray-50';
+                    row.innerHTML = `
+                        <td class="px-6 py-4 font-medium text-gray-900">${result.nik}</td>
+                        <td class="px-6 py-4">${result.nama}</td>
+                        <td class="px-6 py-4 font-semibold">${result.totalJam} jam</td>
+                    `;
+                    tableBody.appendChild(row);
+                });
+            }
+
+            resultModal.classList.remove('hidden');
+            document.body.style.overflow = 'hidden'; // Untuk modal hasil juga
+        }
+
+        // Event listener untuk form rekap
+        document.getElementById('rekapForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const startDate = document.getElementById('startDate').value;
+            const endDate = document.getElementById('endDate').value;
+            const selectedEmployeeId = document.getElementById('employeeFilter').value; // Bisa kosong
+
+            // Tambahkan log untuk debugging
+            console.log("Filter Tanggal Mulai:", startDate);
+            console.log("Filter Tanggal Selesai:", endDate);
+            console.log("Filter NIK Karyawan:", selectedEmployeeId);
+            console.log("Data lembur lokal (overtimeData):", overtimeData);
+
+            if (!startDate || !endDate) {
+                alert('Pilih tanggal mulai dan tanggal selesai.');
+                return;
+            }
+
+            // Convert to Date objects for comparison
+            const start = new Date(startDate);
+            const end = new Date(endDate);
+
+            if (start > end) {
+                alert('Tanggal mulai tidak boleh setelah tanggal selesai.');
+                return;
+            }
+
+            // Ambil data lembur dari overtimeData (data lokal yang diambil dari Google Sheets)
+            const filteredData = overtimeData.filter(entry => {
+                const entryDate = new Date(entry.date);
+                const isInRange = entryDate >= start && entryDate <= end; // <-- Baris ini sekarang harus valid
+                const isSelectedEmp = !selectedEmployeeId || entry.employees.some(emp => emp.id === selectedEmployeeId);
+                return isInRange && isSelectedEmp;
+            });
+
+            // Tambahkan log untuk debugging hasil filter
+            console.log("Data yang difilter:", filteredData);
+
+            // Hitung total jam per karyawan
+            const rekapMap = {}; // { nik: { nama: "...", totalJam: 0 } }
+
+            filteredData.forEach(entry => { // <-- forEach entry DIBUKA
+                // Pastikan startTime dan endTime adalah string HH:MM
+                const entryStartTime = entry.startTime;
+                const entryEndTime = entry.endTime;
+
+                if (!entryStartTime || !entryEndTime) {
+                    console.warn("Waktu mulai atau selesai tidak valid untuk entry:", entry);
+                    return; // Lewati entry ini jika waktu tidak valid
+                }
+
+                const entryStart = new Date(`2000-01-01T${entryStartTime}:00`);
+                const entryEnd = new Date(`2000-01-01T${entryEndTime}:00`);
+
+                let diffMs = entryEnd - entryStart;
+                if (diffMs < 0) {
+                    // Handle lembur melewati tengah malam
+                    diffMs += 24 * 60 * 60 * 1000;
+                }
+                // Kurangi 1 jam (3600000 ms) untuk istirahat
+                diffMs -= (1 * 60 * 60 * 1000);
+
+                // Pastikan durasi tidak negatif
+                if (diffMs < 0) {
+                    diffMs = 0;
+                }
+
+                const entryHours = diffMs / (1000 * 60 * 60);
+
+                entry.employees.forEach(emp => { // <-- forEach employee DIBUKA
+                    // Filter karyawan di sini juga, karena filter di atas hanya menyaring entry
+                    if (!selectedEmployeeId || emp.id === selectedEmployeeId) {
+                        if (!rekapMap[emp.id]) {
+                            // Cari nama dari array employees global jika belum ada
+                            const empInfo = employees.find(e => e.id === emp.id);
+                            rekapMap[emp.id] = {
+                                nik: emp.id,
+                                nama: empInfo ? empInfo.name : emp.id, // Fallback ke ID jika tidak ditemukan di master
+                                totalJam: 0
+                            };
+                        }
+                        rekapMap[emp.id].totalJam += entryHours;
+                    }
+                }); // <-- forEach employee DITUTUP
+            }); // <-- forEach entry DITUTUP (INI YANG KURANG)
+
+            // Konversi map ke array dan bulatkan total jam
+            const rekapResults = Object.values(rekapMap).map(item => ({
+                nik: item.nik,
+                nama: item.nama,
+                totalJam: parseFloat(item.totalJam.toFixed(2)) // Bulatkan ke 2 desimal
+            }));
+
+            // Urutkan berdasarkan nama
+            rekapResults.sort((a, b) => a.nama.localeCompare(b.nama));
+
+            // Tampilkan hasil
+            showRekapResult(rekapResults, startDate, endDate);
+
+            // Tutup modal filter
+            closeRekapModal();
+        }); // <-- Event listener submit DITUTUP
+
         function populateLineOptions() {
             // Get unique departments from employees data (exclude empty departments)
             const uniqueDepts = [...new Set(employees
                 .map(emp => emp.dept)
                 .filter(dept => dept && dept.trim() !== '')
             )].sort();
+
             // Update line select dropdown in modal
             const lineSelect = document.getElementById('lineSelect');
             lineSelect.innerHTML = '<option value="">-- Pilih Line --</option>';
@@ -375,6 +700,7 @@
                 option.textContent = dept;
                 lineSelect.appendChild(option);
             });
+
             // Update filter line dropdown
             const filterLine = document.getElementById('filterLine');
             filterLine.innerHTML = '<option value="">Semua Line</option>';
@@ -384,25 +710,30 @@
                 option.textContent = dept;
                 filterLine.appendChild(option);
             });
+
             // Update active lines count
             document.getElementById('activeLines').textContent = uniqueDepts.length;
             console.log('✅ Line options populated:', uniqueDepts);
         }
+
         function updateEmployeeList() {
             const selectedLine = document.getElementById('lineSelect').value;
             const employeeListDiv = document.getElementById('employeeList');
+
             if (!selectedLine) {
                 employeeListDiv.innerHTML = `
                     <div class="text-center text-gray-500 py-8">
                         <svg class="w-12 h-12 mx-auto text-gray-300 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0z"></path>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
                         </svg>
                         <p>Pilih line terlebih dahulu</p>
                     </div>
                 `;
                 return;
             }
+
             const filteredEmployees = employees.filter(emp => emp.dept === selectedLine);
+
             if (filteredEmployees.length === 0) {
                 employeeListDiv.innerHTML = `
                     <div class="text-center text-gray-500 py-8">
@@ -411,6 +742,7 @@
                 `;
                 return;
             }
+
             let html = '<div class="space-y-3">';
             filteredEmployees.forEach(emp => {
                 html += `
@@ -426,6 +758,7 @@
             html += '</div>';
             employeeListDiv.innerHTML = html;
         }
+
         function updateSelectedCount() {
             const selectedCheckboxes = document.querySelectorAll('input[name="selectedEmployees"]:checked');
             const countDiv = document.getElementById('selectedCount');
@@ -436,23 +769,28 @@
                 countDiv.classList.add('hidden');
             }
         }
+
         function calculateDuration() {
             const startTime = document.getElementById('startTime').value;
             const endTime = document.getElementById('endTime').value;
             const durationDisplay = document.getElementById('durationDisplay');
             const durationText = document.getElementById('durationText');
+
             if (startTime && endTime) {
                 const start = new Date(`2000-01-01 ${startTime}`);
                 const end = new Date(`2000-01-01 ${endTime}`);
+
                 if (end > start) {
                     const diffMs = end - start;
                     // Kurangi 1 jam (3600000 ms) untuk istirahat dalam preview
                     const adjustedDiffMs = diffMs - (1 * 60 * 60 * 1000);
                     let displayHours = Math.floor(adjustedDiffMs / (1000 * 60 * 60));
                     let displayMinutes = Math.floor((adjustedDiffMs % (1000 * 60 * 60)) / (1000 * 60));
+
                     // Pastikan durasi tidak negatif
                     if (displayHours < 0) displayHours = 0;
                     if (displayMinutes < 0) displayMinutes = 0;
+
                     durationText.textContent = `${displayHours} jam ${displayMinutes} menit`;
                     durationDisplay.classList.remove('hidden');
                 } else {
@@ -462,9 +800,11 @@
                 durationDisplay.classList.add('hidden');
             }
         }
+
         function formatTime(time) {
             return time.replace(':', '.');
         }
+
         function showLoading() {
             document.getElementById('loadingIndicator').classList.remove('hidden');
             const submitBtn = document.getElementById('submitBtn');
@@ -474,12 +814,14 @@
             `;
             submitBtn.disabled = true;
         }
+
         function hideLoading() {
             document.getElementById('loadingIndicator').classList.add('hidden');
             const submitBtn = document.getElementById('submitBtn');
             submitBtn.innerHTML = '<span>Simpan Pengajuan</span>';
             submitBtn.disabled = false;
         }
+
         function showNotification(message, type = 'info') {
             // Buat elemen notifikasi
             const notification = document.createElement('div');
@@ -498,10 +840,12 @@
                 </div>
             `;
             document.body.appendChild(notification);
+
             // Animasi masuk
             setTimeout(() => {
                 notification.classList.remove('translate-x-full');
             }, 100);
+
             // Auto remove setelah 5 detik
             setTimeout(() => {
                 if (notification.parentNode) {
@@ -516,76 +860,278 @@
         }
 
         // --- Fungsi-fungsi untuk komunikasi dengan GAS ---
-        function loadMasterData() {
-            console.log('Memuat master data dari Google Sheets...');
-            showNotification('🔄 Memuat data karyawan...', 'info');
-            google.script.run
-                .withSuccessHandler(processMasterData)
-                .withFailureHandler(function(error) {
-                    console.error('Gagal memuat master ', error);
-                    showNotification('❌ Gagal memuat master  ' + error.message, 'error');
-                })
-                .getMasterDataFromSheet();
+        async function loadMasterData() {
+            try {
+                console.log('Memuat master data dari Google Sheets...');
+                showNotification('🔄 Memuat data karyawan dari Google Sheets...', 'info');
+                const timestamp = Date.now();
+                const callbackName = `jsonpCallback${timestamp}`;
+                return new Promise((resolve, reject) => {
+                    let script;
+                    const timeoutId = setTimeout(() => {
+                        cleanup();
+                        reject(new Error('Timeout - Google Sheets tidak merespons dalam 15 detik. Periksa URL script atau koneksi internet.'));
+                    }, 15000);
+
+                    const cleanup = () => {
+                        if (window[callbackName]) {
+                            delete window[callbackName];
+                        }
+                        if (script && script.parentNode) {
+                            document.head.removeChild(script);
+                        }
+                        clearTimeout(timeoutId);
+                    };
+
+                    window[callbackName] = function(data) {
+                        try {
+                            cleanup();
+                            console.log('JSONP response received:', data);
+                            if (data && data.success && data.data && Array.isArray(data.data)) {
+                                processMasterData(data);
+                                resolve();
+                            } else {
+                                throw new Error(data.error || 'Format data tidak valid atau kosong');
+                            }
+                        } catch (error) {
+                            reject(error);
+                        }
+                    };
+
+                    script = document.createElement('script');
+                    script.src = `${SCRIPT_URL}?action=getMasterData&sheet=Sheet12&callback=${callbackName}&timestamp=${timestamp}`;
+                    script.onerror = () => {
+                        cleanup();
+                        reject(new Error('Network error - tidak dapat terhubung ke Google Sheets. Periksa URL script atau deployment.'));
+                    };
+                    script.onload = () => {
+                        console.log('JSONP script loaded successfully');
+                    };
+                    document.head.appendChild(script);
+                    console.log('JSONP request sent:', script.src);
+                });
+            } catch (error) {
+                console.error('❌ Error loading master data:', error);
+                showNotification(`❌ Gagal memuat master data: ${error.message}. Menggunakan data default.`, 'error');
+                // Load default data if Google Sheets fails
+                loadDefaultData();
+            }
         }
 
-        // Fungsi baru untuk memuat data lembur dari GAS
-        function loadOvertimeData() {
-             console.log('Memuat data lembur dari Google Sheets...');
-             google.script.run
-                 .withSuccessHandler(updateTableAndStats)
-                 .withFailureHandler(function(error) {
-                     console.error('Gagal memuat data lembur:', error);
-                     showNotification('❌ Gagal memuat data lembur: ' + error.message, 'error');
-                 })
-                 .getAllOvertimeData();
+        // Fungsi untuk memuat data lembur dari Google Sheets menggunakan JSONP
+        // HANYA ADA SATU DEFINISI FUNGSI INI
+        async function loadOvertimeData() {
+            try {
+                console.log('Memuat data lembur dari Google Sheets (JSONP)...');
+                const timestamp = Date.now();
+                const callbackName = `loadOvertimeCallback${timestamp}`;
+                return new Promise((resolve, reject) => {
+                    let script;
+                    const timeoutId = setTimeout(() => {
+                        cleanup();
+                        reject(new Error('Timeout memuat data lembur.'));
+                    }, 15000);
+
+                    const cleanup = () => {
+                        if (window[callbackName]) {
+                            delete window[callbackName];
+                        }
+                        if (script && script.parentNode) {
+                            document.head.removeChild(script);
+                        }
+                        clearTimeout(timeoutId);
+                    };
+
+                    window[callbackName] = function(response) {
+                        try {
+                            cleanup();
+                            console.log('JSONP loadOvertime response:', response);
+                            if (response && response.success && Array.isArray(response.data)) {
+                                overtimeData = response.data; // Isi array lokal dengan data dari server
+                                console.log('✅ Data lembur berhasil dimuat dari Google Sheets (JSONP):', overtimeData.length, 'pengajuan');
+                                updateTable(); // Update tabel dengan data baru
+                                updateStats();  // Update statistik dengan data baru
+                                resolve(response.data);
+                            } else {
+                                throw new Error(response.error || 'Format data lembur tidak valid');
+                            }
+                        } catch (error) {
+                            console.error('Error processing overtime data (JSONP):', error);
+                            reject(error);
+                        }
+                    };
+
+                    script = document.createElement('script');
+                    script.src = `${SCRIPT_URL}?action=getAllOvertimeData&callback=${callbackName}&timestamp=${timestamp}`;
+                    script.onerror = () => {
+                        cleanup();
+                        reject(new Error('Network error saat memuat data lembur (JSONP).'));
+                    };
+                    document.head.appendChild(script);
+                    console.log('JSONP loadOvertime request sent:', script.src);
+                });
+            } catch (error) {
+                console.error('Error loading overtime data (JSONP):', error);
+                showNotification(`❌ Gagal memuat riwayat lembur (JSONP): ${error.message}`, 'error');
+                overtimeData = []; // Kosongkan jika gagal
+                updateTable(); // Update tabel agar menampilkan pesan kosong
+                updateStats();  // Update statistik agar tetap akurat
+            }
         }
 
-        function saveToGoogleSheets(data) {
-            console.log('Menyimpan data ke Google Sheets:', data);
-            showLoading();
-            google.script.run
-                .withSuccessHandler(function(result) {
-                    hideLoading();
-                    console.log('Data berhasil disimpan:', result);
-                    if (result.success) {
-                        showNotification(result.message, 'success');
-                        // Tutup modal dan tampilkan success
-                        closeModal();
-                        document.getElementById('successModal').classList.remove('hidden');
-                        // Muat ulang data dari Google Sheets untuk menampilkan yang baru
-                        loadOvertimeData(); // Panggil fungsi untuk memuat data lembur setelah simpan
-                    } else {
-                        throw new Error(result.error || 'Gagal menyimpan data');
+        // Fungsi save yang DIPERBAIKI (menggunakan POST JSON, JSONP fallback)
+        async function saveToGoogleSheets(data) {
+            try {
+                console.log('Mencoba menyimpan data ke Google Sheets (POST JSON):', data);
+                // Prepare data with proper structure
+                const payload = {
+                    action: 'saveOvertimeData',
+                    date: data.date,
+                    line: data.line,
+                    startTime: data.startTime,
+                    endTime: data.endTime,
+                    task: data.task,
+                    employees: data.employees,
+                    timestamp: data.timestamp
+                };
+                console.log('Payload prepared for POST:', payload);
+
+                const response = await fetch(SCRIPT_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(payload)
+                });
+
+                console.log('Raw POST response status:', response.status);
+                console.log('Raw POST response headers:', response.headers);
+
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    console.error('POST response error text:', errorText);
+                    throw new Error(`HTTP error! status: ${response.status}, message: ${errorText}`);
+                }
+
+                const result = await response.json();
+                console.log('POST response JSON:', result);
+
+                if (result.success) {
+                     console.log('✅ Data berhasil disimpan ke Google Sheets melalui POST (JSON).');
+                     return result;
+                } else {
+                     throw new Error(result.error || 'Gagal menyimpan data melalui POST (JSON)');
+                }
+            } catch (error) {
+                console.error('Error saving via POST:', error);
+                console.log('POST failed, trying JSONP fallback...');
+                // Jika POST gagal, coba JSONP sebagai fallback untuk menyimpan
+                return saveToGoogleSheetsJsonp(data);
+            }
+        }
+
+         // Fallback save menggunakan JSONP (mengirim ke doGet)
+        async function saveToGoogleSheetsJsonp(data) {
+            return new Promise((resolve, reject) => {
+                const timestamp = Date.now();
+                const callbackName = `saveCallback${timestamp}`;
+                const timeoutId = setTimeout(() => {
+                    cleanup();
+                    console.log('JSONP Timeout reached for save.');
+                    reject(new Error('JSONP Request Timeout for save'));
+                }, 15000);
+
+                const cleanup = () => {
+                    if (window[callbackName]) {
+                        delete window[callbackName];
                     }
-                })
-                .withFailureHandler(function(error) {
-                    hideLoading();
-                    console.error('Gagal menyimpan data:', error);
-                    showNotification('❌ Gagal menyimpan  ' + error.message, 'error');
-                })
-                .submitOvertimeBulk(data);
+                    const script = document.querySelector(`script[src*="${callbackName}"]`);
+                    if (script && script.parentNode) {
+                        document.head.removeChild(script);
+                    }
+                    clearTimeout(timeoutId);
+                };
+
+                window[callbackName] = function(result) {
+                    try {
+                        cleanup();
+                        console.log('JSONP save response:', result);
+                        if (result && result.success) {
+                             console.log('✅ Data berhasil disimpan ke Google Sheets melalui JSONP.');
+                             resolve(result);
+                        } else {
+                             console.error('JSONP returned error or no success flag:', result);
+                             reject(new Error(result.error || 'JSONP returned failure or no success flag'));
+                        }
+                    } catch (error) {
+                        console.error('Error processing JSONP save response:', error);
+                        reject(error);
+                    }
+                };
+
+                const jsonpParams = new URLSearchParams({
+                    action: 'saveOvertimeData',
+                    date: data.date,
+                    line: data.line,
+                    startTime: data.startTime,
+                    endTime: data.endTime,
+                    task: data.task,
+                    employees: JSON.stringify(data.employees),
+                    timestamp: data.timestamp,
+                    callback: callbackName
+                });
+
+                const script = document.createElement('script');
+                script.src = `${SCRIPT_URL}?${jsonpParams.toString()}`;
+                script.onerror = () => {
+                    cleanup();
+                    console.log('JSONP script load error for save');
+                    reject(new Error('JSONP Script Load Error for save'));
+                };
+                document.head.appendChild(script);
+                console.log('JSONP save request sent:', script.src);
+            });
         }
 
         // --- Handler untuk google.script.run ---
         function processMasterData(data) {
-            try {
-                console.log('Processing master data from GAS:', data);
-                employees = data.slice(1).map(row => ({
-                    id: String(row[0] || "").trim(),
-                    name: String(row[1] || "").trim(),
+    try {
+        console.log('Processing master data:', data); // Log untuk debugging
+        // Pengecekan tipe data
+        if (!data || typeof data !== 'object') {
+            throw new Error('Data dari server bukan objek: ' + typeof data);
+        }
+        if (!Array.isArray(data.data)) {
+            throw new Error('data.data dari server bukan array: ' + typeof data.data);
+        }
+        // Clear existing data
+        employees = [];
+        // Skip header row (index 0) dan mulai dari row 1
+        // Gunakan slice(1) pada data.data
+        const rows = data.data.slice(1); // Ambil baris-baris tanpa header
+        for (let i = 0; i < rows.length; i++) { // Loop dimulai dari 0 karena rows sudah tanpa header
+            const row = rows[i];
+            if (row && row.length >= 3 && row[0] && row[1]) {
+                employees.push({
+                    id: String(row[0]).trim(),
+                    name: String(row[1]).trim(),
                     dept: String(row[2] || "").trim()
-                })).filter(emp => emp.id && emp.name); // Filter baris kosong
-
-                document.getElementById('totalEmployees').textContent = employees.length;
-                populateLineOptions();
-                console.log('✅ Master data berhasil dimuat:', employees.length, 'karyawan');
-                showNotification(`✅ Master data dimuat: ${employees.length} karyawan`, 'success');
-            } catch (error) {
-                console.error('Error processing master ', error);
-                showNotification(`❌ Error memproses  ${error.message}`, 'error');
+                });
             }
         }
-
+        // Update total karyawan di dashboard
+        document.getElementById('totalEmployees').textContent = employees.length;
+        // Populate line options dynamically
+        populateLineOptions();
+        console.log('✅ Master data berhasil dimuat:', employees.length, 'karyawan');
+        // Show success message
+        showNotification(`✅ Master data berhasil dimuat: ${employees.length} karyawan`, 'success');
+    } catch (error) {
+        console.error('Error processing master data:', error);
+        showNotification(`❌ Error memproses data: ${error.message}`, 'error');
+        loadDefaultData();
+    }
+}
         // Handler untuk data lembur dari GAS
         function updateTableAndStats(data) {
              console.log('Updating table and stats with data from GAS:', data);
@@ -593,10 +1139,10 @@
              updateTable();
              updateStats();
         }
-
-        // --- Event Listeners ---
-        document.getElementById('overtimeForm').addEventListener('submit', function(e) {
+        // Event Listener Submit (HANYA ADA SATU DAN DITEMPATKAN DENGAN BENAR)
+        document.getElementById('overtimeForm').addEventListener('submit', async function(e) {
             e.preventDefault();
+            showLoading();
             const formData = {
                 date: document.getElementById('overtimeDate').value,
                 line: document.getElementById('lineSelect').value,
@@ -606,7 +1152,7 @@
                 employees: [],
                 timestamp: new Date().toISOString()
             };
-
+            // Ambil karyawan yang dipilih
             const selectedCheckboxes = document.querySelectorAll('input[name="selectedEmployees"]:checked');
             selectedCheckboxes.forEach(checkbox => {
                 const employee = employees.find(emp => emp.id === checkbox.value);
@@ -617,19 +1163,33 @@
                     });
                 }
             });
-
             if (formData.employees.length === 0) {
+                hideLoading();
                 alert('Pilih minimal satu karyawan untuk lembur!');
                 return;
             }
-
-            saveToGoogleSheets(formData);
+            try {
+                // Simpan ke Google Sheets (menggunakan POST JSON utama, JSONP fallback)
+                const result = await saveToGoogleSheets(formData);
+                if (result.success) {
+                    // JANGAN simpan ke overtimeData lokal, tapi muat ulang data dari Google Sheets
+                    // overtimeData.push(formData); // Hapus baris ini
+                    await loadOvertimeData(); // Muat ulang data dari Google Sheets untuk menyertakan entri baru
+                    // Update tabel dan statistik (sudah dilakukan di loadOvertimeData)
+                    closeModal();
+                    document.getElementById('successModal').classList.remove('hidden');
+                } else {
+                    throw new Error('Gagal menyimpan data dari server');
+                }
+            } catch (error) {
+                console.error('Submit error:', error);
+                alert('Terjadi kesalahan saat menyimpan data: ' + error.message);
+            } finally {
+                hideLoading();
+            }
         });
-
-        // --- Fungsi Tabel dan Statistik ---
-        function updateTable() {
+                       function updateTable() {
             const tbody = document.getElementById('overtimeTable');
-            // Gunakan filteredData jika ada, jika tidak gunakan overtimeData
             const dataToShow = filteredData.length > 0 ? filteredData : overtimeData;
             if (dataToShow.length === 0) {
                 tbody.innerHTML = `
@@ -649,17 +1209,65 @@
             }
             let html = '';
             dataToShow.forEach((data, index) => {
+                // Perbaikan untuk Karyawan: Tampilkan satu nama per baris
                 // Pastikan data.employees adalah array
-                const employeeNames = (data.employees || []).map(emp => emp.name).join(', ');
-                const timeRange = `${formatTime(data.startTime)} - ${formatTime(data.endTime)}`;
-                // Gunakan durasi yang sudah dihitung dan dikurangi istirahat dari server (data.duration)
-                const duration = data.duration !== undefined ? `${data.duration} jam` : 'N/A'; // Tampilkan jam
+                const employeeNamesDiv = (data.employees || []).map(emp => `<div>${emp.name}</div>`).join('');
+                // Perbaikan untuk Waktu: Gunakan startTime dan endTime dari data (format HH:MM)
+                // Validasi format HH:MM atau ambil dari objek Date jika perlu
+                let startTimeFormatted, endTimeFormatted;
+                if (typeof data.startTime === 'string' && data.startTime.match(/^\d{2}:\d{2}$/)) {
+                    startTimeFormatted = data.startTime;
+                } else if (data.startTime instanceof Date) {
+                    // Jika masih objek Date (kemungkinan kecil setelah perbaikan code.gs)
+                    startTimeFormatted = data.startTime.toTimeString().substr(0, 5); // Ambil HH:MM
+                } else {
+                    startTimeFormatted = 'N/A';
+                }
+                if (typeof data.endTime === 'string' && data.endTime.match(/^\d{2}:\d{2}$/)) {
+                    endTimeFormatted = data.endTime;
+                } else if (data.endTime instanceof Date) {
+                     // Jika masih objek Date (kemungkinan kecil setelah perbaikan code.gs)
+                    endTimeFormatted = data.endTime.toTimeString().substr(0, 5); // Ambil HH:MM
+                } else {
+                    endTimeFormatted = 'N/A';
+                }
+                const timeRange = `${startTimeFormatted} - ${endTimeFormatted}`;
+                // Perbaikan untuk Durasi: Gunakan duration dari data (dari Google Sheets, sudah dikurangi istirahat)
+                // Atau hitung ulang berdasarkan startTime dan endTime jika data.duration tidak tersedia
+                let duration;
+                if (data.duration !== undefined) {
+                    // Jika data.duration adalah desimal (misalnya 3.5), ubah ke format jam:menit
+                    const totalMinutes = data.duration * 60;
+                    const hours = Math.floor(totalMinutes / 60);
+                    const minutes = Math.floor(totalMinutes % 60);
+                    duration = `${hours}j ${minutes}m`;
+                } else {
+                    // Jika data.duration tidak ada, hitung ulang berdasarkan startTime dan endTime
+                    // Gunakan format yang sudah difilter
+                    const start = new Date(`2000-01-01T${startTimeFormatted}:00`);
+                    const end = new Date(`2000-01-01T${endTimeFormatted}:00`);
+                    let diffMs = end - start;
+                    if (diffMs < 0) {
+                        // Handle lembur melewati tengah malam
+                        diffMs += 24 * 60 * 60 * 1000;
+                    }
+                    // Kurangi 1 jam (3600000 ms) untuk istirahat
+                    diffMs -= (1 * 60 * 60 * 1000);
+                    // Pastikan durasi tidak negatif
+                    if (diffMs < 0) {
+                        diffMs = 0;
+                    }
+                    const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
+                    const diffMinutes = Math.floor((diffMs % (1000 * 60 * 60)) / (1000 * 60));
+                    duration = `${diffHours}j ${diffMinutes}m`;
+                }
                 // Dynamic color for line badges
                 const lineColors = {
                     'MATTRESS': 'bg-blue-100 text-blue-800',
                     'MATTRESS SPRING': 'bg-purple-100 text-purple-800'
                 };
                 const lineColor = lineColors[data.line] || 'bg-gray-100 text-gray-800';
+                // Tambahkan id unik ke <td> karyawan dan sembunyikan data tambahan dalam atribut data-
                 html += `
                     <tr class="hover:bg-gray-50 transition-colors">
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 font-medium table-cell">${new Date(data.date).toLocaleDateString('id-ID')}</td>
@@ -667,8 +1275,12 @@
                             <span class="px-3 py-1 text-xs font-semibold rounded-full ${lineColor}">${data.line}</span>
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 table-cell">${timeRange}</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 font-medium table-cell">${duration}</td> <!-- Gunakan data.duration -->
-                        <td class="px-6 py-4 text-sm text-gray-900 max-w-xs truncate table-cell" title="${employeeNames}">${employeeNames}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 font-medium table-cell">${duration}</td>
+                        <td class="px-6 py-4 text-sm text-gray-900 table-cell cursor-pointer" id="empCell-${index}" data-date="${data.date}" data-starttime="${startTimeFormatted}" data-endtime="${endTimeFormatted}" data-duration="${duration}">
+                            <div class="max-h-32 overflow-y-auto">
+                                ${employeeNamesDiv}
+                            </div>
+                        </td>
                         <td class="px-6 py-4 text-sm text-gray-900 max-w-xs truncate table-cell" title="${data.task}">${data.task}</td>
                         <td class="px-6 py-4 whitespace-nowrap">
                             <span class="px-3 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">Tersimpan</span>
@@ -677,9 +1289,24 @@
                 `;
             });
             tbody.innerHTML = html;
+            // Tambahkan event listener setelah HTML diisi
+            dataToShow.forEach((data, index) => {
+                const cell = document.getElementById(`empCell-${index}`);
+                if (cell) {
+                    cell.addEventListener('click', () => {
+                        // Ambil data dari atribut data- (sudah difilter di atas)
+                        const date = cell.getAttribute('data-date');
+                        const startTime = cell.getAttribute('data-starttime');
+                        const endTime = cell.getAttribute('data-endtime');
+                        const duration = cell.getAttribute('data-duration');
+                        const employees = data.employees; // Ambil array employees dari scope luar
+                        // Panggil fungsi modal dengan semua data
+                        openEmployeeDetailModal(date, startTime, endTime, duration, employees);
+                    });
+                }
+            });
         }
-
-        function updateStats() {
+         function updateStats() {
             const today = new Date().toISOString().split('T')[0];
             const currentMonth = new Date().getMonth();
             const currentYear = new Date().getFullYear();
@@ -692,7 +1319,6 @@
             document.getElementById('todayCount').textContent = todayData.length;
             document.getElementById('monthlyCount').textContent = monthlyData.length;
         }
-
         function filterData() {
             const filterDate = document.getElementById('filterDate').value;
             const filterLine = document.getElementById('filterLine').value;
@@ -710,32 +1336,32 @@
             });
             updateTable(); // Update tabel dengan data yang difilter
         }
-
         function clearFilters() {
             document.getElementById('filterDate').value = '';
             document.getElementById('filterLine').value = '';
             filteredData = []; // Kosongkan filteredData
             updateTable(); // Update tabel tanpa filter
         }
-
         function refreshData() {
             const refreshIcon = document.getElementById('refreshIcon');
             refreshIcon.style.animation = 'spin 1s linear infinite';
             setTimeout(() => {
                 refreshIcon.style.animation = '';
-                loadOvertimeData(); // Muat ulang data dari Google Sheets
+                // Muat ulang data dari Google Sheets
+                loadOvertimeData(); // Panggil fungsi untuk memuat data lembur
             }, 1000);
         }
-
         function exportToCSV() {
             if (overtimeData.length === 0) {
                 showNotification('Tidak ada data untuk diekspor!', 'error');
                 return;
             }
-            let csv = 'Tanggal,Line,Jam Mulai,Jam Selesai,Durasi (jam),NIK,Nama Karyawan,Tugas Lembur\n'; // Sesuaikan header CSV
+            let csv = 'Tanggal,Line,Jam Mulai,Jam Selesai,Durasi (jam),NIK,Nama Karyawan,Tugas Lembur
+'; // Sesuaikan header CSV
             overtimeData.forEach(data => {
                 data.employees.forEach(employee => {
-                    csv += `"${data.date}","${data.line}","${data.startTime}","${data.endTime}","${data.duration}","${employee.id}","${employee.name}","${data.task}"\n`; // Gunakan data.duration
+                    csv += `"${data.date}","${data.line}","${data.startTime}","${data.endTime}","${data.duration}","${employee.id}","${employee.name}","${data.task}"
+`; // Gunakan data.duration
                 });
             });
             const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
@@ -749,17 +1375,16 @@
             document.body.removeChild(link);
             showNotification('File CSV berhasil diunduh!', 'success');
         }
-
-        // Initialize application
-        function initializeApp() {
+         // Initialize Application (HANYA ADA SATU PEMANGGILAN)
+        // Pastikan ini dipanggil sekali saja
+        async function initializeApp() { // Jadikan async
             document.getElementById('overtimeDate').valueAsDate = new Date();
-            loadMasterData(); // Muat master data saat halaman dimuat
-            loadOvertimeData(); // Muat data lembur saat halaman dimuat
+            await loadMasterData(); // Tunggu master data selesai
+            await loadOvertimeData(); // Tunggu overtime data selesai
         }
-
         // Start the application when page loads
+        // Hanya ada satu event listener DOMContentLoaded
         document.addEventListener('DOMContentLoaded', initializeApp);
-
     </script>
     <!-- Hapus script Cloudflare jika tidak relevan -->
     <!-- <script>(function(){...})()</script> -->
