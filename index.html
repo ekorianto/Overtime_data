@@ -520,69 +520,91 @@
 
     // --- Rekap Submit ---
     document.getElementById('rekapForm').addEventListener('submit', function(e) {
-        e.preventDefault();
-        const startDate = document.getElementById('startDate').value;
-        const endDate = document.getElementById('endDate').value;
-        const selectedEmployeeId = document.getElementById('employeeFilter').value;
-        if (!startDate || !endDate) {
-            alert('Pilih tanggal mulai dan selesai.');
-            return;
+    e.preventDefault();
+    const startDate = document.getElementById('startDate').value;
+    const endDate = document.getElementById('endDate').value;
+    const selectedEmployeeId = document.getElementById('employeeFilter').value;
+
+    if (!startDate || !endDate) {
+        alert('Pilih tanggal mulai dan selesai.');
+        return;
+    }
+
+    const start = new Date(startDate);
+    const end = new Date(endDate);
+    if (start > end) {
+        alert('Tanggal mulai tidak boleh setelah tanggal selesai.');
+        return;
+    }
+
+    console.log("📅 Rekap diminta:", { startDate, endDate, karyawan: selectedEmployeeId });
+    console.log("📊 Data lembur asli (cek format):", overtimeData);
+    console.log("📊 Contoh entri pertama:", overtimeData[0]);
+
+    const filteredEntries = overtimeData.filter(entry => {
+        // Debug: Tampilkan entry yang sedang difilter
+        console.log("🔍 Memeriksa entry:", entry);
+
+        // 1. Filter Tanggal
+        if (!entry.date) {
+            console.log("⚠️ Entry tanpa tanggal dilewati:", entry);
+            return false;
         }
-        const start = new Date(startDate);
-        const end = new Date(endDate);
-        if (start > end) {
-            alert('Tanggal mulai tidak boleh setelah tanggal selesai.');
-            return;
+        const entryDate = new Date(entry.date);
+        if (isNaN(entryDate.getTime())) {
+            console.log("⚠️ Tanggal entry tidak valid dilewati:", entry);
+            return false;
+        }
+        const isInRange = entryDate >= start && entryDate <= end;
+        console.log("📅 Tanggal entry:", entry.date, "| Dalam rentang?", isInRange);
+
+        // 2. Filter Karyawan (jika dipilih)
+        let matchesEmployee = true;
+        if (selectedEmployeeId) {
+            matchesEmployee = entry.employees.some(emp => emp.id === selectedEmployeeId);
+            console.log("👥 Karyawan entry:", entry.employees.map(e => e.id), "| Cocok dengan", selectedEmployeeId, "?", matchesEmployee);
         }
 
-        console.log("📅 Rekap diminta:", { startDate, endDate, karyawan: selectedEmployeeId });
-        console.log("📊 Data lembur asli:", overtimeData);
-
-        const filteredEntries = overtimeData.filter(entry => {
-            if (!entry.date) return false;
-            const entryDate = new Date(entry.date);
-            if (isNaN(entryDate.getTime())) return false;
-
-            const isInRange = entryDate >= start && entryDate <= end;
-            const matchesEmployee = !selectedEmployeeId || entry.employees.some(emp => emp.id === selectedEmployeeId);
-
-            return isInRange && matchesEmployee;
-        });
-
-        console.log("📊 Data lembur yang sesuai filter:", filteredEntries.length);
-        console.log("🧾 Data contoh:", filteredEntries.slice(0, 2));
-
-        const rekapMap = {};
-        filteredEntries.forEach(entry => {
-            const entryDuration = parseFloat(entry.duration) || 0;
-            entry.employees.forEach(emp => {
-                if (!selectedEmployeeId || emp.id === selectedEmployeeId) {
-                    if (!rekapMap[emp.id]) {
-                        const empInfo = employees.find(e => e.id === emp.id);
-                        rekapMap[emp.id] = {
-                            nik: emp.id,
-                            nama: empInfo ? empInfo.name : emp.id,
-                            totalJam: 0
-                        };
-                    }
-                    rekapMap[emp.id].totalJam += entryDuration;
-                }
-            });
-        });
-
-        const rekapResults = Object.values(rekapMap)
-            .map(item => ({
-                nik: item.nik,
-                nama: item.nama,
-                totalJam: parseFloat(item.totalJam.toFixed(2))
-            }))
-            .sort((a, b) => a.nama.localeCompare(b.nama));
-
-        console.log("📊 Hasil rekap akhir:", rekapResults);
-
-        showRekapResult(rekapResults, startDate, endDate);
-        closeRekapModal();
+        const result = isInRange && matchesEmployee;
+        console.log("✅ Filter entry:", result, "\n---");
+        return result;
     });
+
+    console.log("📊 Data lembur yang sesuai filter:", filteredEntries.length);
+    console.log("🧾 Data contoh:", filteredEntries.slice(0, 2));
+
+    const rekapMap = {};
+    filteredEntries.forEach(entry => {
+        const entryDuration = parseFloat(entry.duration) || 0;
+        console.log("⏱️ Durasi entry:", entryDuration, "jam");
+        entry.employees.forEach(emp => {
+            if (!selectedEmployeeId || emp.id === selectedEmployeeId) {
+                if (!rekapMap[emp.id]) {
+                    const empInfo = employees.find(e => e.id === emp.id);
+                    rekapMap[emp.id] = {
+                        nik: emp.id,
+                        nama: empInfo ? empInfo.name : emp.id,
+                        totalJam: 0
+                    };
+                }
+                rekapMap[emp.id].totalJam += entryDuration;
+            }
+        });
+    });
+
+    const rekapResults = Object.values(rekapMap)
+        .map(item => ({
+            nik: item.nik,
+            nama: item.nama,
+            totalJam: parseFloat(item.totalJam.toFixed(2))
+        }))
+        .sort((a, b) => a.nama.localeCompare(b.nama));
+
+    console.log("📊 Hasil rekap akhir:", rekapResults);
+
+    showRekapResult(rekapResults, startDate, endDate);
+    closeRekapModal();
+});
 
     // --- Master Data ---
     function populateLineOptions() {
@@ -755,6 +777,7 @@
                     if (res?.success && Array.isArray(res.data)) {
                         overtimeData = res.data;
                         console.log("📊 Data lembur setelah load (cek format):", overtimeData);
+                        console.log("📊 Contoh entri pertama:", overtimeData[0]); // <-- Tambahkan baris ini
                         updateTable();
                         updateStats();
                         resolve();
