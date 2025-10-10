@@ -419,597 +419,587 @@
     </div>
 
     <script>
-        // === CONFIGURASI ===
-        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzOc4bSWA5CtS7pN9ngXHs0Bnf5gr5nbTo1Z2vv7OURELRTaEceTp5PVjhOkrdqNJj-/exec'; // 🔴 GANTI DENGAN URL DEPLOYMENT-MU
+    // GANTI INI DENGAN URL DEPLOYMENT KAMU
+    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbz2reOa-uv6sueDoFZVPxRW0tTFsVDheScU3dnwk6FZEWGwrSY-HXiX87KHUgR1PJ7F/exec'; // 🔴 GANTI DENGAN URL KAMU
 
-        let employees = [];
-        let overtimeData = [];
-        let filteredData = [];
+    // Data lokal
+    let employees = [];
+    let overtimeData = [];
+    let filteredData = [];
 
-        // --- Modal Functions ---
-        function openModal() {
-            document.getElementById('overtimeModal').classList.remove('hidden');
-            document.body.style.overflow = 'hidden';
-        }
-        function closeModal() {
-            document.getElementById('overtimeModal').classList.add('hidden');
-            document.body.style.overflow = 'auto';
-            document.getElementById('overtimeForm').reset();
-            document.getElementById('employeeList').innerHTML = `<div class="text-center text-gray-500 py-8"><svg class="w-12 h-12 mx-auto text-gray-300 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path></svg><p>Pilih line terlebih dahulu</p></div>`;
-            document.getElementById('durationDisplay').classList.add('hidden');
-            document.getElementById('selectedCount').classList.add('hidden');
-        }
-        function closeSuccessModal() {
-            document.getElementById('successModal').classList.add('hidden');
-        }
-        function openEmployeeDetailModal(date, startTime, endTime, duration, employees) {
-            const modal = document.getElementById('employeeDetailModal');
-            document.getElementById('employeeDetailDate').textContent = `Tanggal: ${new Date(date).toLocaleDateString('id-ID')}`;
-            document.getElementById('employeeDetailTime').textContent = `Waktu: ${startTime} - ${endTime}`;
-            document.getElementById('employeeDetailDuration').textContent = `Durasi: ${duration}`;
-            const listDiv = document.getElementById('employeeDetailList');
-            listDiv.innerHTML = '';
-            employees.forEach(emp => {
-                const div = document.createElement('div');
-                div.className = 'py-1 px-2 border-b border-gray-200';
-                div.textContent = `${emp.name} (${emp.id})`;
-                listDiv.appendChild(div);
-            });
-            modal.classList.remove('hidden');
-            document.body.style.overflow = 'hidden';
-        }
-        function closeEmployeeDetailModal() {
-            document.getElementById('employeeDetailModal').classList.add('hidden');
-            document.body.style.overflow = 'auto';
-        }
-        function openRekapModal() {
-            document.getElementById('rekapModal').classList.remove('hidden');
-            document.body.style.overflow = 'hidden';
-            populateEmployeeFilter();
-        }
-        function closeRekapModal() {
-            document.getElementById('rekapModal').classList.add('hidden');
-            document.body.style.overflow = 'auto';
-            document.getElementById('rekapForm').reset();
-        }
-        function closeRekapResultModal() {
-            document.getElementById('rekapResultModal').classList.add('hidden');
-            document.body.style.overflow = 'auto';
-        }
-
-        function populateEmployeeFilter() {
-            const select = document.getElementById('employeeFilter');
-            select.innerHTML = '<option value="">Semua Karyawan</option>';
-            employees.forEach(emp => {
-                const option = document.createElement('option');
-                option.value = emp.id;
-                option.textContent = `${emp.name} (${emp.id})`;
-                select.appendChild(option);
-            });
-        }
-
-        function showRekapResult(results, startDate, endDate) {
-            const formattedStart = new Date(startDate).toLocaleDateString('id-ID');
-            const formattedEnd = new Date(endDate).toLocaleDateString('id-ID');
-            document.getElementById('rekapDateRangeText').textContent = `Tanggal: ${formattedStart} - ${formattedEnd}`;
-            const tableBody = document.getElementById('rekapResultTableBody');
-            tableBody.innerHTML = '';
-            if (results.length === 0) {
-                tableBody.innerHTML = `<tr><td colspan="3" class="px-6 py-4 text-center text-gray-500">Tidak ada data lembur untuk periode dan karyawan yang dipilih.</td></tr>`;
-            } else {
-                results.forEach(result => {
-                    const row = document.createElement('tr');
-                    row.className = 'bg-white border-b hover:bg-gray-50';
-                    row.innerHTML = `
-                        <td class="px-6 py-4 font-medium text-gray-900">${result.nik}</td>
-                        <td class="px-6 py-4">${result.nama}</td>
-                        <td class="px-6 py-4 font-semibold">${result.totalJam} jam</td>
-                    `;
-                    tableBody.appendChild(row);
-                });
-            }
-            document.getElementById('rekapResultModal').classList.remove('hidden');
-            document.body.style.overflow = 'hidden';
-        }
-
-        // --- Rekap Submit ---
-        document.getElementById('rekapForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            const startDate = document.getElementById('startDate').value;
-            const endDate = document.getElementById('endDate').value;
-            const selectedEmployeeId = document.getElementById('employeeFilter').value;
-
-            if (!startDate || !endDate) {
-                alert('Pilih tanggal mulai dan selesai.');
-                return;
-            }
-
-            const start = new Date(startDate);
-            const end = new Date(endDate);
-            if (start > end) {
-                alert('Tanggal mulai tidak boleh setelah tanggal selesai.');
-                return;
-            }
-
-            console.log("📅 Rekap diminta:", { startDate, endDate, karyawan: selectedEmployeeId });
-            console.log("📊 Data lembur asli:", overtimeData);
-
-            // Filter data berdasarkan rentang tanggal dan NIK karyawan
-            const filteredEntries = overtimeData.filter(entry => {
-                // Pastikan tanggal entry valid
-                if (!entry.date) return false;
-                const entryDate = new Date(entry.date);
-                if (isNaN(entryDate.getTime())) return false; // Tanggal tidak valid
-
-                const isInRange = entryDate >= start && entryDate <= end;
-                const matchesEmployee = !selectedEmployeeId || entry.employees.some(emp => emp.id === selectedEmployeeId);
-
-                return isInRange && matchesEmployee;
-            });
-
-            console.log("📊 Data lembur yang sesuai filter:", filteredEntries.length);
-            console.log("🧾 Data contoh:", filteredEntries.slice(0, 2));
-
-            // Hitung total jam per karyawan menggunakan entry.duration LANGSUNG
-            const rekapMap = {};
-            filteredEntries.forEach(entry => {
-                const entryDuration = parseFloat(entry.duration) || 0; // Ambil dari Google Sheets
-                entry.employees.forEach(emp => {
-                    if (!selectedEmployeeId || emp.id === selectedEmployeeId) {
-                        if (!rekapMap[emp.id]) {
-                            const empInfo = employees.find(e => e.id === emp.id);
-                            rekapMap[emp.id] = {
-                                nik: emp.id,
-                                nama: empInfo ? empInfo.name : emp.id,
-                                totalJam: 0
-                            };
-                        }
-                        rekapMap[emp.id].totalJam += entryDuration;
-                    }
-                });
-            });
-
-            const rekapResults = Object.values(rekapMap)
-                .map(item => ({
-                    nik: item.nik,
-                    nama: item.nama,
-                    totalJam: parseFloat(item.totalJam.toFixed(2))
-                }))
-                .sort((a, b) => a.nama.localeCompare(b.nama));
-
-            console.log("📊 Hasil rekap akhir:", rekapResults);
-
-            showRekapResult(rekapResults, startDate, endDate);
-            closeRekapModal();
-            });
-
-        // --- Master Data ---
-        function populateLineOptions() {
-            const uniqueDepts = [...new Set(employees.map(emp => emp.dept).filter(Boolean))].sort();
-            const lineSelect = document.getElementById('lineSelect');
-            lineSelect.innerHTML = '<option value="">-- Pilih Line --</option>';
-            uniqueDepts.forEach(dept => {
-                const opt = document.createElement('option');
-                opt.value = dept;
-                opt.textContent = dept;
-                lineSelect.appendChild(opt);
-            });
-            const filterLine = document.getElementById('filterLine');
-            filterLine.innerHTML = '<option value="">Semua Line</option>';
-            uniqueDepts.forEach(dept => {
-                const opt = document.createElement('option');
-                opt.value = dept;
-                opt.textContent = dept;
-                filterLine.appendChild(opt);
-            });
-            document.getElementById('activeLines').textContent = uniqueDepts.length;
-        }
-
-        function updateEmployeeList() {
-            const selectedLine = document.getElementById('lineSelect').value;
-            const div = document.getElementById('employeeList');
-            if (!selectedLine) {
-                div.innerHTML = `<div class="text-center text-gray-500 py-8"><svg class="w-12 h-12 mx-auto text-gray-300 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path></svg><p>Pilih line terlebih dahulu</p></div>`;
-                return;
-            }
-            const filtered = employees.filter(emp => emp.dept === selectedLine);
-            if (filtered.length === 0) {
-                div.innerHTML = `<div class="text-center text-gray-500 py-8"><p>Tidak ada karyawan di line ini</p></div>`;
-                return;
-            }
-            let html = '<div class="space-y-3">';
-            filtered.forEach(emp => {
-                html += `
-                    <label class="flex items-center space-x-3 p-4 hover:bg-blue-50 rounded-xl cursor-pointer border border-transparent hover:border-blue-200 transition-all">
-                        <input type="checkbox" name="selectedEmployees" value="${emp.id}" onchange="updateSelectedCount()" class="w-5 h-5 text-blue-600 border-gray-300 rounded focus:ring-blue-500">
-                        <div class="flex-1">
-                            <span class="font-semibold text-gray-900">${emp.name}</span>
-                            <span class="text-sm text-gray-500 ml-2">(${emp.id})</span>
-                        </div>
-                    </label>
+    // --- Modal Functions ---
+    function openModal() {
+        document.getElementById('overtimeModal').classList.remove('hidden');
+        document.body.style.overflow = 'hidden';
+    }
+    function closeModal() {
+        document.getElementById('overtimeModal').classList.add('hidden');
+        document.body.style.overflow = 'auto';
+        document.getElementById('overtimeForm').reset();
+        document.getElementById('employeeList').innerHTML = `
+            <div class="text-center text-gray-500 py-8">
+                <svg class="w-12 h-12 mx-auto text-gray-300 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
+                </svg>
+                <p>Pilih line terlebih dahulu</p>
+            </div>
+        `;
+        document.getElementById('durationDisplay').classList.add('hidden');
+        document.getElementById('selectedCount').classList.add('hidden');
+    }
+    function closeSuccessModal() {
+        document.getElementById('successModal').classList.add('hidden');
+    }
+    function openEmployeeDetailModal(date, startTime, endTime, duration, employees) {
+        const modal = document.getElementById('employeeDetailModal');
+        document.getElementById('employeeDetailDate').textContent = `Tanggal: ${new Date(date).toLocaleDateString('id-ID')}`;
+        document.getElementById('employeeDetailTime').textContent = `Waktu: ${startTime} - ${endTime}`;
+        document.getElementById('employeeDetailDuration').textContent = `Durasi: ${duration}`;
+        const listDiv = document.getElementById('employeeDetailList');
+        listDiv.innerHTML = '';
+        employees.forEach(emp => {
+            const div = document.createElement('div');
+            div.className = 'py-1 px-2 border-b border-gray-200';
+            div.textContent = `${emp.name} (${emp.id})`;
+            listDiv.appendChild(div);
+        });
+        modal.classList.remove('hidden');
+        document.body.style.overflow = 'hidden';
+    }
+    function closeEmployeeDetailModal() {
+        document.getElementById('employeeDetailModal').classList.add('hidden');
+        document.body.style.overflow = 'auto';
+    }
+    function openRekapModal() {
+        document.getElementById('rekapModal').classList.remove('hidden');
+        document.body.style.overflow = 'hidden';
+        populateEmployeeFilter();
+    }
+    function closeRekapModal() {
+        document.getElementById('rekapModal').classList.add('hidden');
+        document.body.style.overflow = 'auto';
+        document.getElementById('rekapForm').reset();
+    }
+    function closeRekapResultModal() {
+        document.getElementById('rekapResultModal').classList.add('hidden');
+        document.body.style.overflow = 'auto';
+    }
+    function populateEmployeeFilter() {
+        const select = document.getElementById('employeeFilter');
+        select.innerHTML = '<option value="">Semua Karyawan</option>';
+        employees.forEach(emp => {
+            const option = document.createElement('option');
+            option.value = emp.id;
+            option.textContent = `${emp.name} (${emp.id})`;
+            select.appendChild(option);
+        });
+    }
+    function showRekapResult(results, startDate, endDate) {
+        const formattedStart = new Date(startDate).toLocaleDateString('id-ID');
+        const formattedEnd = new Date(endDate).toLocaleDateString('id-ID');
+        document.getElementById('rekapDateRangeText').textContent = `Tanggal: ${formattedStart} - ${formattedEnd}`;
+        const tableBody = document.getElementById('rekapResultTableBody');
+        tableBody.innerHTML = '';
+        if (results.length === 0) {
+            tableBody.innerHTML = `<tr><td colspan="3" class="px-6 py-4 text-center text-gray-500">Tidak ada data lembur untuk periode dan karyawan yang dipilih.</td></tr>`;
+        } else {
+            results.forEach(result => {
+                const row = document.createElement('tr');
+                row.className = 'bg-white border-b hover:bg-gray-50';
+                row.innerHTML = `
+                    <td class="px-6 py-4 font-medium text-gray-900">${result.nik}</td>
+                    <td class="px-6 py-4">${result.nama}</td>
+                    <td class="px-6 py-4 font-semibold">${result.totalJam} jam</td>
                 `;
+                tableBody.appendChild(row);
             });
-            html += '</div>';
-            div.innerHTML = html;
+        }
+        document.getElementById('rekapResultModal').classList.remove('hidden');
+        document.body.style.overflow = 'hidden';
+    }
+
+    // --- Rekap Submit ---
+    document.getElementById('rekapForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        const startDate = document.getElementById('startDate').value;
+        const endDate = document.getElementById('endDate').value;
+        const selectedEmployeeId = document.getElementById('employeeFilter').value;
+        if (!startDate || !endDate) {
+            alert('Pilih tanggal mulai dan selesai.');
+            return;
+        }
+        const start = new Date(startDate);
+        const end = new Date(endDate);
+        if (start > end) {
+            alert('Tanggal mulai tidak boleh setelah tanggal selesai.');
+            return;
         }
 
-        function updateSelectedCount() {
-            const count = document.querySelectorAll('input[name="selectedEmployees"]:checked').length;
-            const el = document.getElementById('selectedCount');
-            if (count > 0) {
-                el.textContent = `${count} karyawan dipilih`;
-                el.classList.remove('hidden');
-            } else {
-                el.classList.add('hidden');
-            }
-        }
+        console.log("📅 Rekap diminta:", { startDate, endDate, karyawan: selectedEmployeeId });
+        console.log("📊 Data lembur asli:", overtimeData);
 
-        function calculateDuration() {
-            const startVal = document.getElementById('startTime').value;
-            const endVal = document.getElementById('endTime').value;
-            const display = document.getElementById('durationDisplay');
-            const text = document.getElementById('durationText');
-            if (startVal && endVal) {
-                const start = new Date(`2000-01-01T${startVal}`);
-                const end = new Date(`2000-01-01T${endVal}`);
-                if (end > start) {
-                    let diff = (end - start) - (60 * 60 * 1000); // minus 1 jam
-                    if (diff < 0) diff = 0;
-                    const h = Math.floor(diff / (1000 * 60 * 60));
-                    const m = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-                    text.textContent = `${h} jam ${m} menit`;
-                    display.classList.remove('hidden');
-                } else {
-                    display.classList.add('hidden');
+        const filteredEntries = overtimeData.filter(entry => {
+            if (!entry.date) return false;
+            const entryDate = new Date(entry.date);
+            if (isNaN(entryDate.getTime())) return false;
+
+            const isInRange = entryDate >= start && entryDate <= end;
+            const matchesEmployee = !selectedEmployeeId || entry.employees.some(emp => emp.id === selectedEmployeeId);
+
+            return isInRange && matchesEmployee;
+        });
+
+        console.log("📊 Data lembur yang sesuai filter:", filteredEntries.length);
+        console.log("🧾 Data contoh:", filteredEntries.slice(0, 2));
+
+        const rekapMap = {};
+        filteredEntries.forEach(entry => {
+            const entryDuration = parseFloat(entry.duration) || 0;
+            entry.employees.forEach(emp => {
+                if (!selectedEmployeeId || emp.id === selectedEmployeeId) {
+                    if (!rekapMap[emp.id]) {
+                        const empInfo = employees.find(e => e.id === emp.id);
+                        rekapMap[emp.id] = {
+                            nik: emp.id,
+                            nama: empInfo ? empInfo.name : emp.id,
+                            totalJam: 0
+                        };
+                    }
+                    rekapMap[emp.id].totalJam += entryDuration;
                 }
+            });
+        });
+
+        const rekapResults = Object.values(rekapMap)
+            .map(item => ({
+                nik: item.nik,
+                nama: item.nama,
+                totalJam: parseFloat(item.totalJam.toFixed(2))
+            }))
+            .sort((a, b) => a.nama.localeCompare(b.nama));
+
+        console.log("📊 Hasil rekap akhir:", rekapResults);
+
+        showRekapResult(rekapResults, startDate, endDate);
+        closeRekapModal();
+    });
+
+    // --- Master Data ---
+    function populateLineOptions() {
+        const uniqueDepts = [...new Set(employees.map(emp => emp.dept).filter(Boolean))].sort();
+        const lineSelect = document.getElementById('lineSelect');
+        lineSelect.innerHTML = '<option value="">-- Pilih Line --</option>';
+        uniqueDepts.forEach(dept => {
+            const opt = document.createElement('option');
+            opt.value = dept;
+            opt.textContent = dept;
+            lineSelect.appendChild(opt);
+        });
+        const filterLine = document.getElementById('filterLine');
+        filterLine.innerHTML = '<option value="">Semua Line</option>';
+        uniqueDepts.forEach(dept => {
+            const opt = document.createElement('option');
+            opt.value = dept;
+            opt.textContent = dept;
+            filterLine.appendChild(opt);
+        });
+        document.getElementById('activeLines').textContent = uniqueDepts.length;
+    }
+
+    function updateEmployeeList() {
+        const selectedLine = document.getElementById('lineSelect').value;
+        const div = document.getElementById('employeeList');
+        if (!selectedLine) {
+            div.innerHTML = `<div class="text-center text-gray-500 py-8"><svg class="w-12 h-12 mx-auto text-gray-300 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path></svg><p>Pilih line terlebih dahulu</p></div>`;
+            return;
+        }
+        const filtered = employees.filter(emp => emp.dept === selectedLine);
+        if (filtered.length === 0) {
+            div.innerHTML = `<div class="text-center text-gray-500 py-8"><p>Tidak ada karyawan di line ini</p></div>`;
+            return;
+        }
+        let html = '<div class="space-y-3">';
+        filtered.forEach(emp => {
+            html += `
+                <label class="flex items-center space-x-3 p-4 hover:bg-blue-50 rounded-xl cursor-pointer border border-transparent hover:border-blue-200 transition-all">
+                    <input type="checkbox" name="selectedEmployees" value="${emp.id}" onchange="updateSelectedCount()" class="w-5 h-5 text-blue-600 border-gray-300 rounded focus:ring-blue-500">
+                    <div class="flex-1">
+                        <span class="font-semibold text-gray-900">${emp.name}</span>
+                        <span class="text-sm text-gray-500 ml-2">(${emp.id})</span>
+                    </div>
+                </label>
+            `;
+        });
+        html += '</div>';
+        div.innerHTML = html;
+    }
+
+    function updateSelectedCount() {
+        const count = document.querySelectorAll('input[name="selectedEmployees"]:checked').length;
+        const el = document.getElementById('selectedCount');
+        if (count > 0) {
+            el.textContent = `${count} karyawan dipilih`;
+            el.classList.remove('hidden');
+        } else {
+            el.classList.add('hidden');
+        }
+    }
+
+    function calculateDuration() {
+        const startVal = document.getElementById('startTime').value;
+        const endVal = document.getElementById('endTime').value;
+        const display = document.getElementById('durationDisplay');
+        const text = document.getElementById('durationText');
+        if (startVal && endVal) {
+            const start = new Date(`2000-01-01T${startVal}`);
+            const end = new Date(`2000-01-01T${endVal}`);
+            if (end > start) {
+                let diff = (end - start) - (60 * 60 * 1000); // minus 1 jam
+                if (diff < 0) diff = 0;
+                const h = Math.floor(diff / (1000 * 60 * 60));
+                const m = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+                text.textContent = `${h} jam ${m} menit`;
+                display.classList.remove('hidden');
             } else {
                 display.classList.add('hidden');
             }
+        } else {
+            display.classList.add('hidden');
         }
-
-        function showLoading() {
-            document.getElementById('loadingIndicator').classList.remove('hidden');
-            const btn = document.getElementById('submitBtn');
-            btn.innerHTML = '<div class="loading-spinner"></div><span>Menyimpan...</span>';
-            btn.disabled = true;
-        }
-        function hideLoading() {
-            document.getElementById('loadingIndicator').classList.add('hidden');
-            const btn = document.getElementById('submitBtn');
-            btn.innerHTML = '<span>Simpan Pengajuan</span>';
-            btn.disabled = false;
-        }
-
-        function showNotification(msg, type = 'info') {
-            const notif = document.createElement('div');
-            notif.className = `fixed top-4 right-4 z-50 p-4 rounded-lg shadow-lg max-w-sm transform transition-all duration-300 translate-x-full bg-${type === 'success' ? 'green' : type === 'error' ? 'red' : 'blue'}-500 text-white`;
-            notif.innerHTML = `<div class="flex items-center space-x-2"><span class="text-sm notification-text">${msg}</span><button onclick="this.parentElement.remove()" class="text-white hover:text-gray-200 ml-2">×</button></div>`;
-            document.body.appendChild(notif);
-            setTimeout(() => notif.classList.remove('translate-x-full'), 100);
-            setTimeout(() => {
-                notif.classList.add('translate-x-full');
-                setTimeout(() => notif.remove(), 300);
-            }, 5000);
-        }
-
-        // --- Google Sheets Integration ---
-        async function loadMasterData() {
-            try {
-                showNotification('🔄 Memuat master data...', 'info');
-                const ts = Date.now();
-                const cb = `jsonpCallback${ts}`;
-                return new Promise((resolve, reject) => {
-                    let script;
-                    const to = setTimeout(() => {
-                        cleanup(); reject(new Error('Timeout load master data'));
-                    }, 15000);
-                    const cleanup = () => {
-                        delete window[cb];
-                        if (script?.parentNode) script.parentNode.removeChild(script);
-                        clearTimeout(to);
-                    };
-                    window[cb] = (data) => {
-                        cleanup();
-                        if (data?.success && Array.isArray(data.data)) {
-                            employees = data.data.slice(1)
-                                .filter(row => row[0] && row[1])
-                                .map(row => ({
-                                    id: String(row[0]).trim(),
-                                    name: String(row[1]).trim(),
-                                    dept: String(row[2] || '').trim()
-                                }));
-                            document.getElementById('totalEmployees').textContent = employees.length;
-                            populateLineOptions();
-                            showNotification(`✅ ${employees.length} karyawan dimuat`, 'success');
-                            resolve();
-                        } else {
-                            reject(new Error(data?.error || 'Data tidak valid'));
-                        }
-                    };
-                    script = document.createElement('script');
-                    script.src = `${SCRIPT_URL}?action=getMasterData&sheet=MasterData&callback=${cb}&_=${ts}`;
-                    script.onerror = () => { cleanup(); reject(new Error('Gagal memuat master data')); };
-                    document.head.appendChild(script);
-                });
-            } catch (err) {
-                console.error(err);
-                showNotification(`❌ Gagal: ${err.message}`, 'error');
-            }
-        }
-
-        async function loadOvertimeData() {
-            try {
-                const ts = Date.now();
-                const cb = `loadOvertimeCallback${ts}`;
-                return new Promise((resolve, reject) => {
-                    let script;
-                    const to = setTimeout(() => { cleanup(); reject(new Error('Timeout')); }, 15000);
-                    const cleanup = () => {
-                        delete window[cb];
-                        if (script?.parentNode) script.parentNode.removeChild(script);
-                        clearTimeout(to);
-                    };
-                    window[cb] = (res) => {
-                        cleanup();
-                        if (res?.success && Array.isArray(res.data)) {
-                            overtimeData = res.data;
-                            updateTable();
-                            updateStats();
-                            resolve();
-                        } else {
-                            reject(new Error(res?.error || 'Data tidak valid'));
-                        }
-                    };
-                    script = document.createElement('script');
-                    script.src = `${SCRIPT_URL}?action=getAllOvertimeData&callback=${cb}&_=${ts}`;
-                    script.onerror = () => { cleanup(); reject(new Error('Gagal memuat data lembur')); };
-                    document.head.appendChild(script);
-                });
-            } catch (err) {
-                console.error(err);
-                showNotification(`❌ Gagal memuat data lembur: ${err.message}`, 'error');
-                overtimeData = [];
-                updateTable();
-                updateStats();
-            }
-        }
-
-        async function saveToGoogleSheets(data) {
-    return new Promise((resolve, reject) => {
-        const ts = Date.now();
-        const cb = `saveCallback${ts}`;
-        const to = setTimeout(() => {
-            cleanup();
-            reject(new Error('Timeout simpan'));
-        }, 15000);
-        const cleanup = () => {
-            delete window[cb];
-            const s = document.querySelector(`script[src*="${cb}"]`);
-            if (s?.parentNode) s.parentNode.removeChild(s);
-            clearTimeout(to);
-        };
-        window[cb] = (res) => {
-            cleanup();
-            if (res?.success) resolve(res);
-            else reject(new Error(res?.error || 'Simpan gagal'));
-        };
-        const params = new URLSearchParams({
-            action: 'saveOvertimeData',
-            date: data.date,
-            line: data.line,
-            startTime: data.startTime,
-            endTime: data.endTime,
-            task: data.task,
-            employees: JSON.stringify(data.employees),
-            callback: cb
-        });
-        const script = document.createElement('script');
-        script.src = `${SCRIPT_URL}?${params.toString()}`;
-        script.onerror = () => {
-            cleanup();
-            reject(new Error('Gagal memuat script simpan'));
-        };
-        document.head.appendChild(script);
-    });
-}
-
-        // --- Form Submit ---
-        document.getElementById('overtimeForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            showLoading();
-            const formData = {
-                date: document.getElementById('overtimeDate').value,
-                line: document.getElementById('lineSelect').value,
-                startTime: document.getElementById('startTime').value,
-                endTime: document.getElementById('endTime').value,
-                task: document.getElementById('overtimeTask').value,
-                employees: Array.from(document.querySelectorAll('input[name="selectedEmployees"]:checked'))
-                    .map(cb => {
-                        const emp = employees.find(e => e.id === cb.value);
-                        return emp ? { id: emp.id, name: emp.name } : null;
-                    }).filter(Boolean)
-            };
-            if (formData.employees.length === 0) {
-                hideLoading();
-                alert('Pilih minimal satu karyawan!');
-                return;
-            }
-            try {
-                await saveToGoogleSheets(formData);
-                await loadOvertimeData();
-                closeModal();
-                document.getElementById('successModal').classList.remove('hidden');
-            } catch (err) {
-                console.error(err);
-                alert('Gagal menyimpan: ' + err.message);
-            } finally {
-                hideLoading();
-            }
-        });
-
-        function updateTable() {
-    // Cek apakah filter sedang aktif (ada nilai di input filter)
-    const isFilterActive = 
-        document.getElementById('filterDate').value || 
-        document.getElementById('filterLine').value;
-
-    // Jika filter aktif, tampilkan filteredData (bisa kosong)
-    // Jika tidak, tampilkan semua data (overtimeData)
-    const dataToShow = isFilterActive ? filteredData : overtimeData;
-
-    console.log("🔄 Filter aktif:", isFilterActive, "| Menampilkan data:", dataToShow.length, "baris");
-
-    const tbody = document.getElementById('overtimeTable');
-
-    if (dataToShow.length === 0) {
-        let message = isFilterActive 
-            ? 'Tidak ada data sesuai filter yang dipilih' 
-            : 'Belum ada data pengajuan lembur';
-        let subMessage = isFilterActive 
-            ? '' 
-            : '<p class="text-sm">Klik "Buat Pengajuan Lembur" untuk memulai</p>';
-
-        tbody.innerHTML = `
-            <tr>
-                <td colspan="7" class="px-6 py-12 text-center text-gray-500">
-                    <div class="flex flex-col items-center space-y-3">
-                        <svg class="w-12 h-12 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-                        </svg>
-                        <p>${message}</p>
-                        ${subMessage}
-                    </div>
-                </td>
-            </tr>
-        `;
-        return;
     }
 
-    let html = '';
-    dataToShow.forEach((d, i) => {
-        const empDiv = (d.employees || []).map(e => `<div>${e.name}</div>`).join('');
-        const time = `${d.startTime} - ${d.endTime}`;
-        let durasi = 'N/A';
-        if (typeof d.duration === 'number') {
-            const h = Math.floor(d.duration);
-            const m = Math.round((d.duration - h) * 60);
-            durasi = `${h}j ${m}m`;
-        }
-        const lineColor = d.line.includes('SPRING') ? 'bg-purple-100 text-purple-800' : 'bg-blue-100 text-blue-800';
-        html += `
-            <tr class="hover:bg-gray-50">
-                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">${new Date(d.date).toLocaleDateString('id-ID')}</td>
-                <td class="px-6 py-4"><span class="px-3 py-1 text-xs font-semibold rounded-full ${lineColor}">${d.line}</span></td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm">${time}</td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">${durasi}</td>
-                <td class="px-6 py-4 text-sm cursor-pointer" id="empCell-${i}" data-date="${d.date}" data-start="${d.startTime}" data-end="${d.endTime}" data-dur="${durasi}">
-                    <div class="max-h-32 overflow-y-auto">${empDiv}</div>
-                </td>
-                <td class="px-6 py-4 text-sm max-w-xs truncate" title="${d.task}">${d.task}</td>
-                <td class="px-6 py-4"><span class="px-3 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">Tersimpan</span></td>
-            </tr>
-        `;
-    });
+    function showLoading() {
+        document.getElementById('loadingIndicator').classList.remove('hidden');
+        const btn = document.getElementById('submitBtn');
+        btn.innerHTML = '<div class="loading-spinner"></div><span>Menyimpan...</span>';
+        btn.disabled = true;
+    }
+    function hideLoading() {
+        document.getElementById('loadingIndicator').classList.add('hidden');
+        const btn = document.getElementById('submitBtn');
+        btn.innerHTML = '<span>Simpan Pengajuan</span>';
+        btn.disabled = false;
+    }
 
-    tbody.innerHTML = html;
+    function showNotification(msg, type = 'info') {
+        const notif = document.createElement('div');
+        notif.className = `fixed top-4 right-4 z-50 p-4 rounded-lg shadow-lg max-w-sm transform transition-all duration-300 translate-x-full bg-${type === 'success' ? 'green' : type === 'error' ? 'red' : 'blue'}-500 text-white`;
+        notif.innerHTML = `<div class="flex items-center space-x-2"><span class="text-sm notification-text">${msg}</span><button onclick="this.parentElement.remove()" class="text-white hover:text-gray-200 ml-2">×</button></div>`;
+        document.body.appendChild(notif);
+        setTimeout(() => notif.classList.remove('translate-x-full'), 100);
+        setTimeout(() => {
+            notif.classList.add('translate-x-full');
+            setTimeout(() => notif.remove(), 300);
+        }, 5000);
+    }
 
-    // Pasang event listener setelah DOM di-update
-    dataToShow.forEach((d, i) => {
-        const cell = document.getElementById(`empCell-${i}`);
-        if (cell) {
-            cell.addEventListener('click', () => {
-                openEmployeeDetailModal(
-                    cell.dataset.date,
-                    cell.dataset.start,
-                    cell.dataset.end,
-                    cell.dataset.dur,
-                    d.employees
-                );
+    // --- Google Sheets Integration ---
+    async function loadMasterData() {
+        try {
+            showNotification('🔄 Memuat master data...', 'info');
+            const ts = Date.now();
+            const cb = `jsonpCallback${ts}`;
+            return new Promise((resolve, reject) => {
+                let script;
+                const to = setTimeout(() => {
+                    cleanup(); reject(new Error('Timeout load master data'));
+                }, 15000);
+                const cleanup = () => {
+                    delete window[cb];
+                    if (script?.parentNode) script.parentNode.removeChild(script);
+                    clearTimeout(to);
+                };
+                window[cb] = (data) => {
+                    cleanup();
+                    if (data?.success && Array.isArray(data.data)) {
+                        employees = data.data.slice(1)
+                            .filter(row => row[0] && row[1])
+                            .map(row => ({
+                                id: String(row[0]).trim(),
+                                name: String(row[1]).trim(),
+                                dept: String(row[2] || '').trim()
+                            }));
+                        document.getElementById('totalEmployees').textContent = employees.length;
+                        populateLineOptions();
+                        showNotification(`✅ ${employees.length} karyawan dimuat`, 'success');
+                        resolve();
+                    } else {
+                        reject(new Error(data?.error || 'Data tidak valid'));
+                    }
+                };
+                script = document.createElement('script');
+                script.src = `${SCRIPT_URL}?action=getMasterData&sheet=MasterData&callback=${cb}&_=${ts}`;
+                script.onerror = () => { cleanup(); reject(new Error('Gagal memuat master data')); };
+                document.head.appendChild(script);
             });
+        } catch (err) {
+            console.error(err);
+            showNotification(`❌ Gagal: ${err.message}`, 'error');
+        }
+    }
+
+    async function loadOvertimeData() {
+        try {
+            const ts = Date.now();
+            const cb = `loadOvertimeCallback${ts}`;
+            return new Promise((resolve, reject) => {
+                let script;
+                const to = setTimeout(() => { cleanup(); reject(new Error('Timeout')); }, 15000);
+                const cleanup = () => {
+                    delete window[cb];
+                    if (script?.parentNode) script.parentNode.removeChild(script);
+                    clearTimeout(to);
+                };
+                window[cb] = (res) => {
+                    cleanup();
+                    if (res?.success && Array.isArray(res.data)) {
+                        overtimeData = res.data;
+                        console.log("📊 Data lembur setelah load (cek format):", overtimeData);
+                        updateTable();
+                        updateStats();
+                        resolve();
+                    } else {
+                        reject(new Error(res?.error || 'Data tidak valid'));
+                    }
+                };
+                script = document.createElement('script');
+                script.src = `${SCRIPT_URL}?action=getAllOvertimeData&callback=${cb}&_=${ts}`;
+                script.onerror = () => { cleanup(); reject(new Error('Gagal memuat data lembur')); };
+                document.head.appendChild(script);
+            });
+        } catch (err) {
+            console.error(err);
+            showNotification(`❌ Gagal memuat data lembur: ${err.message}`, 'error');
+            overtimeData = [];
+            updateTable();
+            updateStats();
+        }
+    }
+
+    async function saveToGoogleSheets(data) {
+        return new Promise((resolve, reject) => {
+            const ts = Date.now();
+            const cb = `saveCallback${ts}`;
+            const to = setTimeout(() => {
+                cleanup();
+                reject(new Error('Timeout simpan'));
+            }, 15000);
+            const cleanup = () => {
+                delete window[cb];
+                const s = document.querySelector(`script[src*="${cb}"]`);
+                if (s?.parentNode) s.parentNode.removeChild(s);
+                clearTimeout(to);
+            };
+            window[cb] = (res) => {
+                cleanup();
+                if (res?.success) resolve(res);
+                else reject(new Error(res?.error || 'Simpan gagal'));
+            };
+            const params = new URLSearchParams({
+                action: 'saveOvertimeData',
+                date: data.date,
+                line: data.line,
+                startTime: data.startTime,
+                endTime: data.endTime,
+                task: data.task,
+                employees: JSON.stringify(data.employees),
+                callback: cb
+            });
+            const script = document.createElement('script');
+            script.src = `${SCRIPT_URL}?${params.toString()}`;
+            script.onerror = () => { cleanup(); reject(new Error('Gagal simpan via JSONP')); };
+            document.head.appendChild(script);
+        });
+    }
+
+    // --- Form Submit ---
+    document.getElementById('overtimeForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        showLoading();
+        const formData = {
+            date: document.getElementById('overtimeDate').value,
+            line: document.getElementById('lineSelect').value,
+            startTime: document.getElementById('startTime').value,
+            endTime: document.getElementById('endTime').value,
+            task: document.getElementById('overtimeTask').value,
+            employees: Array.from(document.querySelectorAll('input[name="selectedEmployees"]:checked'))
+                .map(cb => {
+                    const emp = employees.find(e => e.id === cb.value);
+                    return emp ? { id: emp.id, name: emp.name } : null;
+                }).filter(Boolean)
+        };
+        if (formData.employees.length === 0) {
+            hideLoading();
+            alert('Pilih minimal satu karyawan!');
+            return;
+        }
+        try {
+            await saveToGoogleSheets(formData);
+            await loadOvertimeData(); // Muat ulang data setelah simpan
+            closeModal();
+            document.getElementById('successModal').classList.remove('hidden');
+        } catch (err) {
+            console.error(err);
+            alert('Gagal menyimpan: ' + err.message);
+        } finally {
+            hideLoading();
         }
     });
-}
 
-        function updateStats() {
-            const today = new Date().toISOString().split('T')[0];
-            const now = new Date();
-            const month = now.getMonth();
-            const year = now.getFullYear();
-            const todayCount = overtimeData.filter(d => d.date === today).length;
-            const monthCount = overtimeData.filter(d => {
-                const dt = new Date(d.date);
-                return dt.getMonth() === month && dt.getFullYear() === year;
-            }).length;
-            document.getElementById('todayCount').textContent = todayCount;
-            document.getElementById('monthlyCount').textContent = monthCount;
+    // --- Table & Stats ---
+    function updateTable() {
+        // Cek apakah filter sedang aktif (ada nilai di input filter)
+        const isFilterActive =
+            document.getElementById('filterDate').value ||
+            document.getElementById('filterLine').value;
+
+        // Jika filter aktif, tampilkan filteredData (bisa kosong)
+        // Jika tidak, tampilkan semua data (overtimeData)
+        const dataToShow = isFilterActive ? filteredData : overtimeData;
+
+        console.log("🔄 Filter aktif:", isFilterActive, "| Menampilkan ", dataToShow.length, "baris");
+
+        const tbody = document.getElementById('overtimeTable');
+
+        if (dataToShow.length === 0) {
+            let message = isFilterActive
+                ? 'Tidak ada data sesuai filter yang dipilih'
+                : 'Belum ada data pengajuan lembur';
+            let subMessage = isFilterActive
+                ? ''
+                : '<p class="text-sm">Klik "Buat Pengajuan Lembur" untuk memulai</p>';
+
+            tbody.innerHTML = `
+                <tr>
+                    <td colspan="7" class="px-6 py-12 text-center text-gray-500">
+                        <div class="flex flex-col items-center space-y-3">
+                            <svg class="w-12 h-12 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                            </svg>
+                            <p>${message}</p>
+                            ${subMessage}
+                        </div>
+                    </td>
+                </tr>
+            `;
+            return;
         }
 
-        function filterData() {
+        let html = '';
+        dataToShow.forEach((d, i) => {
+            const empDiv = (d.employees || []).map(e => `<div>${e.name}</div>`).join('');
+            const time = `${d.startTime} - ${d.endTime}`;
+            let durasi = 'N/A';
+            if (typeof d.duration === 'number') {
+                const h = Math.floor(d.duration);
+                const m = Math.round((d.duration - h) * 60);
+                durasi = `${h}j ${m}m`;
+            }
+            const lineColor = d.line.includes('SPRING') ? 'bg-purple-100 text-purple-800' : 'bg-blue-100 text-blue-800';
+            html += `
+                <tr class="hover:bg-gray-50">
+                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">${new Date(d.date).toLocaleDateString('id-ID')}</td>
+                    <td class="px-6 py-4"><span class="px-3 py-1 text-xs font-semibold rounded-full ${lineColor}">${d.line}</span></td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm">${time}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">${durasi}</td>
+                    <td class="px-6 py-4 text-sm cursor-pointer" id="empCell-${i}" data-date="${d.date}" data-start="${d.startTime}" data-end="${d.endTime}" data-dur="${durasi}">
+                        <div class="max-h-32 overflow-y-auto">${empDiv}</div>
+                    </td>
+                    <td class="px-6 py-4 text-sm max-w-xs truncate" title="${d.task}">${d.task}</td>
+                    <td class="px-6 py-4"><span class="px-3 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">Tersimpan</span></td>
+                </tr>
+            `;
+        });
+        tbody.innerHTML = html;
+        dataToShow.forEach((d, i) => {
+            const cell = document.getElementById(`empCell-${i}`);
+            if (cell) {
+                cell.addEventListener('click', () => {
+                    openEmployeeDetailModal(
+                        cell.dataset.date,
+                        cell.dataset.start,
+                        cell.dataset.end,
+                        cell.dataset.dur,
+                        d.employees
+                    );
+                });
+            }
+        });
+    }
+
+    function updateStats() {
+        const today = new Date().toISOString().split('T')[0];
+        const now = new Date();
+        const month = now.getMonth();
+        const year = now.getFullYear();
+        const todayCount = overtimeData.filter(d => d.date === today).length;
+        const monthCount = overtimeData.filter(d => {
+            const dt = new Date(d.date);
+            return dt.getMonth() === month && dt.getFullYear() === year;
+        }).length;
+        document.getElementById('todayCount').textContent = todayCount;
+        document.getElementById('monthlyCount').textContent = monthCount;
+    }
+
+    function filterData() {
         const filterDate = document.getElementById('filterDate').value;
         const filterLine = document.getElementById('filterLine').value;
 
-        // Selalu filter dari data asli
-        const result = overtimeData.filter(entry => {
-            const matchDate = !filterDate || entry.date === filterDate;
-            const matchLine = !filterLine || entry.line === filterLine;
+        filteredData = overtimeData.filter(d => {
+            const matchDate = !filterDate || d.date === filterDate;
+            const matchLine = !filterLine || d.line === filterLine;
             return matchDate && matchLine;
         });
 
-        // Simpan hasil filter (bisa kosong)
-        filteredData = result;
+        updateTable(); // ✅ Panggil updateTable setelah filter
+    }
 
-        console.log("🔍 Filter aktif:", { tanggal: filterDate, line: filterLine });
-        console.log("📊 Jumlah data setelah filter:", filteredData.length);
-
+    function clearFilters() {
+        document.getElementById('filterDate').value = '';
+        document.getElementById('filterLine').value = '';
+        filteredData = []; // opsional, tapi konsisten
         updateTable();
-        }
+    }
 
-        function clearFilters() {
-            document.getElementById('filterDate').value = '';
-            document.getElementById('filterLine').value = '';
-            filteredData = [];
-            updateTable();
-        }
+    function refreshData() {
+        const icon = document.getElementById('refreshIcon');
+        icon.style.animation = 'spin 1s linear infinite';
+        setTimeout(() => {
+            icon.style.animation = '';
+            loadOvertimeData();
+        }, 1000);
+    }
 
-        function refreshData() {
-            const icon = document.getElementById('refreshIcon');
-            icon.style.animation = 'spin 1s linear infinite';
-            setTimeout(() => {
-                icon.style.animation = '';
-                loadOvertimeData();
-            }, 1000);
+    function exportToCSV() {
+        if (overtimeData.length === 0) {
+            showNotification('Tidak ada data untuk diekspor!', 'error');
+            return;
         }
-
-        function exportToCSV() {
-            if (overtimeData.length === 0) {
-                showNotification('Tidak ada data untuk diekspor!', 'error');
-                return;
-            }
-            let csv = 'Tanggal,Line,Jam Mulai,Jam Selesai,Durasi (jam),NIK,Nama Karyawan,Tugas Lembur\n';
-            overtimeData.forEach(d => {
-                d.employees.forEach(e => {
-                    csv += `"${d.date}","${d.line}","${d.startTime}","${d.endTime}","${d.duration}","${e.id}","${e.name}","${d.task}"\n`;
-                });
+        let csv = 'Tanggal,Line,Jam Mulai,Jam Selesai,Durasi (jam),NIK,Nama Karyawan,Tugas Lembur\n';
+        overtimeData.forEach(d => {
+            d.employees.forEach(e => {
+                csv += `"${d.date}","${d.line}","${d.startTime}","${d.endTime}","${d.duration}","${e.id}","${e.name}","${d.task}"\n`;
             });
-            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = `lembur_${new Date().toISOString().split('T')[0]}.csv`;
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            showNotification('CSV berhasil diunduh!', 'success');
-        }
+        });
+        const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `lembur_${new Date().toISOString().split('T')[0]}.csv`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        showNotification('CSV berhasil diunduh!', 'success');
+    }
 
-        // --- Init App ---
-        async function initializeApp() {
-            document.getElementById('overtimeDate').valueAsDate = new Date();
-            await loadMasterData();
-            await loadOvertimeData();
-        }
+    // --- Init App ---
+    async function initializeApp() {
+        document.getElementById('overtimeDate').valueAsDate = new Date();
+        await loadMasterData();
+        await loadOvertimeData();
+    }
 
-        document.addEventListener('DOMContentLoaded', initializeApp);
-    </script>
+    document.addEventListener('DOMContentLoaded', initializeApp);
+</script>
 </body>
 </html>
