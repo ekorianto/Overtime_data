@@ -519,6 +519,8 @@
             const endDate = document.getElementById('endDate').value;
             const selectedEmployeeId = document.getElementById('employeeFilter').value;
 
+            console.log("📅 Rekap diminta:", { startDate, endDate, karyawan: selectedEmployeeId });
+
             if (!startDate || !endDate) {
                 alert('Pilih tanggal mulai dan selesai.');
                 return;
@@ -539,6 +541,9 @@
                     entry.employees.some(emp => emp.id === selectedEmployeeId);
                 return inDateRange && matchesEmployee;
             });
+
+            console.log("📊 Data lembur yang sesuai filter:", filteredEntries.length, "entri");
+            console.log("🧾 Data contoh:", filteredEntries.slice(0, 2)); // Tampilkan 2 data pertama
 
             // Hitung total jam per karyawan — GUNAKAN entry.duration LANGSUNG
             const rekapMap = {};
@@ -839,6 +844,7 @@
         function updateTable() {
             const tbody = document.getElementById('overtimeTable');
             const dataToShow = filteredData.length > 0 ? filteredData : overtimeData;
+            console.log("🔄 Menampilkan data di tabel:", dataToShow.length, "baris");
             if (dataToShow.length === 0) {
                 tbody.innerHTML = `<tr><td colspan="7" class="px-6 py-12 text-center text-gray-500"><div class="flex flex-col items-center space-y-3"><svg class="w-12 h-12 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg><p>Belum ada data pengajuan lembur</p><p class="text-sm">Klik "Buat Pengajuan Lembur" untuk memulai</p></div></td></tr>`;
                 return;
@@ -903,13 +909,16 @@
         const filterDate = document.getElementById('filterDate').value;
         const filterLine = document.getElementById('filterLine').value;
 
-        filteredData = overtimeData.filter(entry => {
-            const matchDate = !filterDate || entry.date === filterDate;
-            const matchLine = !filterLine || entry.line === filterLine;
+        filteredData = overtimeData.filter(data => {
+            const matchDate = !filterDate || data.date === filterDate;
+            const matchLine = !filterLine || data.line === filterLine;
             return matchDate && matchLine;
         });
 
-        updateTable(); // ✅ Pastikan ini dipanggil
+        console.log("🔍 Filter aktif:", { tanggal: filterDate, line: filterLine });
+        console.log("📊 Jumlah data setelah filter:", filteredData.length);
+
+        updateTable();
         }
 
         function clearFilters() {
