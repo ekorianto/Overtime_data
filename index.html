@@ -851,84 +851,85 @@
 
     // --- Table & Stats ---
     function updateTable() {
-        // Cek apakah filter sedang aktif (ada nilai di input filter)
-        const isFilterActive =
-            document.getElementById('filterDate').value ||
-            document.getElementById('filterLine').value;
+    // Cek apakah filter sedang aktif (ada nilai di input filter)
+    const isFilterActive =
+        document.getElementById('filterDate').value ||
+        document.getElementById('filterLine').value;
 
-        // Jika filter aktif, tampilkan filteredData (bisa kosong)
-        // Jika tidak, tampilkan semua data (overtimeData)
-        const dataToShow = isFilterActive ? filteredData : overtimeData;
+    // Jika filter aktif, tampilkan filteredData (bisa kosong)
+    // Jika tidak, tampilkan semua data (overtimeData)
+    const dataToShow = isFilterActive ? filteredData : overtimeData;
 
-        console.log("🔄 Filter aktif:", isFilterActive, "| Menampilkan ", dataToShow.length, "baris");
+    console.log("🔄 Filter aktif:", isFilterActive, "| Menampilkan ", dataToShow.length, "baris");
 
-        const tbody = document.getElementById('overtimeTable');
+    const tbody = document.getElementById('overtimeTable');
 
-        if (dataToShow.length === 0) {
-            let message = isFilterActive
-                ? 'Tidak ada data sesuai filter yang dipilih'
-                : 'Belum ada data pengajuan lembur';
-            let subMessage = isFilterActive
-                ? ''
-                : '<p class="text-sm">Klik "Buat Pengajuan Lembur" untuk memulai</p>';
+    if (dataToShow.length === 0) {
+        let message = isFilterActive
+            ? 'Tidak ada data sesuai filter yang dipilih'
+            : 'Belum ada data pengajuan lembur';
+        let subMessage = isFilterActive
+            ? ''
+            : '<p class="text-sm">Klik "Buat Pengajuan Lembur" untuk memulai</p>';
 
-            tbody.innerHTML = `
-                <tr>
-                    <td colspan="7" class="px-6 py-12 text-center text-gray-500">
-                        <div class="flex flex-col items-center space-y-3">
-                            <svg class="w-12 h-12 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-                            </svg>
-                            <p>${message}</p>
-                            ${subMessage}
-                        </div>
-                    </td>
-                </tr>
-            `;
-            return;
-        }
-
-        let html = '';
-        dataToShow.forEach((d, i) => {
-            const empDiv = (d.employees || []).map(e => `<div>${e.name}</div>`).join('');
-            const time = `${d.startTime} - ${d.endTime}`;
-            let durasi = 'N/A';
-            if (typeof d.duration === 'number') {
-                const h = Math.floor(d.duration);
-                const m = Math.round((d.duration - h) * 60);
-                durasi = `${h}j ${m}m`;
-            }
-            const lineColor = d.line.includes('SPRING') ? 'bg-purple-100 text-purple-800' : 'bg-blue-100 text-blue-800';
-            html += `
-                <tr class="hover:bg-gray-50">
-                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">${new Date(d.date).toLocaleDateString('id-ID')}</td>
-                    <td class="px-6 py-4"><span class="px-3 py-1 text-xs font-semibold rounded-full ${lineColor}">${d.line}</span></td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm">${time}</td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">${durasi}</td>
-                    <td class="px-6 py-4 text-sm cursor-pointer" id="empCell-${i}" data-date="${d.date}" data-start="${d.startTime}" data-end="${d.endTime}" data-dur="${durasi}">
-                        <div class="max-h-32 overflow-y-auto">${empDiv}</div>
-                    </td>
-                    <td class="px-6 py-4 text-sm max-w-xs truncate" title="${d.task}">${d.task}</td>
-                    <td class="px-6 py-4"><span class="px-3 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">Tersimpan</span></td>
-                </tr>
-            `;
-        });
-        tbody.innerHTML = html;
-        dataToShow.forEach((d, i) => {
-            const cell = document.getElementById(`empCell-${i}`);
-            if (cell) {
-                cell.addEventListener('click', () => {
-                    openEmployeeDetailModal(
-                        cell.dataset.date,
-                        cell.dataset.start,
-                        cell.dataset.end,
-                        cell.dataset.dur,
-                        d.employees
-                    );
-                });
-            }
-        });
+        tbody.innerHTML = `
+            <tr>
+                <td colspan="7" class="px-6 py-12 text-center text-gray-500">
+                    <div class="flex flex-col items-center space-y-3">
+                        <svg class="w-12 h-12 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                        </svg>
+                        <p>${message}</p>
+                        ${subMessage}
+                    </div>
+                </td>
+            </tr>
+        `;
+        return;
     }
+
+    let html = '';
+    dataToShow.forEach((d, i) => {
+        const empDiv = (d.employees || []).map(e => `<div>${e.name}</div>`).join('');
+        // Gunakan langsung startTime dan endTime dari data (sudah dalam format HH:MM)
+        const time = `${d.startTime} - ${d.endTime}`;
+        let durasi = 'N/A';
+        if (typeof d.duration === 'number') {
+            const h = Math.floor(d.duration);
+            const m = Math.round((d.duration - h) * 60);
+            durasi = `${h}j ${m}m`;
+        }
+        const lineColor = d.line.includes('SPRING') ? 'bg-purple-100 text-purple-800' : 'bg-blue-100 text-blue-800';
+        html += `
+            <tr class="hover:bg-gray-50">
+                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">${new Date(d.date).toLocaleDateString('id-ID')}</td>
+                <td class="px-6 py-4"><span class="px-3 py-1 text-xs font-semibold rounded-full ${lineColor}">${d.line}</span></td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm">${time}</td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">${durasi}</td>
+                <td class="px-6 py-4 text-sm cursor-pointer" id="empCell-${i}" data-date="${d.date}" data-start="${d.startTime}" data-end="${d.endTime}" data-dur="${durasi}">
+                    <div class="max-h-32 overflow-y-auto">${empDiv}</div>
+                </td>
+                <td class="px-6 py-4 text-sm max-w-xs truncate" title="${d.task}">${d.task}</td>
+                <td class="px-6 py-4"><span class="px-3 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">Tersimpan</span></td>
+            </tr>
+        `;
+    });
+    tbody.innerHTML = html;
+    dataToShow.forEach((d, i) => {
+        const cell = document.getElementById(`empCell-${i}`);
+        if (cell) {
+            cell.addEventListener('click', () => {
+                openEmployeeDetailModal(
+                    cell.dataset.date,
+                    cell.dataset.start,
+                    cell.dataset.end,
+                    cell.dataset.dur,
+                    d.employees
+                );
+            });
+        }
+    });
+}
 
     function updateStats() {
         const today = new Date().toISOString().split('T')[0];
