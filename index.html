@@ -518,71 +518,77 @@
         document.body.style.overflow = 'hidden';
     }
 
-    // --- Rekap Submit ---
-    document.getElementById('rekapForm').addEventListener('submit', function(e) {
-        e.preventDefault();
-        const startDate = document.getElementById('startDate').value;
-        const endDate = document.getElementById('endDate').value;
-        const selectedEmployeeId = document.getElementById('employeeFilter').value;
-        if (!startDate || !endDate) {
-            alert('Pilih tanggal mulai dan selesai.');
-            return;
-        }
-        const start = new Date(startDate);
-        const end = new Date(endDate);
-        if (start > end) {
-            alert('Tanggal mulai tidak boleh setelah tanggal selesai.');
-            return;
-        }
+    // Event listener untuk form rekap
+document.getElementById('rekapForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    const startDate = document.getElementById('startDate').value;
+    const endDate = document.getElementById('endDate').value;
+    const selectedEmployeeId = document.getElementById('employeeFilter').value; // Bisa kosong
 
-        console.log("📅 Rekap diminta:", { startDate, endDate, karyawan: selectedEmployeeId });
-        console.log("📊 Data lembur asli:", overtimeData);
+    console.log("📅 Rekap diminta:", { startDate, endDate, karyawan: selectedEmployeeId });
+    console.log("📊 Data lembur asli (cek format):", overtimeData);
+    console.log("📊 Contoh entri pertama:", overtimeData[0]);
 
-        const filteredEntries = overtimeData.filter(entry => {
-            if (!entry.date) return false;
-            const entryDate = new Date(entry.date);
-            if (isNaN(entryDate.getTime())) return false;
+    if (!startDate || !endDate) {
+        alert('Pilih tanggal mulai dan selesai.');
+        return;
+    }
 
-            const isInRange = entryDate >= start && entryDate <= end;
-            const matchesEmployee = !selectedEmployeeId || entry.employees.some(emp => emp.id === selectedEmployeeId);
+    const start = new Date(startDate);
+    const end = new Date(endDate);
+    if (start > end) {
+        alert('Tanggal mulai tidak boleh setelah tanggal selesai.');
+        return;
+    }
 
-            return isInRange && matchesEmployee;
-        });
+    // Ambil data lembur dari overtimeData (data lokal yang diambil dari Google Sheets)
+    const filteredEntries = overtimeData.filter(entry => {
+        // Pastikan tanggal entry valid
+        if (!entry.date) return false;
+        const entryDate = new Date(entry.date);
+        if (isNaN(entryDate.getTime())) return false; // Tanggal tidak valid
 
-        console.log("📊 Data lembur yang sesuai filter:", filteredEntries.length);
-        console.log("🧾 Data contoh:", filteredEntries.slice(0, 2));
+        const isInRange = entryDate >= start && entryDate <= end;
+        const matchesEmployee = !selectedEmployeeId || entry.employees.some(emp => emp.id === selectedEmployeeId);
 
-        const rekapMap = {};
-        filteredEntries.forEach(entry => {
-            const entryDuration = parseFloat(entry.duration) || 0;
-            entry.employees.forEach(emp => {
-                if (!selectedEmployeeId || emp.id === selectedEmployeeId) {
-                    if (!rekapMap[emp.id]) {
-                        const empInfo = employees.find(e => e.id === emp.id);
-                        rekapMap[emp.id] = {
-                            nik: emp.id,
-                            nama: empInfo ? empInfo.name : emp.id,
-                            totalJam: 0
-                        };
-                    }
-                    rekapMap[emp.id].totalJam += entryDuration;
-                }
-            });
-        });
-
-        const rekapResults = Object.values(rekapMap)
-            .map(item => ({
-                nik: item.nik,
-                nama: item.nama,
-                totalJam: parseFloat(item.totalJam.toFixed(2))
-            }))
-            .sort((a, b) => a.nama.localeCompare(b.nama));
-
-        console.log("📊 Hasil rekap akhir:", rekapResults);
-
-        showRekapResult(rekapResults, startDate, endDate);
-        closeRekapModal();
+        return isInRange && matchesEmployee;
     });
+
+    console.log("📊 Data lembur yang sesuai filter:", filteredEntries.length);
+    console.log("🧾 Data contoh:", filteredEntries.slice(0, 2));
+
+    // Hitung total jam per karyawan menggunakan entry.duration LANGSUNG
+    const rekapMap = {};
+    filteredEntries.forEach(entry => {
+        const entryDuration = parseFloat(entry.duration) || 0; // Ambil dari Google Sheets
+        entry.employees.forEach(emp => {
+            if (!selectedEmployeeId || emp.id === selectedEmployeeId) {
+                if (!rekapMap[emp.id]) {
+                    const empInfo = employees.find(e => e.id === emp.id);
+                    rekapMap[emp.id] = {
+                        nik: emp.id,
+                        nama: empInfo ? empInfo.name : emp.id,
+                        totalJam: 0
+                    };
+                }
+                rekapMap[emp.id].totalJam += entryDuration;
+            }
+        });
+    });
+
+    const rekapResults = Object.values(rekapMap)
+        .map(item => ({
+            nik: item.nik,
+            nama: item.nama,
+            totalJam: parseFloat(item.totalJam.toFixed(2))
+        }))
+        .sort((a, b) => a.nama.localeCompare(b.nama));
+
+    console.log("📊 Hasil rekap akhir:", rekapResults);
+
+    showRekapResult(rekapResults, startDate, endDate);
+    closeRekapModal();
+});
 
     // --- Master Data ---
     function populateLineOptions() {
