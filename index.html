@@ -761,10 +761,29 @@ document.getElementById('rekapForm').addEventListener('submit', function(e) {
                 window[cb] = (res) => {
                     cleanup();
                     if (res?.success && Array.isArray(res.data)) {
-                        overtimeData = res.data;
-                        // 🔥 Tambahkan log ini untuk debugging
-                        console.log("📊 Data lembur setelah load (cek format):", overtimeData);
-                        console.log("📊 Contoh entri pertama:", overtimeData[0]);
+                        overtimeData = res.data.map(row => {
+                            // Parse tanggal ke format YYYY-MM-DD
+                            let parsedDate = '';
+                            if (row[0]) {
+                                const d = new Date(row[0]);
+                                if (!isNaN(d.getTime())) {
+                                    parsedDate = d.toISOString().split('T')[0];
+                                }
+                            }
+                            return {
+                                date: parsedDate,
+                                line: row[1] || '',
+                                startTime: row[2] || '',
+                                endTime: row[3] || '',
+                                duration: parseFloat(row[7]) || 0, // 🔥 Kolom H = Durasi (jam)
+                                task: row[6] || '',
+                                employees: [{
+                                    id: String(row[4] || '').trim(),
+                                    name: String(row[5] || '').trim()
+                                }]
+                            };
+                        });
+                        console.log("📊 Data lembur setelah load (dengan durasi):", overtimeData);
                         updateTable();
                         updateStats();
                         resolve();
