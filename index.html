@@ -590,6 +590,20 @@ document.getElementById('rekapForm').addEventListener('submit', function(e) {
     closeRekapModal();
 });
 
+    const rekapResults = Object.values(rekapMap)
+        .map(item => ({
+            nik: item.nik,
+            nama: item.nama,
+            totalJam: parseFloat(item.totalJam.toFixed(2))
+        }))
+        .sort((a, b) => a.nama.localeCompare(b.nama));
+
+    console.log("📊 Hasil rekap akhir:", rekapResults);
+
+    showRekapResult(rekapResults, startDate, endDate);
+    closeRekapModal();
+});
+
     // --- Master Data ---
     function populateLineOptions() {
         const uniqueDepts = [...new Set(employees.map(emp => emp.dept).filter(Boolean))].sort();
